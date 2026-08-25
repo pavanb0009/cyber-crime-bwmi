@@ -1,0 +1,112 @@
+import type { CaseRecord, ReportDraft } from '../types'
+
+const DRAFT_KEY = 'rakshak-report-draft-v1'
+const CASES_KEY = 'rakshak-demo-cases-v1'
+
+export const emptyDraft: ReportDraft = {
+  incidentType: '',
+  anonymous: false,
+  occurredAt: '',
+  state: '',
+  channel: '',
+  amount: '',
+  transactionId: '',
+  description: '',
+  evidenceNames: [],
+  fullName: '',
+  mobile: '',
+  email: '',
+  consent: false,
+}
+
+export function loadDraft(): ReportDraft {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    if (!raw) return emptyDraft
+    return { ...emptyDraft, ...(JSON.parse(raw) as Partial<ReportDraft>) }
+  } catch {
+    return emptyDraft
+  }
+}
+
+export function saveDraft(draft: ReportDraft): void {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+  } catch {
+    // The interface still works if storage is unavailable.
+  }
+}
+
+export function clearDraft(): void {
+  try {
+    localStorage.removeItem(DRAFT_KEY)
+  } catch {
+    // No-op when storage is unavailable.
+  }
+}
+
+export function loadCases(): CaseRecord[] {
+  try {
+    const raw = localStorage.getItem(CASES_KEY)
+    return raw ? (JSON.parse(raw) as CaseRecord[]) : []
+  } catch {
+    return []
+  }
+}
+
+export function saveCase(record: CaseRecord): void {
+  try {
+    const existing = loadCases().filter((item) => item.caseId !== record.caseId)
+    localStorage.setItem(CASES_KEY, JSON.stringify([record, ...existing].slice(0, 8)))
+  } catch {
+    // No-op when storage is unavailable.
+  }
+}
+
+export function findCase(caseId: string): CaseRecord | undefined {
+  return loadCases().find((item) => item.caseId.toLowerCase() === caseId.toLowerCase())
+}
+
+export const defaultDemoCase: CaseRecord = {
+  caseId: 'NCRP-DEMO-26-84019',
+  createdAt: '24 August 2026, 18:42',
+  incidentType: 'financial',
+  state: 'Karnataka',
+  description: 'Synthetic demo complaint: fake customer-care UPI collection request.',
+  anonymous: false,
+  progress: 68,
+  statusLabel: 'Under review by state cyber cell',
+  assignedUnit: 'Demo Cyber Cell — Bengaluru Urban',
+  timeline: [
+    {
+      label: 'Complaint submitted',
+      detail: 'Acknowledgement generated and evidence package sealed.',
+      timestamp: '24 Aug · 18:42',
+      status: 'done',
+    },
+    {
+      label: 'Initial triage complete',
+      detail: 'Incident category and jurisdiction verified.',
+      timestamp: '24 Aug · 19:06',
+      status: 'done',
+    },
+    {
+      label: 'Forwarded to state cyber cell',
+      detail: 'Case routed to the relevant review queue.',
+      timestamp: '24 Aug · 19:24',
+      status: 'done',
+    },
+    {
+      label: 'Officer review',
+      detail: 'Evidence and transaction details are being examined.',
+      timestamp: 'Current stage',
+      status: 'active',
+    },
+    {
+      label: 'Action update',
+      detail: 'A new update will appear here when available.',
+      timestamp: 'Pending',
+      status: 'pending',
+    },
+  ],
+}
