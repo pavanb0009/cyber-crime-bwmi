@@ -109,7 +109,6 @@ export function LearnPage() {
             tone: 'aqua',
             icon: ShieldCheck,
           }
-  const AssessmentIcon = assessment.icon
 
   return (
     <>
@@ -119,41 +118,23 @@ export function LearnPage() {
         title={<>Safety advice for<br /><span className="text-signal">the next five minutes.</span></>}
         description="Long awareness pages become short, situation-based playbooks: what to do now, what evidence to keep, and what never to share."
         aside={
-          <div className="surface-soft rounded-2xl p-4">
-            <div className="flex items-start gap-3">
-              <HeartHandshake className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
-              <div>
-                <p className="text-sm font-bold text-paper">Designed without blame</p>
-                <p className="mt-1 text-xs leading-5 text-muted">Clear language, no shame, and an action in every section.</p>
-              </div>
-            </div>
-          </div>
+          <p className="text-sm leading-6 text-muted">
+            Clear language, no shame, and an action in every section.
+          </p>
         }
       />
 
       <section className="page-shell">
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="divide-y divide-black/[0.08] border-y border-black/[0.08] sm:grid sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {quickActions.map((item) => {
-            const Icon = item.icon
             const inner = (
               <>
-                <div className="flex items-center justify-between gap-4">
-                  <span className={cx(
-                    'flex h-11 w-11 items-center justify-center rounded-xl',
-                    item.accent === 'coral' && 'bg-coral/[0.10] text-coral',
-                    item.accent === 'aqua' && 'bg-aqua/[0.10] text-aqua',
-                    item.accent === 'saffron' && 'bg-saffron/[0.10] text-saffron',
-                  )}>
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <ArrowRight className="h-4 w-4 text-muted transition group-hover:translate-x-1 group-hover:text-paper" />
-                </div>
-                <p className="mt-8 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-muted">{item.title}</p>
-                <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-paper">{item.action}</h2>
+                <p className="text-sm text-muted">{item.title}</p>
+                <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-paper">{item.action}</h2>
                 <p className="mt-2 text-sm leading-6 text-muted">{item.detail}</p>
               </>
             )
-            const className = 'group surface-soft min-h-[13rem] rounded-[1.5rem] p-5 transition hover:-translate-y-1 hover:border-white/[0.15] hover:bg-white/[0.045] sm:p-6'
+            const className = 'block py-6 sm:pr-8 sm:first:pl-0 sm:[&:nth-child(2)]:px-8 sm:last:pl-8 sm:last:pr-0'
             return item.external ? (
               <a key={item.title} href={item.href} className={className}>{inner}</a>
             ) : (
@@ -169,37 +150,36 @@ export function LearnPage() {
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="eyebrow">Situation playbooks</p>
-                <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-paper sm:text-4xl">Find the right guide.</h2>
+                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-paper sm:text-3xl">Find the right guide.</h2>
               </div>
-              <span className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-muted">{filteredGuides.length} results</span>
+              <span className="text-sm text-muted">{filteredGuides.length} results</span>
             </div>
 
             <div className="surface rounded-2xl p-4 sm:p-5">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  className="text-field pl-11 pr-11"
+                  className="text-field pr-16"
                   placeholder="Search: UPI, password, harassment…"
                 />
                 {query ? (
-                  <button type="button" onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted hover:bg-white/5 hover:text-paper" aria-label="Clear search">
-                    <X className="h-4 w-4" />
+                  <button type="button" onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted hover:text-paper" aria-label="Clear search">
+                    Clear
                   </button>
                 ) : null}
               </div>
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              <div className="mt-3 flex gap-4 overflow-x-auto border-b border-black/[0.08]">
                 {categories.map((item) => (
                   <button
                     key={item}
                     type="button"
                     onClick={() => setCategory(item)}
                     className={cx(
-                      'shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition',
+                      '-mb-px shrink-0 border-b py-2 text-sm transition',
                       category === item
-                        ? 'border-signal/25 bg-signal text-ink'
-                        : 'border-white/[0.08] bg-white/[0.025] text-muted hover:border-white/[0.15] hover:text-paper',
+                        ? 'border-paper font-medium text-paper'
+                        : 'border-transparent text-muted hover:text-paper',
                     )}
                   >
                     {item}
@@ -212,7 +192,7 @@ export function LearnPage() {
               {filteredGuides.map((guide) => {
                 const open = openGuide === guide.id
                 return (
-                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.025]">
+                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-black/[0.08] bg-black/[0.025]">
                     <button
                       type="button"
                       onClick={() => setOpenGuide(open ? null : guide.id)}
@@ -221,31 +201,25 @@ export function LearnPage() {
                     >
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className={cx(
-                            'rounded-full px-2.5 py-1 font-mono text-[0.56rem] font-bold uppercase tracking-[0.12em]',
-                            guide.accent === 'coral' && 'bg-coral/[0.09] text-coral',
-                            guide.accent === 'aqua' && 'bg-aqua/[0.09] text-aqua',
-                            guide.accent === 'saffron' && 'bg-saffron/[0.09] text-saffron',
-                            guide.accent === 'signal' && 'bg-signal/[0.09] text-signal',
-                          )}>{guide.category}</span>
-                          <span className="inline-flex items-center gap-1 font-mono text-[0.56rem] uppercase tracking-[0.1em] text-muted"><Clock3 className="h-3 w-3" /> {guide.readingTime}</span>
+                          <span className="text-sm text-muted">{guide.category}</span>
+                          <span className="text-sm text-muted">{guide.readingTime}</span>
                         </div>
                         <h3 className="mt-3 text-lg font-extrabold tracking-[-0.025em] text-paper sm:text-xl">{guide.title}</h3>
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{guide.summary}</p>
                       </div>
-                      <span className={cx('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-muted transition', open && 'rotate-180 bg-paper text-ink')}>
-                        <ChevronDown className="h-4 w-4" />
+                      <span className={cx('mt-1 shrink-0 text-sm text-muted', open && 'text-paper')}>
+                        {open ? 'Close' : 'Open'}
                       </span>
                     </button>
                     <AnimatePresence initial={false}>
                       {open ? (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                          <div className="border-t border-white/[0.08] px-5 py-5 sm:px-6">
+                          <div className="border-t border-black/[0.08] px-5 py-5 sm:px-6">
                             <ol className="space-y-4">
                               {guide.steps.map((step, index) => (
                                 <li key={step} className="flex gap-3">
-                                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-signal/[0.08] font-mono text-[0.6rem] font-bold text-signal">0{index + 1}</span>
-                                  <p className="pt-0.5 text-sm leading-6 text-paper/[0.80]">{step}</p>
+                                  <span className="w-4 shrink-0 text-sm text-muted">{index + 1}</span>
+                                  <p className="text-sm leading-6 text-paper">{step}</p>
                                 </li>
                               ))}
                             </ol>
@@ -258,25 +232,19 @@ export function LearnPage() {
               })}
 
               {!filteredGuides.length ? (
-                <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-8 text-center">
-                  <Filter className="mx-auto h-6 w-6 text-muted" />
-                  <p className="mt-3 text-sm font-bold text-paper">No guide matches that search.</p>
-                  <button type="button" onClick={() => { setQuery(''); setCategory('All') }} className="mt-3 text-xs font-bold text-aqua">Clear filters</button>
+                <div className="py-8">
+                  <p className="text-sm font-medium text-paper">No guide matches that search.</p>
+                  <button type="button" onClick={() => { setQuery(''); setCategory('All') }} className="mt-3 text-sm font-medium text-signal">Clear filters</button>
                 </div>
               ) : null}
             </div>
           </div>
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="signal-border noise overflow-hidden rounded-[1.7rem] bg-[#0b1715] p-5 shadow-signal sm:p-7">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="eyebrow">60-second check</p>
-                  <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper">Does this feel like a scam?</h2>
-                </div>
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-signal/[0.18] bg-signal/[0.055] text-signal">
-                  <Sparkles className="h-5 w-5" />
-                </span>
+            <div className="border-t border-black/[0.08] pt-2 sm:border sm:p-7 sm:pt-7">
+              <div>
+                <p className="text-sm text-muted">60-second check</p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-paper">Does this feel like a scam?</h2>
               </div>
               <p className="mt-3 text-sm leading-6 text-muted">Select every signal that is present. This is guidance, not a safety certificate.</p>
 
@@ -290,12 +258,12 @@ export function LearnPage() {
                       'flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition',
                       answers[index]
                         ? 'border-signal/25 bg-signal/[0.07]'
-                        : 'border-white/[0.07] bg-white/[0.025] hover:border-white/[0.15]',
+                        : 'border-black/[0.07] bg-black/[0.025] hover:border-black/[0.15]',
                     )}
                   >
                     <span className={cx(
                       'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border',
-                      answers[index] ? 'border-signal bg-signal text-ink' : 'border-white/20 text-transparent',
+                      answers[index] ? 'border-signal bg-signal text-ink' : 'border-black/20 text-transparent',
                     )}>
                       <Check className="h-3 w-3" />
                     </span>
@@ -314,12 +282,6 @@ export function LearnPage() {
                 )}
               >
                 <div className="flex items-start gap-3">
-                  <AssessmentIcon className={cx(
-                    'mt-0.5 h-4 w-4 shrink-0',
-                    assessment.tone === 'coral' && 'text-coral',
-                    assessment.tone === 'saffron' && 'text-saffron',
-                    assessment.tone === 'aqua' && 'text-aqua',
-                  )} />
                   <div>
                     <p className="text-sm font-extrabold text-paper">{assessment.title}</p>
                     <p className="mt-1 text-xs leading-5 text-muted">{assessment.detail}</p>
@@ -329,20 +291,17 @@ export function LearnPage() {
 
               <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 <Link to="/check" className={buttonStyles('primary', 'md')}>
-                  <FileSearch className="h-4 w-4" /> Check identifier
+                  Check identifier
                 </Link>
                 <Link to="/report" className={buttonStyles('secondary', 'md')}>
-                  Start report <ArrowRight className="h-4 w-4" />
+                  Start report
                 </Link>
               </div>
 
               <button type="button" onClick={() => setAnswers(scamQuestions.map(() => false))} className="mt-3 w-full text-center text-xs font-semibold text-muted hover:text-paper">Reset checklist</button>
             </div>
 
-            <div className="mt-4 flex items-start gap-3 rounded-2xl border border-white/[0.07] p-4">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
-              <p className="text-xs leading-5 text-muted">For immediate physical danger, contact local emergency services. This prototype is not a substitute for professional or legal advice.</p>
-            </div>
+            <p className="mt-6 text-sm leading-6 text-muted">For immediate physical danger, contact local emergency services. This prototype is not a substitute for professional or legal advice.</p>
           </aside>
         </div>
       </section>

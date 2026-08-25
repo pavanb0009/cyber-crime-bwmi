@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { PhoneCall } from 'lucide-react'
 import { Footer } from './Footer'
 import { Navigation } from './Navigation'
 import { PrototypeBar } from './PrototypeBar'
@@ -23,9 +22,9 @@ export function Layout() {
 
       <a
         href="tel:1930"
-        className="fixed inset-x-3 bottom-3 z-40 flex h-14 items-center justify-center gap-2 rounded-2xl border border-coral/40 bg-coral text-sm font-extrabold text-ink shadow-[0_18px_60px_rgba(0,0,0,.45)] sm:hidden"
+        className="fixed inset-x-4 bottom-4 z-40 flex h-12 items-center justify-center rounded-lg bg-coral text-sm font-medium text-ink sm:hidden"
       >
-        <PhoneCall className="h-4 w-4" /> Financial fraud? Call 1930
+        Financial fraud? Call 1930
       </a>
     </div>
   )

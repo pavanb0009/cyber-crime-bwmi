@@ -10,20 +10,17 @@ export function buttonStyles(
   size: ButtonSize = 'md',
 ): string {
   const base =
-    'group inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition duration-200 disabled:pointer-events-none disabled:opacity-50'
+    'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition duration-150 disabled:pointer-events-none disabled:opacity-50'
   const variants: Record<ButtonVariant, string> = {
-    primary:
-      'bg-signal text-ink shadow-[0_12px_38px_rgba(199,255,103,.12)] hover:-translate-y-0.5 hover:bg-[#d4ff8e] active:translate-y-0',
-    secondary:
-      'border border-white/[0.12] bg-white/[0.055] text-paper hover:-translate-y-0.5 hover:border-white/[0.22] hover:bg-white/[0.09] active:translate-y-0',
-    ghost: 'text-paper/[0.80] hover:bg-white/[0.06] hover:text-paper',
-    danger:
-      'bg-coral text-ink shadow-[0_12px_38px_rgba(255,117,105,.12)] hover:-translate-y-0.5 hover:bg-[#ff9188] active:translate-y-0',
+    primary: 'bg-signal text-ink hover:bg-[#1f5aef] active:bg-[#1a4fd6]',
+    secondary: 'border border-black/[0.12] bg-white text-paper hover:bg-mist',
+    ghost: 'text-muted hover:text-paper',
+    danger: 'bg-coral text-ink hover:bg-[#c0143a] active:bg-[#a31132]',
   }
   const sizes: Record<ButtonSize, string> = {
-    sm: 'h-9 px-3.5 text-xs',
-    md: 'h-11 px-4 text-sm',
-    lg: 'h-[3.25rem] px-5 text-sm sm:px-6',
+    sm: 'h-9 px-3.5 text-sm',
+    md: 'h-10 px-4 text-sm',
+    lg: 'h-12 px-5 text-[0.95rem]',
   }
   return cx(base, variants[variant], sizes[size])
 }

@@ -92,7 +92,7 @@ function FieldError({ children }: { children?: string }) {
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 border-b border-white/[0.07] py-3 last:border-b-0 sm:grid-cols-[9rem_1fr] sm:gap-4">
+    <div className="grid gap-1 border-b border-black/[0.07] py-3 last:border-b-0 sm:grid-cols-[9rem_1fr] sm:gap-4">
       <span className="text-xs font-semibold text-muted">{label}</span>
       <span className="text-sm font-semibold leading-6 text-paper">{value || 'Not added'}</span>
     </div>
@@ -131,10 +131,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
       <div className="relative overflow-hidden border-b border-signal/[0.15] bg-signal/[0.07] px-6 py-9 sm:px-9 sm:py-12">
         <div className="absolute right-0 top-0 h-44 w-44 translate-x-1/3 -translate-y-1/3 rounded-full border border-signal/20" />
         <div className="absolute right-0 top-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full border border-signal/10" />
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-signal text-ink shadow-[0_0_45px_rgba(199,255,103,.2)]">
-          <Check className="h-7 w-7" />
-        </span>
-        <p className="eyebrow mt-7 text-signal">Demo complaint created</p>
+        <p className="eyebrow mt-0 text-signal">Demo complaint created</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-extrabold tracking-[-0.045em] text-paper sm:text-5xl">
           You now have a clear next step.
         </h2>
@@ -144,7 +141,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
       </div>
 
       <div className="p-6 sm:p-9">
-        <div className="rounded-2xl border border-white/[0.09] bg-ink/[0.65] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div className="rounded-2xl border border-black/[0.09] bg-mist p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
           <div>
             <p className="font-mono text-[0.62rem] uppercase tracking-[0.15em] text-muted">Demo acknowledgement number</p>
             <p className="mt-2 break-all font-mono text-xl font-bold text-signal sm:text-2xl">{record.caseId}</p>
@@ -160,7 +157,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
             ['02', 'Preserve original evidence'],
             ['03', 'Check status in Track'],
           ].map(([number, label]) => (
-            <div key={number} className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-4">
+            <div key={number} className="rounded-xl border border-black/[0.07] bg-black/[0.025] p-4">
               <span className="font-mono text-xs font-bold text-signal">{number}</span>
               <p className="mt-3 text-sm font-bold text-paper">{label}</p>
             </div>
@@ -201,7 +198,6 @@ export function ReportPage() {
     () => incidentTypes.find((item) => item.id === draft.incidentType),
     [draft.incidentType],
   )
-  const SelectedIncidentIcon = selectedIncident?.icon
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -368,15 +364,9 @@ export function ReportPage() {
         title={<>One clear report.<br /><span className="text-signal">Four short steps.</span></>}
         description="Choose what happened in plain language, add only the useful details, review everything once, and leave with a trackable demo acknowledgement."
         aside={
-          <div className="surface-soft rounded-2xl p-4">
-            <div className="flex items-start gap-3">
-              <FolderLock className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
-              <div>
-                <p className="text-sm font-bold text-paper">Prototype safety boundary</p>
-                <p className="mt-1 text-xs leading-5 text-muted">Use fictional information only. Files stay in your browser and are not uploaded.</p>
-              </div>
-            </div>
-          </div>
+          <p className="text-sm leading-6 text-muted">
+            Use fictional information only. Files stay in your browser and are not uploaded.
+          </p>
         }
       />
 
@@ -395,14 +385,12 @@ export function ReportPage() {
         ) : (
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:gap-8">
             <div className="surface overflow-hidden rounded-[1.8rem]">
-              <div className="border-b border-white/[0.08] bg-[#0a1513] px-5 py-5 sm:px-7">
+              <div className="border-b border-black/[0.08] bg-mist px-5 py-5 sm:px-7">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-[0.13em] text-muted">
-                    <Save className="h-3.5 w-3.5 text-aqua" /> {savedLabel}
-                  </div>
-                  <span className="font-mono text-[0.62rem] font-semibold text-paper/60">{Math.round(progress)}% complete</span>
+                  <p className="text-sm text-muted">{savedLabel}</p>
+                  <p className="text-sm text-muted">{Math.round(progress)}% complete</p>
                 </div>
-                <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="mt-4 h-1 overflow-hidden rounded-full bg-black/[0.06]">
                   <motion.div
                     className="h-full rounded-full bg-signal"
                     animate={{ width: `${progress}%` }}
@@ -422,13 +410,13 @@ export function ReportPage() {
                         className={cx(
                           'rounded-xl border px-2 py-3 text-left transition sm:px-3',
                           active && 'border-signal/25 bg-signal/[0.07]',
-                          done && 'border-white/[0.08] bg-white/[0.025] hover:bg-white/[0.05]',
+                          done && 'border-black/[0.08] bg-black/[0.025] hover:bg-black/[0.05]',
                           !active && !done && 'border-transparent bg-transparent opacity-[0.45]',
                         )}
                       >
                         <span className={cx(
                           'flex h-6 w-6 items-center justify-center rounded-lg font-mono text-[0.62rem] font-bold',
-                          active ? 'bg-signal text-ink' : done ? 'bg-aqua/10 text-aqua' : 'bg-white/[0.05] text-muted',
+                          active ? 'bg-signal text-ink' : done ? 'bg-aqua/10 text-aqua' : 'bg-black/[0.05] text-muted',
                         )}>
                           {done ? <Check className="h-3.5 w-3.5" /> : item.id}
                         </span>
@@ -447,11 +435,9 @@ export function ReportPage() {
                       <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper sm:text-3xl">What best describes the incident?</h2>
                       <p className="mt-2 text-sm leading-6 text-muted">You do not need to know a legal category. Pick the closest match.</p>
 
-                      <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                      <div className="mt-7 divide-y divide-black/[0.08] border-y border-black/[0.08]">
                         {incidentTypes.map((incident) => {
-                          const Icon = incident.icon
                           const active = draft.incidentType === incident.id
-                          const tones = toneClasses[incident.tone]
                           return (
                             <button
                               key={incident.id}
@@ -460,24 +446,15 @@ export function ReportPage() {
                                 update('incidentType', incident.id)
                                 if (incident.id !== 'women-child') update('anonymous', false)
                               }}
-                              className={cx(
-                                'group relative min-h-[10.5rem] rounded-2xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 sm:p-5',
-                                active ? tones.active : 'border-white/[0.08] bg-white/[0.025] hover:border-white/[0.15] hover:bg-white/[0.045]',
-                              )}
+                              className="flex w-full items-start justify-between gap-6 py-4 text-left"
                             >
-                              <div className="flex items-start justify-between gap-4">
-                                <span className={cx('flex h-10 w-10 items-center justify-center rounded-xl', tones.icon)}>
-                                  <Icon className="h-5 w-5" />
-                                </span>
-                                <span className={cx(
-                                  'flex h-6 w-6 items-center justify-center rounded-full border transition',
-                                  active ? 'border-signal bg-signal text-ink' : 'border-white/[0.15] text-transparent',
-                                )}>
-                                  <Check className="h-3.5 w-3.5" />
-                                </span>
-                              </div>
-                              <h3 className="mt-5 text-base font-extrabold tracking-[-0.02em] text-paper">{incident.title}</h3>
-                              <p className="mt-1.5 text-xs leading-5 text-muted">{incident.description}</p>
+                              <span>
+                                <span className={cx('block text-[0.95rem]', active ? 'font-medium text-paper' : 'text-paper')}>{incident.title}</span>
+                                <span className="mt-1 block text-sm leading-6 text-muted">{incident.description}</span>
+                              </span>
+                              <span className={cx('mt-0.5 shrink-0 text-sm', active ? 'font-medium text-signal' : 'text-muted')}>
+                                {active ? 'Selected' : 'Choose'}
+                              </span>
                             </button>
                           )
                         })}
@@ -485,15 +462,12 @@ export function ReportPage() {
                       <FieldError>{errors.incidentType}</FieldError>
 
                       {draft.incidentType === 'financial' ? (
-                        <div className="mt-5 rounded-2xl border border-coral/20 bg-coral/[0.06] p-4 sm:flex sm:items-center sm:justify-between sm:gap-5">
-                          <div className="flex items-start gap-3">
-                            <PhoneCall className="mt-0.5 h-4 w-4 shrink-0 text-coral" />
-                            <div>
-                              <p className="text-sm font-extrabold text-paper">Call 1930 before continuing.</p>
-                              <p className="mt-1 text-xs leading-5 text-muted">Then contact your bank or payment provider and preserve the transaction details.</p>
-                            </div>
+                        <div className="mt-5 rounded-xl border border-coral/20 bg-coral/[0.06] p-4 sm:flex sm:items-center sm:justify-between sm:gap-5">
+                          <div>
+                            <p className="text-sm font-medium text-paper">Call 1930 before continuing.</p>
+                            <p className="mt-1 text-sm leading-6 text-muted">Then contact your bank or payment provider and preserve the transaction details.</p>
                           </div>
-                          <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-3 w-full shrink-0 sm:mt-0 sm:w-auto')}>Call now</a>
+                          <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-3 shrink-0 sm:mt-0')}>Call now</a>
                         </div>
                       ) : null}
 
@@ -504,10 +478,10 @@ export function ReportPage() {
                               type="checkbox"
                               checked={draft.anonymous}
                               onChange={(event) => update('anonymous', event.target.checked)}
-                              className="mt-0.5 h-4 w-4 accent-[#c7ff67]"
+                              className="mt-0.5 h-4 w-4 accent-signal"
                             />
                             <span>
-                              <span className="flex items-center gap-2 text-sm font-extrabold text-paper"><EyeOff className="h-4 w-4 text-signal" /> Report anonymously</span>
+                              <span className="block text-sm font-medium text-paper">Report anonymously</span>
                               <span className="mt-1 block text-xs leading-5 text-muted">The contact fields will be skipped. This remains a simulated submission.</span>
                             </span>
                           </label>
@@ -537,7 +511,7 @@ export function ReportPage() {
                             type="datetime-local"
                             value={draft.occurredAt}
                             onChange={(event) => update('occurredAt', event.target.value)}
-                            className="text-field [color-scheme:dark]"
+                            className="text-field [color-scheme:light]"
                           />
                           <FieldError>{errors.occurredAt}</FieldError>
                         </div>
@@ -607,17 +581,14 @@ export function ReportPage() {
                       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add screenshots, transaction receipts, chat exports or a short document. The prototype stores file names only.</p>
 
                       <div
-                        className="mt-7 rounded-2xl border border-dashed border-white/[0.15] bg-white/[0.025] p-7 text-center transition hover:border-aqua/30 hover:bg-aqua/[0.025] sm:p-10"
+                        className="mt-7 rounded-2xl border border-dashed border-black/[0.15] bg-black/[0.025] p-7 text-center transition hover:border-aqua/30 hover:bg-aqua/[0.025] sm:p-10"
                         onDragOver={(event: DragEvent<HTMLDivElement>) => event.preventDefault()}
                         onDrop={(event: DragEvent<HTMLDivElement>) => {
                           event.preventDefault()
                           addFiles(event.dataTransfer.files)
                         }}
                       >
-                        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-aqua/20 bg-aqua/[0.07] text-aqua">
-                          <UploadCloud className="h-6 w-6" />
-                        </span>
-                        <h3 className="mt-5 text-lg font-extrabold text-paper">Drop evidence here</h3>
+                        <h3 className="text-lg font-semibold text-paper">Drop evidence here</h3>
                         <p className="mt-2 text-sm text-muted">PNG, JPG, PDF or text · up to 5 MB each · maximum 6 items</p>
                         <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
                           <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
@@ -641,11 +612,8 @@ export function ReportPage() {
                       {draft.evidenceNames.length ? (
                         <div className="mt-5 grid gap-2">
                           {draft.evidenceNames.map((name, index) => (
-                            <div key={`${name}-${index}`} className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.08] bg-white/[0.025] px-4 py-3">
+                            <div key={`${name}-${index}`} className="flex items-center justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.025] px-4 py-3">
                               <div className="flex min-w-0 items-center gap-3">
-                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-signal/[0.08] text-signal">
-                                  <FileText className="h-4 w-4" />
-                                </span>
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-paper">{name}</p>
                                   <p className="mt-0.5 font-mono text-[0.57rem] uppercase tracking-[0.12em] text-muted">Stored locally · demo only</p>
@@ -670,7 +638,7 @@ export function ReportPage() {
                           ['Keep', 'Original files without edits'],
                           ['Never add', 'Passwords, PINs or OTPs'],
                         ].map(([label, value], index) => (
-                          <div key={label} className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-4">
+                          <div key={label} className="rounded-xl border border-black/[0.07] bg-black/[0.025] p-4">
                             <span className={cx('font-mono text-[0.58rem] uppercase tracking-[0.14em]', index === 2 ? 'text-coral' : 'text-aqua')}>{label}</span>
                             <p className="mt-2 text-xs leading-5 text-muted">{value}</p>
                           </div>
@@ -686,13 +654,10 @@ export function ReportPage() {
                       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">This final screen makes the privacy boundary and every submitted detail visible before the action.</p>
 
                       {!draft.anonymous ? (
-                        <div className="mt-7 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-6">
-                          <div className="mb-5 flex items-center gap-3">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-aqua/[0.08] text-aqua"><UserRound className="h-5 w-5" /></span>
-                            <div>
-                              <h3 className="text-base font-extrabold text-paper">Fictional demo contact</h3>
-                              <p className="mt-0.5 text-xs text-muted">Used only to complete the prototype journey.</p>
-                            </div>
+                        <div className="mt-7 rounded-2xl border border-black/[0.08] bg-black/[0.025] p-5 sm:p-6">
+                          <div className="mb-5">
+                            <h3 className="text-base font-semibold text-paper">Fictional demo contact</h3>
+                            <p className="mt-0.5 text-xs text-muted">Used only to complete the prototype journey.</p>
                           </div>
                           <div className="grid gap-5 sm:grid-cols-2">
                             <div>
@@ -713,16 +678,13 @@ export function ReportPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="mt-7 flex items-start gap-3 rounded-2xl border border-signal/20 bg-signal/[0.055] p-5">
-                          <EyeOff className="mt-0.5 h-5 w-5 shrink-0 text-signal" />
-                          <div>
-                            <p className="text-sm font-extrabold text-paper">Anonymous reporting selected</p>
-                            <p className="mt-1 text-xs leading-5 text-muted">No name, mobile number or email will be included in this demo record.</p>
-                          </div>
+                        <div className="mt-7 rounded-xl border border-black/[0.08] p-5">
+                          <p className="text-sm font-medium text-paper">Anonymous reporting selected</p>
+                          <p className="mt-1 text-sm leading-6 text-muted">No name, mobile number or email will be included in this demo record.</p>
                         </div>
                       )}
 
-                      <div className="mt-5 rounded-2xl border border-white/[0.08] bg-[#091311] p-5 sm:p-6">
+                      <div className="mt-5 rounded-2xl border border-black/[0.08] bg-mist p-5 sm:p-6">
                         <div className="mb-3 flex items-center justify-between gap-4">
                           <h3 className="text-base font-extrabold text-paper">Report summary</h3>
                           <button type="button" onClick={() => setStep(1)} className="text-xs font-bold text-aqua hover:text-paper">Edit</button>
@@ -736,12 +698,12 @@ export function ReportPage() {
                         <SummaryRow label="Description" value={draft.description} />
                       </div>
 
-                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
+                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/[0.08] bg-black/[0.025] p-4">
                         <input
                           type="checkbox"
                           checked={draft.consent}
                           onChange={(event) => update('consent', event.target.checked)}
-                          className="mt-1 h-4 w-4 accent-[#c7ff67]"
+                          className="mt-1 h-4 w-4 accent-signal"
                         />
                         <span>
                           <span className="block text-sm font-bold text-paper">I understand this is an independent prototype using synthetic data.</span>
@@ -753,7 +715,7 @@ export function ReportPage() {
                   ) : null}
                 </AnimatePresence>
 
-                <div className="mt-8 flex flex-col-reverse gap-3 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-8 flex flex-col-reverse gap-3 border-t border-black/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="ghost" size="lg" onClick={previousStep} disabled={step === 1}>
                     <ArrowLeft className="h-4 w-4" /> Back
                   </Button>
@@ -773,15 +735,10 @@ export function ReportPage() {
             <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
               <div className="surface-soft rounded-2xl p-5">
                 <p className="eyebrow">Current selection</p>
-                {selectedIncident && SelectedIncidentIcon ? (
+                {selectedIncident ? (
                   <div className="mt-4">
-                    <div className="flex items-center gap-3">
-                      <span className={cx('flex h-10 w-10 items-center justify-center rounded-xl', toneClasses[selectedIncident.tone].icon)}>
-                        <SelectedIncidentIcon className="h-5 w-5" />
-                      </span>
-                      <p className="text-sm font-extrabold text-paper">{selectedIncident.title}</p>
-                    </div>
-                    <p className="mt-3 text-xs leading-5 text-muted">{selectedIncident.hint}</p>
+                    <p className="text-sm font-medium text-paper">{selectedIncident.title}</p>
+                    <p className="mt-3 text-sm leading-6 text-muted">{selectedIncident.hint}</p>
                   </div>
                 ) : (
                   <p className="mt-3 text-sm leading-6 text-muted">Choose an incident type to see contextual guidance.</p>
@@ -789,27 +746,22 @@ export function ReportPage() {
               </div>
 
               <div className="surface-soft rounded-2xl p-5">
-                <div className="flex items-center gap-2 text-sm font-extrabold text-paper">
-                  <LockKeyhole className="h-4 w-4 text-aqua" /> What stays private
-                </div>
-                <ul className="mt-4 space-y-3 text-xs leading-5 text-muted">
-                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-signal" /> No API calls or live government integration.</li>
-                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-signal" /> File contents never leave this device.</li>
-                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-signal" /> Drafts use browser storage only.</li>
+                <p className="text-sm font-medium text-paper">What stays private</p>
+                <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
+                  <li>No API calls or live government integration.</li>
+                  <li>File contents never leave this device.</li>
+                  <li>Drafts use browser storage only.</li>
                 </ul>
               </div>
 
               <div className="rounded-2xl border border-coral/[0.18] bg-coral/[0.055] p-5">
-                <div className="flex items-center gap-2 text-sm font-extrabold text-paper">
-                  <PhoneCall className="h-4 w-4 text-coral" /> Financial loss
-                </div>
+                <p className="text-sm font-medium text-paper">Financial loss</p>
                 <p className="mt-3 text-xs leading-5 text-muted">Do not wait for the form. Call 1930, then contact the bank or payment provider.</p>
                 <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-4 w-full')}>Call 1930</a>
               </div>
 
-              <div className="flex items-start gap-3 rounded-2xl border border-white/[0.07] p-4">
-                <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted" />
-                <p className="text-xs leading-5 text-muted">In production, OTP, identity verification, jurisdiction routing and police-system handoff would require approved secure integrations.</p>
+              <div className="rounded-2xl border border-black/[0.07] p-4">
+                <p className="text-sm leading-6 text-muted">In production, OTP, identity verification, jurisdiction routing and police-system handoff would require approved secure integrations.</p>
               </div>
             </aside>
           </div>

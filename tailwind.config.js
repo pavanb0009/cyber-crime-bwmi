@@ -4,35 +4,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#07100f',
-        panel: '#0b1715',
-        panel2: '#10211e',
-        paper: '#f2f4ec',
-        signal: '#c7ff67',
-        aqua: '#72e5df',
-        coral: '#ff7569',
-        saffron: '#ffb45f',
-        muted: '#9bb0aa',
+        ink: '#ffffff',
+        panel: '#ffffff',
+        panel2: '#f6f7fb',
+        paper: '#0b1220',
+        signal: '#2f6bff',
+        aqua: '#3b82f6',
+        coral: '#e11d48',
+        saffron: '#d97706',
+        muted: '#667085',
+        mist: '#f4f6fb',
+        line: '#e7eaf2',
       },
       fontFamily: {
         sans: ['Manrope Variable', 'Manrope', 'ui-sans-serif', 'system-ui'],
         mono: ['JetBrains Mono Variable', 'JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        'signal': '0 0 0 1px rgba(199,255,103,.2), 0 24px 80px rgba(0,0,0,.35)',
-        'soft': '0 18px 50px rgba(0,0,0,.22)',
+        signal: '0 1px 2px rgba(15,23,42,.04), 0 16px 40px rgba(47,107,255,.10)',
+        soft: '0 1px 2px rgba(15,23,42,.04), 0 10px 28px rgba(15,23,42,.06)',
       },
       backgroundImage: {
-        'radial-grid': 'radial-gradient(circle at center, rgba(255,255,255,.10) 0 1px, transparent 1.4px)',
+        'radial-grid': 'radial-gradient(circle at center, rgba(47,107,255,.16) 0 1px, transparent 1.4px)',
       },
       keyframes: {
         scan: {
           '0%': { transform: 'translateY(-10%)', opacity: '.15' },
-          '50%': { opacity: '.5' },
+          '50%': { opacity: '.45' },
           '100%': { transform: 'translateY(110%)', opacity: '.12' },
         },
         pulseRing: {
-          '0%': { transform: 'scale(.75)', opacity: '.8' },
+          '0%': { transform: 'scale(.75)', opacity: '.7' },
           '100%': { transform: 'scale(1.65)', opacity: '0' },
         },
         marquee: {
