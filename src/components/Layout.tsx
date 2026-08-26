@@ -13,7 +13,7 @@ export function Layout() {
 
   return (
     <div className="min-h-screen">
-      <PrototypeBar />
+      {/* <PrototypeBar /> */}
       <SiteHeader />
       <main>
         <Outlet />
@@ -22,7 +22,7 @@ export function Layout() {
 
       <a
         href="tel:1930"
-        className="fixed inset-x-4 bottom-4 z-40 flex h-12 items-center justify-center rounded-lg bg-coral text-sm font-medium text-ink sm:hidden"
+        className="fixed inset-x-4 bottom-4 z-40 flex h-12 items-center justify-center rounded-xl bg-alert text-sm font-semibold text-ink shadow-soft sm:hidden"
       >
         Financial fraud? Call 1930
       </a>

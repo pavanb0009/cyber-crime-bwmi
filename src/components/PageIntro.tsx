@@ -13,18 +13,20 @@ export function PageIntro({
   aside?: ReactNode
 }) {
   return (
-    <section className="page-shell pb-10 pt-12 sm:pb-12 sm:pt-16">
-      <p className="text-sm text-muted">{eyebrow}</p>
-      <div className="mt-3 grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <section className="page-shell pb-8 pt-10 sm:pb-10 sm:pt-14">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-end lg:gap-12">
         <div>
-          <h1 className="max-w-3xl text-[clamp(2.1rem,4.4vw,3.4rem)] font-semibold leading-[1.12] tracking-[-0.035em] text-paper">
+          <p className="eyebrow">{eyebrow}</p>
+          <h1 className="mt-3 max-w-3xl text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-[1.18] tracking-[-0.025em] text-paper">
             {title}
           </h1>
-          <p className="mt-5 max-w-2xl text-[1.05rem] leading-7 text-muted">
+          <p className="mt-4 max-w-2xl text-[0.95rem] leading-7 text-muted">
             {description}
           </p>
         </div>
-        {aside}
+        {aside ? (
+          <div className="surface-soft p-4 text-sm leading-6 text-muted lg:p-5">{aside}</div>
+        ) : null}
       </div>
     </section>
   )

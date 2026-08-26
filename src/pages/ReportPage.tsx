@@ -5,26 +5,14 @@ import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
-  BadgeCheck,
   Check,
-  CheckCircle2,
   ChevronRight,
   Clock3,
   Download,
-  EyeOff,
   FileCheck2,
-  FileText,
-  FolderLock,
-  Info,
-  LockKeyhole,
-  PhoneCall,
   Plus,
-  Save,
   ShieldCheck,
   Trash2,
-  UploadCloud,
-  UserRound,
-  X,
 } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
@@ -47,25 +35,6 @@ const steps = [
   { id: 4, label: 'Review and submit', short: 'Review' },
 ]
 
-const toneClasses = {
-  coral: {
-    icon: 'bg-coral/[0.10] text-coral',
-    active: 'border-coral/[0.35] bg-coral/[0.07]',
-  },
-  aqua: {
-    icon: 'bg-aqua/[0.10] text-aqua',
-    active: 'border-aqua/[0.35] bg-aqua/[0.07]',
-  },
-  signal: {
-    icon: 'bg-signal/[0.10] text-signal',
-    active: 'border-signal/[0.35] bg-signal/[0.07]',
-  },
-  saffron: {
-    icon: 'bg-saffron/[0.10] text-saffron',
-    active: 'border-saffron/[0.35] bg-saffron/[0.07]',
-  },
-}
-
 function makeCaseId(): string {
   const number = Math.floor(10000 + Math.random() * 89999)
   return `NCRP-DEMO-26-${number}`
@@ -84,8 +53,8 @@ function formatDateTime(value: string): string {
 function FieldError({ children }: { children?: string }) {
   if (!children) return null
   return (
-    <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-coral">
-      <AlertCircle className="h-3.5 w-3.5" /> {children}
+    <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-paper">
+      <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {children}
     </p>
   )
 }
@@ -93,8 +62,8 @@ function FieldError({ children }: { children?: string }) {
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="grid gap-1 border-b border-black/[0.07] py-3 last:border-b-0 sm:grid-cols-[9rem_1fr] sm:gap-4">
-      <span className="text-xs font-semibold text-muted">{label}</span>
-      <span className="text-sm font-semibold leading-6 text-paper">{value || 'Not added'}</span>
+      <span className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{label}</span>
+      <span className="text-sm leading-6 text-paper">{value || 'Not added'}</span>
     </div>
   )
 }
@@ -126,45 +95,43 @@ function SuccessView({ record }: { record: CaseRecord }) {
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      className="surface overflow-hidden rounded-[1.8rem]"
+      className="card overflow-hidden"
     >
-      <div className="relative overflow-hidden border-b border-signal/[0.15] bg-signal/[0.07] px-6 py-9 sm:px-9 sm:py-12">
-        <div className="absolute right-0 top-0 h-44 w-44 translate-x-1/3 -translate-y-1/3 rounded-full border border-signal/20" />
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-1/3 -translate-y-1/3 rounded-full border border-signal/10" />
-        <p className="eyebrow mt-0 text-signal">Demo complaint created</p>
-        <h2 className="mt-3 max-w-2xl text-3xl font-extrabold tracking-[-0.045em] text-paper sm:text-5xl">
+      <div className="bg-brand px-6 py-8 text-ink sm:px-8 sm:py-10">
+        <p className="eyebrow text-white/70">Demo complaint created</p>
+        <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
           You now have a clear next step.
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-base sm:leading-7">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">
           This is a synthetic acknowledgement for the prototype. No live portal, police system, bank or government service was contacted.
         </p>
       </div>
 
-      <div className="p-6 sm:p-9">
-        <div className="rounded-2xl border border-black/[0.09] bg-mist p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+      <div className="p-5 sm:p-7">
+        <div className="surface-soft p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
           <div>
-            <p className="font-mono text-[0.62rem] uppercase tracking-[0.15em] text-muted">Demo acknowledgement number</p>
-            <p className="mt-2 break-all font-mono text-xl font-bold text-signal sm:text-2xl">{record.caseId}</p>
+            <p className="eyebrow">Demo acknowledgement number</p>
+            <p className="mt-2 break-all font-mono text-xl font-bold text-brand sm:text-2xl">{record.caseId}</p>
           </div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-aqua/20 bg-aqua/[0.06] px-3 py-2 text-xs font-semibold text-aqua sm:mt-0">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/[0.12] bg-white px-3 py-2 text-xs font-semibold text-paper sm:mt-0">
             <Clock3 className="h-3.5 w-3.5" /> Initial triage simulated
           </div>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {[
             ['01', 'Save the reference'],
             ['02', 'Preserve original evidence'],
             ['03', 'Check status in Track'],
           ].map(([number, label]) => (
-            <div key={number} className="rounded-xl border border-black/[0.07] bg-black/[0.025] p-4">
-              <span className="font-mono text-xs font-bold text-signal">{number}</span>
-              <p className="mt-3 text-sm font-bold text-paper">{label}</p>
+            <div key={number} className="rounded-xl border border-black/[0.07] p-4">
+              <span className="font-mono text-xs font-bold text-brand">{number}</span>
+              <p className="mt-2 text-sm font-semibold text-paper">{label}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link to={`/track?case=${encodeURIComponent(record.caseId)}`} className={buttonStyles('primary', 'lg')}>
             Track this demo case <ArrowRight className="h-4 w-4" />
           </Link>
@@ -359,18 +326,13 @@ export function ReportPage() {
   return (
     <>
       <PageIntro
-        index="01"
-        eyebrow="Report an incident"
-        title={<>One clear report.<br /><span className="text-signal">Four short steps.</span></>}
+        eyebrow="Register a complaint"
+        title="One clear report. Four short steps."
         description="Choose what happened in plain language, add only the useful details, review everything once, and leave with a trackable demo acknowledgement."
-        aside={
-          <p className="text-sm leading-6 text-muted">
-            Use fictional information only. Files stay in your browser and are not uploaded.
-          </p>
-        }
+        aside="Use fictional information only. Files stay in your browser and are not uploaded."
       />
 
-      <section className="page-shell">
+      <section className="page-shell pb-4">
         {completedCase ? (
           <div className="mx-auto max-w-5xl">
             <SuccessView record={completedCase} />
@@ -383,16 +345,16 @@ export function ReportPage() {
             </button>
           </div>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:gap-8">
-            <div className="surface overflow-hidden rounded-[1.8rem]">
-              <div className="border-b border-black/[0.08] bg-mist px-5 py-5 sm:px-7">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div className="card overflow-hidden">
+              <div className="border-b border-black/[0.07] bg-mist px-5 py-5 sm:px-6">
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-sm text-muted">{savedLabel}</p>
                   <p className="text-sm text-muted">{Math.round(progress)}% complete</p>
                 </div>
-                <div className="mt-4 h-1 overflow-hidden rounded-full bg-black/[0.06]">
+                <div className="mt-4 h-1 overflow-hidden rounded-full bg-black/[0.08]">
                   <motion.div
-                    className="h-full rounded-full bg-signal"
+                    className="h-full rounded-full bg-brand"
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.35 }}
                   />
@@ -409,33 +371,33 @@ export function ReportPage() {
                         disabled={!done}
                         className={cx(
                           'rounded-xl border px-2 py-3 text-left transition sm:px-3',
-                          active && 'border-signal/25 bg-signal/[0.07]',
-                          done && 'border-black/[0.08] bg-black/[0.025] hover:bg-black/[0.05]',
-                          !active && !done && 'border-transparent bg-transparent opacity-[0.45]',
+                          active && 'border-brand bg-brand/[0.06]',
+                          done && 'border-black/[0.10] bg-white hover:border-brand/40',
+                          !active && !done && 'border-transparent opacity-50',
                         )}
                       >
                         <span className={cx(
                           'flex h-6 w-6 items-center justify-center rounded-lg font-mono text-[0.62rem] font-bold',
-                          active ? 'bg-signal text-ink' : done ? 'bg-aqua/10 text-aqua' : 'bg-black/[0.05] text-muted',
+                          active ? 'bg-brand text-ink' : done ? 'border border-brand/40 text-brand' : 'bg-black/[0.06] text-muted',
                         )}>
                           {done ? <Check className="h-3.5 w-3.5" /> : item.id}
                         </span>
-                        <span className="mt-2 hidden text-[0.68rem] font-bold text-paper sm:block">{item.short}</span>
+                        <span className="mt-2 hidden text-[0.68rem] font-semibold text-paper sm:block">{item.short}</span>
                       </button>
                     )
                   })}
                 </div>
               </div>
 
-              <div className="p-5 sm:p-7 lg:p-9">
+              <div className="p-5 sm:p-6 lg:p-8">
                 <AnimatePresence mode="wait">
                   {step === 1 ? (
                     <motion.div key="step-1" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
                       <p className="eyebrow">Step 1 of 4</p>
-                      <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper sm:text-3xl">What best describes the incident?</h2>
+                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">What best describes the incident?</h2>
                       <p className="mt-2 text-sm leading-6 text-muted">You do not need to know a legal category. Pick the closest match.</p>
 
-                      <div className="mt-7 divide-y divide-black/[0.08] border-y border-black/[0.08]">
+                      <div className="mt-6 grid gap-2">
                         {incidentTypes.map((incident) => {
                           const active = draft.incidentType === incident.id
                           return (
@@ -446,13 +408,16 @@ export function ReportPage() {
                                 update('incidentType', incident.id)
                                 if (incident.id !== 'women-child') update('anonymous', false)
                               }}
-                              className="flex w-full items-start justify-between gap-6 py-4 text-left"
+                              className={cx(
+                                'flex w-full items-start justify-between gap-6 rounded-xl border p-4 text-left transition',
+                                active ? 'border-brand bg-brand/[0.05]' : 'border-black/[0.10] hover:border-brand/40',
+                              )}
                             >
                               <span>
-                                <span className={cx('block text-[0.95rem]', active ? 'font-medium text-paper' : 'text-paper')}>{incident.title}</span>
+                                <span className={cx('block text-[0.95rem]', active ? 'font-semibold text-brand' : 'text-paper')}>{incident.title}</span>
                                 <span className="mt-1 block text-sm leading-6 text-muted">{incident.description}</span>
                               </span>
-                              <span className={cx('mt-0.5 shrink-0 text-sm', active ? 'font-medium text-signal' : 'text-muted')}>
+                              <span className={cx('mt-0.5 shrink-0 text-sm', active ? 'font-semibold text-brand' : 'text-muted')}>
                                 {active ? 'Selected' : 'Choose'}
                               </span>
                             </button>
@@ -462,23 +427,28 @@ export function ReportPage() {
                       <FieldError>{errors.incidentType}</FieldError>
 
                       {draft.incidentType === 'financial' ? (
-                        <div className="mt-5 rounded-xl border border-coral/20 bg-coral/[0.06] p-4 sm:flex sm:items-center sm:justify-between sm:gap-5">
+                        <div className="mt-5 rounded-xl bg-alert p-4 text-ink sm:flex sm:items-center sm:justify-between sm:gap-5">
                           <div>
-                            <p className="text-sm font-medium text-paper">Call 1930 before continuing.</p>
-                            <p className="mt-1 text-sm leading-6 text-muted">Then contact your bank or payment provider and preserve the transaction details.</p>
+                            <p className="text-sm font-semibold">Call 1930 before continuing.</p>
+                            <p className="mt-1 text-sm leading-6 text-white/75">Then contact your bank or payment provider and preserve the transaction details.</p>
                           </div>
-                          <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-3 shrink-0 sm:mt-0')}>Call now</a>
+                          <a
+                            href="tel:1930"
+                            className="mt-3 inline-flex h-9 shrink-0 items-center justify-center rounded-lg bg-white px-3.5 text-sm font-semibold text-alert hover:bg-white/90 sm:mt-0"
+                          >
+                            Call now
+                          </a>
                         </div>
                       ) : null}
 
                       {draft.incidentType === 'women-child' ? (
-                        <div className="mt-5 rounded-2xl border border-signal/20 bg-signal/[0.055] p-4">
+                        <div className="mt-5 rounded-2xl border border-brand/30 bg-brand/[0.04] p-4">
                           <label className="flex cursor-pointer items-start gap-3">
                             <input
                               type="checkbox"
                               checked={draft.anonymous}
                               onChange={(event) => update('anonymous', event.target.checked)}
-                              className="mt-0.5 h-4 w-4 accent-signal"
+                              className="mt-0.5 h-4 w-4 accent-brand"
                             />
                             <span>
                               <span className="block text-sm font-medium text-paper">Report anonymously</span>
@@ -495,7 +465,7 @@ export function ReportPage() {
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                           <p className="eyebrow">Step 2 of 4</p>
-                          <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper sm:text-3xl">Tell the story in sequence.</h2>
+                          <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">Tell the story in sequence.</h2>
                           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Approximate details are okay. Focus on who contacted you, what they asked, and what happened next.</p>
                         </div>
                         <Button type="button" variant="secondary" size="sm" onClick={fillDemoDetails} className="shrink-0">
@@ -577,11 +547,11 @@ export function ReportPage() {
                   {step === 3 ? (
                     <motion.div key="step-3" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
                       <p className="eyebrow">Step 3 of 4</p>
-                      <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper sm:text-3xl">Preserve the proof, not the clutter.</h2>
+                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">Preserve the proof, not the clutter.</h2>
                       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add screenshots, transaction receipts, chat exports or a short document. The prototype stores file names only.</p>
 
                       <div
-                        className="mt-7 rounded-2xl border border-dashed border-black/[0.15] bg-black/[0.025] p-7 text-center transition hover:border-aqua/30 hover:bg-aqua/[0.025] sm:p-10"
+                        className="mt-6 rounded-2xl border border-dashed border-black/[0.18] bg-mist p-7 text-center transition hover:border-brand hover:bg-brand/[0.03] sm:p-10"
                         onDragOver={(event: DragEvent<HTMLDivElement>) => event.preventDefault()}
                         onDrop={(event: DragEvent<HTMLDivElement>) => {
                           event.preventDefault()
@@ -612,7 +582,7 @@ export function ReportPage() {
                       {draft.evidenceNames.length ? (
                         <div className="mt-5 grid gap-2">
                           {draft.evidenceNames.map((name, index) => (
-                            <div key={`${name}-${index}`} className="flex items-center justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.025] px-4 py-3">
+                            <div key={`${name}-${index}`} className="flex items-center justify-between gap-4 rounded-xl border border-black/[0.08] px-4 py-3">
                               <div className="flex min-w-0 items-center gap-3">
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-paper">{name}</p>
@@ -622,7 +592,7 @@ export function ReportPage() {
                               <button
                                 type="button"
                                 onClick={() => update('evidenceNames', draft.evidenceNames.filter((_, itemIndex) => itemIndex !== index))}
-                                className="rounded-lg p-2 text-muted hover:bg-coral/[0.08] hover:text-coral"
+                                className="rounded-lg p-2 text-muted hover:bg-alert/[0.08] hover:text-alert"
                                 aria-label={`Remove ${name}`}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -638,8 +608,8 @@ export function ReportPage() {
                           ['Keep', 'Original files without edits'],
                           ['Never add', 'Passwords, PINs or OTPs'],
                         ].map(([label, value], index) => (
-                          <div key={label} className="rounded-xl border border-black/[0.07] bg-black/[0.025] p-4">
-                            <span className={cx('font-mono text-[0.58rem] uppercase tracking-[0.14em]', index === 2 ? 'text-coral' : 'text-aqua')}>{label}</span>
+                          <div key={label} className={cx('rounded-xl border p-4', index === 2 ? 'border-alert/30 bg-alert/[0.04]' : 'border-black/[0.10]')}>
+                            <span className={cx('font-mono text-[0.58rem] uppercase tracking-[0.14em]', index === 2 ? 'text-alert' : 'text-brand')}>{label}</span>
                             <p className="mt-2 text-xs leading-5 text-muted">{value}</p>
                           </div>
                         ))}
@@ -650,11 +620,11 @@ export function ReportPage() {
                   {step === 4 ? (
                     <motion.div key="step-4" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
                       <p className="eyebrow">Step 4 of 4</p>
-                      <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-paper sm:text-3xl">Review once. Submit with confidence.</h2>
+                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">Review once. Submit with confidence.</h2>
                       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">This final screen makes the privacy boundary and every submitted detail visible before the action.</p>
 
                       {!draft.anonymous ? (
-                        <div className="mt-7 rounded-2xl border border-black/[0.08] bg-black/[0.025] p-5 sm:p-6">
+                        <div className="mt-6 rounded-2xl border border-black/[0.08] p-5 sm:p-6">
                           <div className="mb-5">
                             <h3 className="text-base font-semibold text-paper">Fictional demo contact</h3>
                             <p className="mt-0.5 text-xs text-muted">Used only to complete the prototype journey.</p>
@@ -678,16 +648,16 @@ export function ReportPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="mt-7 rounded-xl border border-black/[0.08] p-5">
+                        <div className="mt-6 rounded-xl border border-black/[0.08] p-5">
                           <p className="text-sm font-medium text-paper">Anonymous reporting selected</p>
                           <p className="mt-1 text-sm leading-6 text-muted">No name, mobile number or email will be included in this demo record.</p>
                         </div>
                       )}
 
-                      <div className="mt-5 rounded-2xl border border-black/[0.08] bg-mist p-5 sm:p-6">
+                      <div className="mt-5 surface-soft p-5 sm:p-6">
                         <div className="mb-3 flex items-center justify-between gap-4">
-                          <h3 className="text-base font-extrabold text-paper">Report summary</h3>
-                          <button type="button" onClick={() => setStep(1)} className="text-xs font-bold text-aqua hover:text-paper">Edit</button>
+                          <h3 className="text-base font-semibold text-paper">Report summary</h3>
+                          <button type="button" onClick={() => setStep(1)} className="link-accent text-xs">Edit</button>
                         </div>
                         <SummaryRow label="Incident" value={selectedIncident?.title ?? ''} />
                         <SummaryRow label="Occurred" value={formatDateTime(draft.occurredAt)} />
@@ -698,15 +668,15 @@ export function ReportPage() {
                         <SummaryRow label="Description" value={draft.description} />
                       </div>
 
-                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/[0.08] bg-black/[0.025] p-4">
+                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/[0.08] p-4">
                         <input
                           type="checkbox"
                           checked={draft.consent}
                           onChange={(event) => update('consent', event.target.checked)}
-                          className="mt-1 h-4 w-4 accent-signal"
+                          className="mt-1 h-4 w-4 accent-brand"
                         />
                         <span>
-                          <span className="block text-sm font-bold text-paper">I understand this is an independent prototype using synthetic data.</span>
+                          <span className="block text-sm font-semibold text-paper">I understand this is an independent prototype using synthetic data.</span>
                           <span className="mt-1 block text-xs leading-5 text-muted">Submitting creates a local demo record only. It is not a complaint to the Government of India or any police authority.</span>
                         </span>
                       </label>
@@ -715,7 +685,7 @@ export function ReportPage() {
                   ) : null}
                 </AnimatePresence>
 
-                <div className="mt-8 flex flex-col-reverse gap-3 border-t border-black/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-7 flex flex-col-reverse gap-3 border-t border-black/[0.07] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="ghost" size="lg" onClick={previousStep} disabled={step === 1}>
                     <ArrowLeft className="h-4 w-4" /> Back
                   </Button>
@@ -732,8 +702,8 @@ export function ReportPage() {
               </div>
             </div>
 
-            <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
-              <div className="surface-soft rounded-2xl p-5">
+            <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+              <div className="surface-soft p-5">
                 <p className="eyebrow">Current selection</p>
                 {selectedIncident ? (
                   <div className="mt-4">
@@ -745,7 +715,7 @@ export function ReportPage() {
                 )}
               </div>
 
-              <div className="surface-soft rounded-2xl p-5">
+              <div className="surface-soft p-5">
                 <p className="text-sm font-medium text-paper">What stays private</p>
                 <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
                   <li>No API calls or live government integration.</li>
@@ -754,10 +724,15 @@ export function ReportPage() {
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-coral/[0.18] bg-coral/[0.055] p-5">
-                <p className="text-sm font-medium text-paper">Financial loss</p>
-                <p className="mt-3 text-xs leading-5 text-muted">Do not wait for the form. Call 1930, then contact the bank or payment provider.</p>
-                <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-4 w-full')}>Call 1930</a>
+              <div className="rounded-2xl bg-alert p-5 text-ink">
+                <p className="text-sm font-semibold">Financial loss</p>
+                <p className="mt-2 text-xs leading-5 text-white/75">Do not wait for the form. Call 1930, then contact the bank or payment provider.</p>
+                <a
+                  href="tel:1930"
+                  className="mt-4 flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"
+                >
+                  Call 1930
+                </a>
               </div>
 
               <div className="rounded-2xl border border-black/[0.07] p-4">

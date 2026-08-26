@@ -26,22 +26,23 @@ export function VolunteersPage() {
     <>
       <PageIntro
         eyebrow="Cyber volunteers"
-        title={<>Help your neighbourhood<br /><span className="text-signal">stay safer online.</span></>}
+        title="Help your neighbourhood stay safer online."
         description="This prototype shows how a volunteer programme could be presented: clear roles, honest expectations and no access to complaint data."
+        aside="Volunteers support awareness and flagging. They never handle complaints."
       />
 
-      <section className="page-shell">
+      <section className="page-shell page-section pt-0">
         <div className="grid gap-4 sm:grid-cols-3">
           {roles.map((role) => (
-            <div key={role.title} className="surface rounded-2xl p-6">
-              <p className="text-base font-semibold text-paper">{role.title}</p>
-              <p className="mt-3 text-sm leading-6 text-muted">{role.description}</p>
+            <div key={role.title} className="card border-t-2 border-t-brand p-5 sm:p-6">
+              <p className="text-[1.05rem] font-semibold text-paper">{role.title}</p>
+              <p className="mt-2 text-sm leading-6 text-muted">{role.description}</p>
             </div>
           ))}
         </div>
 
-        <div className="surface mt-6 rounded-2xl p-6 sm:p-8">
-          <p className="text-sm text-muted">Before you apply</p>
+        <div className="surface-soft mt-4 p-5 sm:p-7">
+          <p className="eyebrow">Before you apply</p>
           <ul className="mt-4 grid gap-3 text-sm leading-6 text-paper">
             <li>Volunteers never receive complainant details, case files or investigation access.</li>
             <li>Registration in a real programme requires identity verification by the state nodal officer.</li>

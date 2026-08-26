@@ -1,27 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  ArrowRight,
-  BadgeIndianRupee,
-  Check,
-  CheckCircle2,
-  ChevronDown,
-  CircleAlert,
-  Clock3,
-  Eye,
-  FileSearch,
-  Filter,
-  HeartHandshake,
-  Info,
-  KeyRound,
-  MessageCircleWarning,
-  PhoneCall,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  TriangleAlert,
-  X,
-} from 'lucide-react'
+import { Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
@@ -32,29 +11,23 @@ const categories = ['All', 'Money', 'Accounts', 'Harassment', 'Family', 'General
 
 const quickActions = [
   {
-    icon: PhoneCall,
     title: 'Money moved',
     action: 'Call 1930 first',
     detail: 'Then contact your bank or payment provider.',
-    accent: 'coral',
     href: 'tel:1930',
     external: true,
   },
   {
-    icon: KeyRound,
     title: 'Account taken over',
     action: 'Secure access',
     detail: 'Change passwords from a trusted device and sign out other sessions.',
-    accent: 'aqua',
     href: '/report?type=account',
     external: false,
   },
   {
-    icon: MessageCircleWarning,
     title: 'Threats or harassment',
     action: 'Preserve evidence',
     detail: 'Save links, timestamps and messages before blocking.',
-    accent: 'saffron',
     href: '/report?type=harassment',
     external: false,
   },
@@ -93,48 +66,40 @@ export function LearnPage() {
       ? {
           title: 'Stop. Strong scam signals are present.',
           detail: 'Do not pay, approve a request, share access or continue the conversation. Verify independently and report suspicious identifiers.',
-          tone: 'coral',
-          icon: TriangleAlert,
+          tone: 'solid',
         }
       : score >= 1
         ? {
             title: 'Pause and verify independently.',
             detail: 'One signal can be enough to justify caution. Open the official service directly or call a trusted number you already know.',
-            tone: 'saffron',
-            icon: CircleAlert,
+            tone: 'filled',
           }
         : {
             title: 'No selected warning signals — still verify.',
             detail: 'This checklist cannot certify safety. Check the identifier and use an independent trusted channel before acting.',
-            tone: 'aqua',
-            icon: ShieldCheck,
+            tone: 'outline',
           }
 
   return (
     <>
       <PageIntro
-        index="04"
         eyebrow="Learning corner"
-        title={<>Safety advice for<br /><span className="text-signal">the next five minutes.</span></>}
+        title="Safety advice for the next five minutes."
         description="Long awareness pages become short, situation-based playbooks: what to do now, what evidence to keep, and what never to share."
-        aside={
-          <p className="text-sm leading-6 text-muted">
-            Clear language, no shame, and an action in every section.
-          </p>
-        }
+        aside="Clear language, no shame, and an action in every section."
       />
 
       <section className="page-shell">
-        <div className="divide-y divide-black/[0.08] border-y border-black/[0.08] sm:grid sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="grid gap-4 sm:grid-cols-3">
           {quickActions.map((item) => {
             const inner = (
               <>
-                <p className="text-sm text-muted">{item.title}</p>
-                <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-paper">{item.action}</h2>
+                <p className="eyebrow text-brand">{item.title}</p>
+                <h2 className="mt-2 text-[1.05rem] font-semibold text-paper group-hover:text-brand">{item.action}</h2>
                 <p className="mt-2 text-sm leading-6 text-muted">{item.detail}</p>
               </>
             )
-            const className = 'block py-6 sm:pr-8 sm:first:pl-0 sm:[&:nth-child(2)]:px-8 sm:last:pl-8 sm:last:pr-0'
+            const className = 'card group block p-5 transition hover:border-brand/50'
             return item.external ? (
               <a key={item.title} href={item.href} className={className}>{inner}</a>
             ) : (
@@ -144,18 +109,18 @@ export function LearnPage() {
         </div>
       </section>
 
-      <section className="page-shell py-20 sm:py-24 lg:py-28">
-        <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] xl:gap-12">
+      <section className="page-shell page-section">
+        <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-8">
           <div>
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="eyebrow">Situation playbooks</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-paper sm:text-3xl">Find the right guide.</h2>
+                <h2 className="section-title mt-2">Find the right guide.</h2>
               </div>
               <span className="text-sm text-muted">{filteredGuides.length} results</span>
             </div>
 
-            <div className="surface rounded-2xl p-4 sm:p-5">
+            <div className="surface p-4 sm:p-5">
               <div className="relative">
                 <input
                   value={query}
@@ -176,9 +141,9 @@ export function LearnPage() {
                     type="button"
                     onClick={() => setCategory(item)}
                     className={cx(
-                      '-mb-px shrink-0 border-b py-2 text-sm transition',
+                      '-mb-px shrink-0 border-b-2 py-2 text-sm transition',
                       category === item
-                        ? 'border-paper font-medium text-paper'
+                        ? 'border-brand font-semibold text-brand'
                         : 'border-transparent text-muted hover:text-paper',
                     )}
                   >
@@ -192,7 +157,7 @@ export function LearnPage() {
               {filteredGuides.map((guide) => {
                 const open = openGuide === guide.id
                 return (
-                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-black/[0.08] bg-black/[0.025]">
+                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-black/[0.08] bg-white">
                     <button
                       type="button"
                       onClick={() => setOpenGuide(open ? null : guide.id)}
@@ -200,11 +165,12 @@ export function LearnPage() {
                       aria-expanded={open}
                     >
                       <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm text-muted">{guide.category}</span>
-                          <span className="text-sm text-muted">{guide.readingTime}</span>
+                        <div className="flex flex-wrap items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
+                          <span>{guide.category}</span>
+                          <span aria-hidden>·</span>
+                          <span>{guide.readingTime}</span>
                         </div>
-                        <h3 className="mt-3 text-lg font-extrabold tracking-[-0.025em] text-paper sm:text-xl">{guide.title}</h3>
+                        <h3 className="mt-3 text-lg font-semibold tracking-[-0.02em] text-paper sm:text-xl">{guide.title}</h3>
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{guide.summary}</p>
                       </div>
                       <span className={cx('mt-1 shrink-0 text-sm text-muted', open && 'text-paper')}>
@@ -234,17 +200,17 @@ export function LearnPage() {
               {!filteredGuides.length ? (
                 <div className="py-8">
                   <p className="text-sm font-medium text-paper">No guide matches that search.</p>
-                  <button type="button" onClick={() => { setQuery(''); setCategory('All') }} className="mt-3 text-sm font-medium text-signal">Clear filters</button>
+                  <button type="button" onClick={() => { setQuery(''); setCategory('All') }} className="link-accent mt-3 text-sm">Clear filters</button>
                 </div>
               ) : null}
             </div>
           </div>
 
-          <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="border-t border-black/[0.08] pt-2 sm:border sm:p-7 sm:pt-7">
+          <aside className="lg:sticky lg:top-6 lg:self-start">
+            <div className="card p-5 sm:p-6">
               <div>
-                <p className="text-sm text-muted">60-second check</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-paper">Does this feel like a scam?</h2>
+                <p className="eyebrow">60-second check</p>
+                <h2 className="section-title mt-2">Does this feel like a scam?</h2>
               </div>
               <p className="mt-3 text-sm leading-6 text-muted">Select every signal that is present. This is guidance, not a safety certificate.</p>
 
@@ -257,17 +223,17 @@ export function LearnPage() {
                     className={cx(
                       'flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition',
                       answers[index]
-                        ? 'border-signal/25 bg-signal/[0.07]'
-                        : 'border-black/[0.07] bg-black/[0.025] hover:border-black/[0.15]',
+                        ? 'border-brand bg-brand/[0.05]'
+                        : 'border-black/[0.10] bg-white hover:border-brand/40',
                     )}
                   >
                     <span className={cx(
                       'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border',
-                      answers[index] ? 'border-signal bg-signal text-ink' : 'border-black/20 text-transparent',
+                      answers[index] ? 'border-brand bg-brand text-ink' : 'border-black/20 text-transparent',
                     )}>
                       <Check className="h-3 w-3" />
                     </span>
-                    <span className="text-xs font-semibold leading-5 text-paper/[0.85]">{question}</span>
+                    <span className="text-xs font-medium leading-5 text-paper">{question}</span>
                   </button>
                 ))}
               </div>
@@ -276,17 +242,17 @@ export function LearnPage() {
                 layout
                 className={cx(
                   'mt-5 rounded-2xl border p-4',
-                  assessment.tone === 'coral' && 'border-coral/[0.22] bg-coral/[0.07]',
-                  assessment.tone === 'saffron' && 'border-saffron/[0.22] bg-saffron/[0.065]',
-                  assessment.tone === 'aqua' && 'border-aqua/20 bg-aqua/[0.055]',
+                  assessment.tone === 'solid' && 'border-alert bg-alert',
+                  assessment.tone === 'filled' && 'border-alert/30 bg-alert/[0.05]',
+                  assessment.tone === 'outline' && 'border-brand/30 bg-brand/[0.04]',
                 )}
               >
-                <div className="flex items-start gap-3">
-                  <div>
-                    <p className="text-sm font-extrabold text-paper">{assessment.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-muted">{assessment.detail}</p>
-                  </div>
-                </div>
+                <p className={cx('text-sm font-semibold', assessment.tone === 'solid' ? 'text-ink' : 'text-paper')}>
+                  {assessment.title}
+                </p>
+                <p className={cx('mt-1.5 text-xs leading-5', assessment.tone === 'solid' ? 'text-white/75' : 'text-muted')}>
+                  {assessment.detail}
+                </p>
               </motion.div>
 
               <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
@@ -301,7 +267,7 @@ export function LearnPage() {
               <button type="button" onClick={() => setAnswers(scamQuestions.map(() => false))} className="mt-3 w-full text-center text-xs font-semibold text-muted hover:text-paper">Reset checklist</button>
             </div>
 
-            <p className="mt-6 text-sm leading-6 text-muted">For immediate physical danger, contact local emergency services. This prototype is not a substitute for professional or legal advice.</p>
+            <p className="mt-5 text-sm leading-6 text-muted">For immediate physical danger, contact local emergency services. This prototype is not a substitute for professional or legal advice.</p>
           </aside>
         </div>
       </section>

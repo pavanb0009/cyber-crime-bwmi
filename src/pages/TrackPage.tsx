@@ -1,26 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  ArrowRight,
-  BadgeCheck,
-  Check,
-  CheckCircle2,
-  ChevronRight,
-  Circle,
-  CircleAlert,
-  Clock3,
-  Copy,
-  Download,
-  FileClock,
-  FileSearch,
-  Info,
-  MapPin,
-  Radar,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react'
+import { Check, ChevronRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
@@ -102,9 +82,8 @@ export function TrackPage() {
   return (
     <>
       <PageIntro
-        index="03"
-        eyebrow="Track complaint"
-        title={<>Status without<br /><span className="text-signal">the mystery.</span></>}
+        eyebrow="Track your complaint"
+        title="Status without the mystery."
         description="Replace opaque status codes with a readable timeline: what is done, what is happening now, which unit owns it, and what comes next."
         aside={
           <button
@@ -116,14 +95,14 @@ export function TrackPage() {
             className="w-full text-left"
           >
             <p className="text-sm font-medium text-paper">Use the reviewer demo case</p>
-            <p className="mt-1 text-sm text-signal">{defaultDemoCase.caseId}</p>
+            <p className="link-accent mt-1 font-mono text-sm">{defaultDemoCase.caseId}</p>
           </button>
         }
       />
 
-      <section className="page-shell">
-        <div className="surface mx-auto max-w-5xl overflow-hidden rounded-[1.8rem]">
-          <div className="border-b border-black/[0.08] p-5 sm:p-7">
+      <section className="page-shell pb-4">
+        <div className="card mx-auto max-w-5xl overflow-hidden">
+          <div className="border-b border-black/[0.07] p-5 sm:p-6">
             <form
               onSubmit={(event) => {
                 event.preventDefault()
@@ -155,18 +134,18 @@ export function TrackPage() {
                     setReference(defaultDemoCase.caseId)
                     void runSearch(defaultDemoCase.caseId)
                   }}
-                  className="text-left text-sm font-medium text-signal hover:text-paper"
+                  className="link-accent text-left text-sm"
                 >
                   Fill demo reference
                 </button>
               </div>
               {error ? (
-                <p className="mt-3 text-sm font-medium text-coral">{error}</p>
+                <p className="mt-3 text-sm font-semibold text-alert">{error}</p>
               ) : null}
             </form>
           </div>
 
-          <div className="min-h-[26rem] p-5 sm:p-7 lg:p-9">
+          <div className="min-h-[24rem] p-5 sm:p-6 lg:p-8">
             <AnimatePresence mode="wait">
               {loading ? (
                 <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
@@ -176,52 +155,50 @@ export function TrackPage() {
                 <motion.div key={record.caseId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                   <div>
                     <p className="text-sm text-muted">Current status</p>
-                    <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-[-0.03em] text-paper sm:text-3xl">{record.statusLabel}</h2>
+                    <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-[-0.02em] text-paper sm:text-3xl">{record.statusLabel}</h2>
                     <p className="mt-4 text-sm text-muted">
                       {record.caseId} · Created {record.createdAt} · {record.progress}% complete
                     </p>
                   </div>
 
-                  <div className="mt-8 grid gap-8 sm:grid-cols-3">
+                  <div className="mt-6 grid gap-6 border-y border-black/[0.07] py-5 sm:grid-cols-3">
                     <div>
-                      <p className="text-sm text-muted">Assigned unit</p>
-                      <p className="mt-1.5 text-sm font-medium leading-6 text-paper">{record.assignedUnit}</p>
+                      <p className="eyebrow">Assigned unit</p>
+                      <p className="mt-2 text-sm font-medium leading-6 text-paper">{record.assignedUnit}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted">Incident</p>
-                      <p className="mt-1.5 text-sm font-medium leading-6 text-paper">{incidentTitle}</p>
+                      <p className="eyebrow">Incident</p>
+                      <p className="mt-2 text-sm font-medium leading-6 text-paper">{incidentTitle}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted">Next action</p>
-                      <p className="mt-1.5 text-sm font-medium leading-6 text-paper">Wait for the next timeline update</p>
+                      <p className="eyebrow">Next action</p>
+                      <p className="mt-2 text-sm font-medium leading-6 text-paper">Wait for the next timeline update</p>
                     </div>
                   </div>
 
-                  <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_19rem]">
+                  <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>
-                      <div className="mb-5 flex items-center justify-between gap-4">
-                        <div>
-                          <p className="eyebrow">Case timeline</p>
-                          <h3 className="mt-2 text-xl font-extrabold text-paper">Every stage, in human language.</h3>
-                        </div>
+                      <div className="mb-5">
+                        <p className="eyebrow">Case timeline</p>
+                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">Every stage, in human language.</h3>
                       </div>
                       <div className="relative ml-3 border-l border-black/[0.10] pl-7">
                         {record.timeline.map((item, index) => (
                           <div key={`${item.label}-${index}`} className="relative pb-8 last:pb-0">
                             <span className={cx(
                               'absolute -left-[2.23rem] top-0 flex h-5 w-5 items-center justify-center rounded-full border-4 border-white',
-                              item.status === 'done' && 'bg-signal',
-                              item.status === 'active' && 'bg-paper',
+                              item.status === 'done' && 'bg-brand',
+                              item.status === 'active' && 'bg-white ring-[3px] ring-inset ring-brand',
                               item.status === 'pending' && 'bg-black/15',
                             )}>
                               {item.status === 'done' ? <Check className="h-2.5 w-2.5 text-ink" /> : null}
                             </span>
                             <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
                               <div>
-                                <p className={cx('text-sm font-extrabold', item.status === 'pending' ? 'text-muted' : 'text-paper')}>{item.label}</p>
+                                <p className={cx('text-sm font-semibold', item.status === 'pending' ? 'text-muted' : 'text-paper')}>{item.label}</p>
                                 <p className="mt-1 max-w-xl text-xs leading-5 text-muted">{item.detail}</p>
                               </div>
-                              <span className={cx('shrink-0 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.1em]', item.status === 'active' ? 'text-saffron' : 'text-muted')}>{item.timestamp}</span>
+                              <span className={cx('shrink-0 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.1em]', item.status === 'active' ? 'text-brand' : 'text-muted')}>{item.timestamp}</span>
                             </div>
                           </div>
                         ))}
@@ -229,7 +206,7 @@ export function TrackPage() {
                     </div>
 
                     <aside className="space-y-4">
-                      <div className="border border-black/[0.08] p-5">
+                      <div className="surface-soft p-5">
                         <p className="text-sm font-medium text-paper">What happens next</p>
                         <p className="mt-3 text-sm leading-6 text-muted">The active stage is shown in black. In a real integration, notifications would appear only when an official case event is received.</p>
                       </div>
@@ -248,7 +225,7 @@ export function TrackPage() {
                 </motion.div>
               ) : (
                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                  <h3 className="text-xl font-semibold tracking-[-0.03em] text-paper">A timeline you can actually understand.</h3>
+                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">A timeline you can actually understand.</h3>
                   <p className="mt-2 max-w-md text-sm leading-6 text-muted">Enter a local demo reference or use the reviewer case to see assignment, progress and next action.</p>
                   <button
                     type="button"
@@ -278,10 +255,10 @@ export function TrackPage() {
                     setReference(item.caseId)
                     void runSearch(item.caseId)
                   }}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.025] px-4 py-3 text-left hover:border-black/[0.15] hover:bg-black/[0.045]"
+                  className="group flex items-center justify-between gap-4 rounded-xl border border-black/[0.08] px-4 py-3 text-left transition hover:border-brand/50 hover:bg-mist"
                 >
                   <div>
-                    <p className="font-mono text-xs font-bold text-paper">{item.caseId}</p>
+                    <p className="font-mono text-xs font-bold text-paper group-hover:text-brand">{item.caseId}</p>
                     <p className="mt-1 text-[0.68rem] text-muted">{item.statusLabel}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-muted" />

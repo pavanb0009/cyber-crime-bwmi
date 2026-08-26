@@ -53,18 +53,24 @@ function clearResult(type: IdentifierType): SuspectResult {
 const riskStyles = {
   high: {
     label: 'High risk',
-    panel: 'border-coral/25 bg-coral/[0.07]',
-    text: 'text-coral',
+    panel: 'border-alert bg-alert',
+    title: 'text-ink',
+    body: 'text-white/75',
+    badge: 'bg-white text-alert',
   },
   medium: {
     label: 'Use caution',
-    panel: 'border-saffron/25 bg-saffron/[0.065]',
-    text: 'text-saffron',
+    panel: 'border-alert/30 bg-alert/[0.05]',
+    title: 'text-paper',
+    body: 'text-muted',
+    badge: 'bg-alert text-ink',
   },
   clear: {
     label: 'No demo match',
-    panel: 'border-black/10 bg-mist',
-    text: 'text-muted',
+    panel: 'border-brand/30 bg-brand/[0.04]',
+    title: 'text-paper',
+    body: 'text-muted',
+    badge: 'bg-brand text-ink',
   },
 }
 
@@ -112,30 +118,21 @@ export function CheckPage() {
   return (
     <>
       <PageIntro
-        index="02"
-        eyebrow="Check suspect repository"
-        title={<>Pause before<br /><span className="text-signal">you trust.</span></>}
+        eyebrow="Report & check suspect"
+        title="Pause before you trust."
         description="Search a phone number, UPI ID, email address or website in a synthetic repository, then get a clear risk explanation and next action."
-        aside={
-          <p className="text-sm leading-6 text-muted">
-            Results are fictional and designed only to demonstrate the citizen journey.
-          </p>
-        }
+        aside="Results are fictional and designed only to demonstrate the citizen journey."
       />
 
-      <section className="page-shell">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] xl:gap-8">
+      <section className="page-shell pb-4">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div>
-            <div className="surface overflow-hidden rounded-[1.8rem]">
-              <div className="border-b border-black/[0.08] p-5 sm:p-7">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="eyebrow">Synthetic identifier scan</p>
-                    <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-paper sm:text-3xl">What do you want to check?</h2>
-                  </div>
-                </div>
+            <div className="card overflow-hidden">
+              <div className="border-b border-black/[0.07] p-5 sm:p-6">
+                <p className="eyebrow">Synthetic identifier scan</p>
+                <h2 className="section-title mt-2">What do you want to check?</h2>
 
-                <div className="mt-7 flex gap-5 border-b border-black/[0.08]">
+                <div className="mt-6 flex gap-5 border-b border-black/[0.08]">
                   {identifierTypes.map((item) => {
                     const active = type === item.id
                     return (
@@ -144,9 +141,9 @@ export function CheckPage() {
                         type="button"
                         onClick={() => chooseType(item.id)}
                         className={cx(
-                          '-mb-px border-b py-2 text-sm transition',
+                          '-mb-px border-b-2 py-2 text-sm transition',
                           active
-                            ? 'border-paper font-medium text-paper'
+                            ? 'border-brand font-semibold text-brand'
                             : 'border-transparent text-muted hover:text-paper',
                         )}
                       >
@@ -196,17 +193,17 @@ export function CheckPage() {
                   </div>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-muted">{config.helper}</p>
-                    <button type="button" onClick={useExample} className="text-left text-sm font-medium text-signal hover:text-paper">
+                    <button type="button" onClick={useExample} className="link-accent text-left text-sm">
                       Try flagged demo
                     </button>
                   </div>
                   {error ? (
-                    <p className="mt-3 text-sm font-medium text-coral">{error}</p>
+                    <p className="mt-3 text-sm font-semibold text-alert">{error}</p>
                   ) : null}
                 </form>
               </div>
 
-              <div className="min-h-[25rem] p-5 sm:p-7">
+              <div className="min-h-[22rem] p-5 sm:p-6">
                 <AnimatePresence mode="wait">
                   {loading ? (
                     <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
@@ -215,31 +212,30 @@ export function CheckPage() {
                     </motion.div>
                   ) : result ? (
                     <motion.div key={`${result.risk}-${checkedValue}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                      <div className={cx('rounded-xl border p-5 sm:p-6', riskStyles[result.risk].panel)}>
-                        <p className={cx('text-sm font-medium', riskStyles[result.risk].text)}>{riskStyles[result.risk].label}</p>
-                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-paper sm:text-2xl">{result.title}</h3>
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{result.summary}</p>
-                        <p className="mt-4 text-sm text-muted">Checked: <span className="font-medium text-paper">{checkedValue}</span></p>
-
-                        {result.reports !== null ? (
-                          <p className="mt-4 text-sm text-muted">
-                            {result.reports} demo reports · first seen {result.firstSeen ?? '—'}
-                          </p>
-                        ) : null}
+                      <div className={cx('rounded-2xl border p-5 sm:p-6', riskStyles[result.risk].panel)}>
+                        <span className={cx('inline-flex rounded-full px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.1em]', riskStyles[result.risk].badge)}>
+                          {riskStyles[result.risk].label}
+                        </span>
+                        <h3 className={cx('mt-3 text-xl font-semibold tracking-[-0.02em] sm:text-2xl', riskStyles[result.risk].title)}>{result.title}</h3>
+                        <p className={cx('mt-2 max-w-2xl text-sm leading-6', riskStyles[result.risk].body)}>{result.summary}</p>
+                        <p className={cx('mt-4 text-sm', riskStyles[result.risk].body)}>
+                          Checked: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
+                          {result.reports !== null ? ` · ${result.reports} demo reports · first seen ${result.firstSeen ?? '—'}` : null}
+                        </p>
                       </div>
 
-                      <div className="mt-8 grid gap-8 md:grid-cols-2">
+                      <div className="mt-6 grid gap-6 md:grid-cols-2">
                         <div>
-                          <p className="text-sm text-muted">Why this result</p>
-                          <ul className="mt-3 space-y-2">
+                          <p className="eyebrow">Why this result</p>
+                          <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
                             {result.signals.map((signal) => (
                               <li key={signal} className="text-sm leading-6 text-paper">{signal}</li>
                             ))}
                           </ul>
                         </div>
                         <div>
-                          <p className="text-sm text-muted">What to do next</p>
-                          <ul className="mt-3 space-y-2">
+                          <p className="eyebrow">What to do next</p>
+                          <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
                             {result.nextSteps.map((step) => (
                               <li key={step} className="text-sm leading-6 text-paper">{step}</li>
                             ))}
@@ -247,21 +243,23 @@ export function CheckPage() {
                         </div>
                       </div>
 
-                      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                        <Link to="/report?type=suspicious-content" className={buttonStyles(result.risk === 'high' ? 'danger' : 'primary', 'lg')}>
+                      <div className="mt-6 flex flex-col gap-3 border-t border-black/[0.07] pt-5 sm:flex-row">
+                        <Link
+                          to="/report?type=suspicious-content"
+                          className={buttonStyles(result.risk === 'high' ? 'danger' : 'primary', 'lg')}
+                        >
                           Report this identifier
                         </Link>
                         <Button variant="secondary" size="lg" onClick={() => {
                           navigator.clipboard?.writeText(checkedValue).catch(() => undefined)
                         }}>
-                          Copy identifierr
+                          Copy identifier
                         </Button>
-                        
                       </div>
                     </motion.div>
                   ) : (
                     <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                      <h3 className="text-xl font-semibold tracking-[-0.03em] text-paper">Check before you pay, click or reply.</h3>
+                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">Check before you pay, click or reply.</h3>
                       <p className="mt-2 max-w-md text-sm leading-6 text-muted">Choose an identifier above or use the flagged demo value to see a complete result.</p>
                     </motion.div>
                   )}
@@ -270,8 +268,8 @@ export function CheckPage() {
             </div>
           </div>
 
-          <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
-            <div className="surface-soft rounded-2xl p-5">
+          <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+            <div className="surface-soft p-5">
               <p className="eyebrow">Before you trust it</p>
               <div className="mt-4 space-y-4">
                 {[
@@ -287,13 +285,18 @@ export function CheckPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-coral/[0.18] bg-coral/[0.055] p-5">
-              <p className="text-sm font-medium text-paper">Already lost money?</p>
-              <p className="mt-3 text-xs leading-5 text-muted">Do not stop at a suspect check. Call 1930 and file a financial-fraud complaint.</p>
-              <a href="tel:1930" className={cx(buttonStyles('danger', 'sm'), 'mt-4 w-full')}>Call 1930</a>
+            <div className="rounded-2xl bg-alert p-5 text-ink">
+              <p className="text-sm font-semibold">Already lost money?</p>
+              <p className="mt-2 text-xs leading-5 text-white/75">Do not stop at a suspect check. Call 1930 and file a financial-fraud complaint.</p>
+              <a
+                href="tel:1930"
+                className="mt-4 flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"
+              >
+                Call 1930
+              </a>
             </div>
 
-            <div className="surface-soft rounded-2xl p-5">
+            <div className="surface-soft p-5">
               <p className="text-sm leading-6 text-muted">A repository can contain errors and never covers every scam. A clean result cannot certify that an identifier is safe.</p>
             </div>
           </aside>

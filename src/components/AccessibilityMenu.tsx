@@ -33,11 +33,11 @@ export function AccessibilityMenu() {
         aria-label="Accessibility settings"
         aria-expanded={open}
       >
-        Access
+        Accessibility
       </button>
 
       {open ? (
-        <div className="surface absolute right-0 top-12 z-50 w-72 rounded-2xl p-4">
+        <div className="card absolute right-0 top-9 z-50 w-72 p-4">
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-bold text-paper">Accessibility</p>
@@ -57,26 +57,26 @@ export function AccessibilityMenu() {
             <button
               type="button"
               onClick={() => setLargeText((value) => !value)}
-              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#eceff6]"
+              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
             >
               <span>
                 <span className="block text-sm font-semibold text-paper">Larger text</span>
                 <span className="mt-0.5 block text-xs text-muted">Increase interface scale</span>
               </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-signal">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
                 {largeText ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               </span>
             </button>
             <button
               type="button"
               onClick={() => setReduceMotion((value) => !value)}
-              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#eceff6]"
+              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
             >
               <span>
                 <span className="block text-sm font-semibold text-paper">Reduce motion</span>
                 <span className="mt-0.5 block text-xs text-muted">Minimise animated effects</span>
               </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-signal">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
                 {reduceMotion ? <Check className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
               </span>
             </button>

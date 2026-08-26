@@ -12,10 +12,10 @@ export function buttonStyles(
   const base =
     'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition duration-150 disabled:pointer-events-none disabled:opacity-50'
   const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-signal text-ink hover:bg-[#1f5aef] active:bg-[#1a4fd6]',
-    secondary: 'border border-black/[0.12] bg-white text-paper hover:bg-mist',
+    primary: 'bg-brand text-ink hover:bg-brandDark active:bg-brandDark',
+    secondary: 'border border-black/[0.14] bg-white text-paper hover:border-brand hover:text-brand',
     ghost: 'text-muted hover:text-paper',
-    danger: 'bg-coral text-ink hover:bg-[#c0143a] active:bg-[#a31132]',
+    danger: 'bg-alert text-ink hover:bg-alertDark active:bg-alertDark',
   }
   const sizes: Record<ButtonSize, string> = {
     sm: 'h-9 px-3.5 text-sm',
