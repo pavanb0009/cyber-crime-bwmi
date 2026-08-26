@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from './Footer'
-import { Navigation } from './Navigation'
 import { PrototypeBar } from './PrototypeBar'
+import { SiteHeader } from './SiteHeader'
 
 export function Layout() {
   const location = useLocation()
@@ -14,7 +14,7 @@ export function Layout() {
   return (
     <div className="min-h-screen">
       <PrototypeBar />
-      <Navigation />
+      <SiteHeader />
       <main>
         <Outlet />
       </main>
