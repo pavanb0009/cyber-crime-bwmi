@@ -151,11 +151,15 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
   phone: {
     '9876543210': {
       risk: 'high',
+      score: 87,
       title: 'Strong warning signals found',
       summary:
         'This synthetic number appears across multiple demo complaints involving payment collection and impersonation.',
       reports: 142,
       firstSeen: '18 May 2026',
+      lastSeen: 'Today',
+      pattern: 'Fake customer-care / investment collection scam',
+      related: ['refunddesk@upi', 'secure-update.example', 'Telegram @supportdesk11'],
       signals: ['Repeated UPI collection requests', 'Bank-support impersonation', 'Multiple states in demo data'],
       nextSteps: ['Do not send money or OTPs', 'Block the number after saving evidence', 'Report the identifier or file a complaint'],
     },
@@ -163,11 +167,15 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
   upi: {
     'refunddesk@upi': {
       risk: 'high',
+      score: 92,
       title: 'Do not transact with this handle',
       summary:
         'The demo repository links this UPI ID with fake refund and remote-access scams.',
       reports: 86,
       firstSeen: '02 June 2026',
+      lastSeen: 'Today',
+      pattern: 'Fake refund / remote-access scam',
+      related: ['9876543210', 'secure-update.example', 'Telegram @supportdesk11'],
       signals: ['Fake refund requests', 'Remote-screen sharing', 'Urgency language'],
       nextSteps: ['Do not approve collect requests', 'Call your bank if money moved', 'Save the transaction screen and report'],
     },
@@ -175,11 +183,15 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
   email: {
     'support-kys@example.com': {
       risk: 'medium',
+      score: 64,
       title: 'Use extra caution',
       summary:
         'This synthetic sender resembles a service address and appears in demo phishing reports.',
       reports: 19,
       firstSeen: '11 July 2026',
+      lastSeen: '24 August 2026',
+      pattern: 'Lookalike support phishing',
+      related: ['secure-update.example'],
       signals: ['Lookalike support name', 'Credential-reset link', 'Attachment pressure'],
       nextSteps: ['Open the service directly, not through the email', 'Do not download the attachment', 'Report the sender if suspicious'],
     },
@@ -187,11 +199,15 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
   url: {
     'https://secure-update.example': {
       risk: 'high',
+      score: 91,
       title: 'Known demo phishing pattern',
       summary:
         'This synthetic domain is flagged for imitating a security-update page and collecting login details.',
       reports: 61,
       firstSeen: '29 July 2026',
+      lastSeen: 'Today',
+      pattern: 'KYC / credential phishing',
+      related: ['refunddesk@upi', '9876543210'],
       signals: ['Lookalike login page', 'Newly observed domain pattern', 'Credential collection form'],
       nextSteps: ['Close the page', 'Change the password if it was entered', 'Report the URL with a screenshot'],
     },

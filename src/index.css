@@ -147,3 +147,34 @@ textarea:focus-visible {
     );
   }
 }
+
+@layer components {
+  .secure-hero {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(67, 151, 255, 0.36), transparent 34%),
+      linear-gradient(135deg, #0c376d 0%, #1258a8 52%, #0c376d 100%);
+  }
+
+  .scan-line {
+    position: relative;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(16, 16, 18, 0.08);
+  }
+
+  .scan-line::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 32%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, #1668cf 38%, #1668cf 68%, transparent);
+    animation: scan-pass 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes scan-pass {
+  0% { transform: translateX(-105%); }
+  100% { transform: translateX(320%); }
+}

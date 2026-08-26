@@ -10,11 +10,15 @@ import {
   Monitor,
   Search,
   ShieldCheck,
+  Sparkles,
+  Zap,
   UserRoundX,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
 import { cx } from '../lib/cx'
+import { classifyIncident } from '../lib/intelligence'
+import type { CopilotResult } from '../types'
 
 const heroCards = [
   {
@@ -175,6 +179,25 @@ function HeroCard({
 }
 
 export function HomePage() {
+  const navigate = useNavigate()
+  const [copilotText, setCopilotText] = useState('')
+  const [copilotResult, setCopilotResult] = useState<CopilotResult | null>(null)
+
+  function runCopilot() {
+    if (copilotText.trim().length < 12) return
+    setCopilotResult(classifyIncident(copilotText))
+  }
+
+  function openCopilotRoute() {
+    if (!copilotResult) return
+    const encoded = encodeURIComponent(copilotText)
+    if (copilotResult.incidentType === 'financial') {
+      navigate(`/report?type=financial&mode=emergency&story=${encoded}`)
+    } else {
+      navigate(`/report?type=${copilotResult.incidentType}&story=${encoded}`)
+    }
+  }
+
   return (
     <>
       <section className="relative isolate flex min-h-[calc(100dvh-4rem)] flex-col justify-center py-8">
@@ -203,6 +226,10 @@ export function HomePage() {
               Start a report
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
+            <Link to="/report?type=financial&mode=emergency" className={cx(buttonStyles('danger', 'md'), 'rounded-full px-6')}>
+              <Zap className="h-4 w-4" aria-hidden />
+              I just lost money
+            </Link>
             <a href="tel:1930" className={cx(buttonStyles('secondary', 'md'), 'rounded-full px-6')}>
               Call 1930
             </a>
@@ -214,6 +241,30 @@ export function HomePage() {
             {heroCards.map((card) => (
               <HeroCard key={card.src} {...card} />
             ))}
+          </div>
+
+          <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-brand/20 bg-white/90 p-4 text-left shadow-card backdrop-blur sm:p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="eyebrow text-brand">Cybercrime Copilot</p>
+                <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-paper">Not sure what category this is?</h2>
+                <p className="mt-1 text-sm leading-6 text-muted">Describe it naturally. The local demo classifier selects the likely incident and route.</p>
+              </div>
+              <span className="pill-badge shrink-0"><Sparkles className="h-3.5 w-3.5" /> Simulated classification</span>
+            </div>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <textarea value={copilotText} onChange={(event) => { setCopilotText(event.target.value.slice(0, 500)); setCopilotResult(null) }} className="text-area min-h-24 flex-1" placeholder="Someone called claiming to be CBI and made my father transfer ₹2 lakh…" />
+              <div className="flex shrink-0 flex-row gap-2 sm:w-40 sm:flex-col">
+                <button type="button" onClick={runCopilot} className={cx(buttonStyles('primary', 'md'), 'flex-1')}>Understand it</button>
+                <button type="button" onClick={() => setCopilotText('Someone called my father claiming to be CBI and said his Aadhaar was involved in money laundering. They made him transfer ₹2 lakh.')} className={cx(buttonStyles('secondary', 'md'), 'flex-1')}>Use demo</button>
+              </div>
+            </div>
+            {copilotResult ? (
+              <div className="mt-4 flex flex-col gap-3 rounded-xl border border-black/[0.08] bg-mist p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div><p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-brand">{copilotResult.severity} · {copilotResult.route}</p><p className="mt-1 text-sm font-semibold text-paper">{copilotResult.label}</p><p className="mt-1 text-xs leading-5 text-muted">{copilotResult.signals.join(' · ')}</p></div>
+                <button type="button" onClick={openCopilotRoute} className={copilotResult.incidentType === 'financial' ? buttonStyles('danger', 'md') : buttonStyles('primary', 'md')}>Open recommended route <ArrowRight className="h-4 w-4" /></button>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

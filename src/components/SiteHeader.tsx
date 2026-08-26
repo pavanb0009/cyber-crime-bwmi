@@ -10,10 +10,10 @@ import { buttonStyles } from './Button'
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/report', label: 'Report' },
-  { to: '/track', label: 'Track' },
   { to: '/check', label: 'Check' },
+  { to: '/track', label: 'Track' },
+  { to: '/learn', label: 'Help' },
   { to: '/volunteers', label: 'Volunteers' },
-  { to: '/learn', label: 'Learn' },
   { to: '/contact', label: 'Contact' },
 ]
 
@@ -52,6 +52,7 @@ export function SiteHeader() {
           <span className="hidden sm:block">
             <AccessibilityMenu />
           </span>
+          <a href="tel:1930" className="hidden text-xs font-bold text-alert hover:underline xl:inline">1930</a>
           <Link to="/report" className={cx(buttonStyles('primary', 'sm'), 'hidden sm:inline-flex')}>
             Start a report
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />

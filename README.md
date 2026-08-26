@@ -16,10 +16,10 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 
 | Journey | Working behaviour |
 |---|---|
-| Home / response navigator | Interactive incident triage, urgent 1930 escalation, clear route selection and responsive layout |
-| Report cybercrime | Four-step form, incident categories, women/child anonymous option, contextual financial-fraud warning, validation, local autosave, evidence-name handling, review, consent and acknowledgement generation |
-| Check suspect | Phone, UPI ID, email and URL validation; synthetic repository lookup; high/caution/no-match results; signal explanations and next actions |
-| Track complaint | Search by demo reference, locally created cases, progress ring, assigned unit, plain-language status timeline and downloadable text status |
+| Home / response navigator | Existing hero and incident cards preserved, plus “I just lost money” Golden Minutes entry and a local natural-language Cybercrime Copilot |
+| Report cybercrime | Existing four-step journey preserved and expanded with contextual forms by incident, Golden Minutes mode, voice input, evidence classification, completeness score, extraction, auto timeline, action plan, review, consent and acknowledgement generation |
+| Check suspect | Existing phone/UPI/email/URL scanner preserved and expanded with 0–100 risk scoring, linked identifiers, patterns, “report this identifier”, “I already paid”, and a deterministic screenshot scam scanner |
+| Track complaint | Existing local case search/timeline preserved, plus a financial Money Recovery Tracker and optional frozen-account/lien-help demo flow |
 | Learning corner | Searchable/filterable situation playbooks, emergency actions, expandable guidance and an interactive scam-signal checklist |
 | Accessibility | Keyboard focus states, larger-text mode, reduced-motion mode, mobile-first controls and a persistent mobile 1930 action |
 
@@ -41,7 +41,7 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 
 | Feature | Demo value |
 |---|---|
-| Track case | `RK-DEMO-26-84019` |
+| Track case | `RK-DEMO-26-84021` |
 | Flagged phone | `9876543210` |
 | Flagged UPI ID | `refunddesk@upi` |
 | Caution email | `support-kys@example.com` |
@@ -92,20 +92,24 @@ src/
 │   ├── Button.tsx
 │   ├── Footer.tsx
 │   ├── Layout.tsx
-│   ├── Navigation.tsx
 │   ├── PageIntro.tsx
 │   ├── PrototypeBar.tsx
-│   └── SectionLabel.tsx
-├── data/content.ts
+│   └── SiteHeader.tsx
+├── data/
+│   ├── brand.ts
+│   └── content.ts
 ├── lib/
 │   ├── cx.ts
+│   ├── intelligence.ts
 │   └── storage.ts
 ├── pages/
 │   ├── CheckPage.tsx
+│   ├── ContactPage.tsx
 │   ├── HomePage.tsx
 │   ├── LearnPage.tsx
 │   ├── ReportPage.tsx
-│   └── TrackPage.tsx
+│   ├── TrackPage.tsx
+│   └── VolunteersPage.tsx
 ├── App.tsx
 ├── index.css
 ├── main.tsx
@@ -126,9 +130,9 @@ Financial fraud is treated differently because speed matters. The 1930 call acti
 
 The tracking experience avoids opaque internal codes. It shows what is completed, the active stage, who currently owns the case and what the citizen should expect next.
 
-### 4. Premium, not decorative
+### 4. Secure, consistent, not decorative
 
-The visual hook is an “incident command centre”: dark civic calm, signal-lime priority states, restrained scanning motion, editorial typography and a custom network field. Motion and contrast always support hierarchy rather than adding spectacle for its own sake.
+The rebuild keeps the existing white/blue Cyber Rakshak visual system, cards, hero assets and navigation patterns. Security cues are added through restrained scanning motion, local-data labels, evidence sealing language, structured risk panels and clearly separated emergency states rather than replacing the UI with a different theme.
 
 ### 5. Honest prototype boundary
 
@@ -146,7 +150,7 @@ The prototype retains the portal’s primary citizen-facing services while simpl
 - Suspicious-identifier reporting handoff
 - Cyber-safety learning content
 
-Volunteer and law-enforcement-only workflows are intentionally outside this citizen MVP.
+The pre-existing Volunteers and Contact screens remain available so earlier UI work is not removed. They are not connected to live government or law-enforcement systems.
 
 ## Production integration boundaries
 
