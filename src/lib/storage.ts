@@ -1,3 +1,4 @@
+import { brand } from '../data/brand'
 import type { CaseRecord, ReportDraft } from '../types'
 
 const DRAFT_KEY = 'rakshak-report-draft-v1'
@@ -68,7 +69,7 @@ export function findCase(caseId: string): CaseRecord | undefined {
 }
 
 export const defaultDemoCase: CaseRecord = {
-  caseId: 'NCRP-DEMO-26-84019',
+  caseId: `${brand.casePrefix}-84019`,
   createdAt: '24 August 2026, 18:42',
   incidentType: 'financial',
   state: 'Karnataka',

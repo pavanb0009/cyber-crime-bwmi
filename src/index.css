@@ -71,7 +71,7 @@ textarea:focus-visible {
 
 @layer components {
   .page-shell {
-    @apply mx-auto w-full max-w-[1120px] px-4 sm:px-6;
+    @apply mx-auto w-full max-w-[1180px] px-4 sm:px-6 lg:px-8;
   }
 
   .page-section {
@@ -120,5 +120,28 @@ textarea:focus-visible {
 
   .link-accent {
     @apply font-medium text-brand transition hover:text-brandDark;
+  }
+
+  /* Soft full-page texture — faint blue dots everywhere. */
+  .dot-field-full {
+    background-image: radial-gradient(rgba(22, 104, 207, 0.11) 1px, transparent 1.15px);
+    background-size: 18px 18px;
+  }
+
+  /* Stronger dots used on the left and right edges of the hero. */
+  .dot-field-side {
+    background-image: radial-gradient(rgba(22, 104, 207, 0.38) 1.15px, transparent 1.15px);
+    background-size: 18px 18px;
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 35%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 0%, #000 35%, transparent 100%);
+  }
+
+  .dot-field-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
+  }
+
+  .pill-badge {
+    @apply inline-flex items-center gap-2 rounded-full border border-brand/15 bg-brand/[0.07] px-3 py-1.5 text-[0.8rem] font-medium text-brand;
   }
 }

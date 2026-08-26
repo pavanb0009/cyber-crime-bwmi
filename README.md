@@ -1,4 +1,4 @@
-# RAKSHAK / 1930
+# RAKSHAK
 
 A citizen-first redesign of India’s cybercrime reporting experience, built as an **independent hackathon prototype** with React, TypeScript and Tailwind CSS.
 
@@ -41,7 +41,7 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 
 | Feature | Demo value |
 |---|---|
-| Track case | `NCRP-DEMO-26-84019` |
+| Track case | `RK-DEMO-26-84019` |
 | Flagged phone | `9876543210` |
 | Flagged UPI ID | `refunddesk@upi` |
 | Caution email | `support-kys@example.com` |

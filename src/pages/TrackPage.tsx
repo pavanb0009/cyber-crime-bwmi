@@ -4,6 +4,7 @@ import { Check, ChevronRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
+import { brand } from '../data/brand'
 import { incidentTypes } from '../data/content'
 import { cx } from '../lib/cx'
 import { defaultDemoCase, findCase, loadCases } from '../lib/storage'
@@ -17,8 +18,8 @@ function getCase(reference: string): CaseRecord | undefined {
 
 function downloadStatus(record: CaseRecord) {
   const lines = [
-    'RAKSHAK / 1930 — DEMO CASE STATUS',
-    'Independent prototype. This is not an official complaint record.',
+    `${brand.name.toUpperCase()} — DEMO CASE STATUS`,
+    `${brand.disclaimer} This is not an official complaint record.`,
     '',
     `Reference: ${record.caseId}`,
     `Created: ${record.createdAt}`,
@@ -60,7 +61,7 @@ export function TrackPage() {
     const found = getCase(clean)
     if (!found) {
       setRecord(null)
-      setError('No local demo case matches that reference. Try NCRP-DEMO-26-84019.')
+      setError(`No local demo case matches that reference. Try ${defaultDemoCase.caseId}.`)
     } else {
       setRecord(found)
       setReference(found.caseId)
@@ -119,7 +120,7 @@ export function TrackPage() {
                     setError('')
                   }}
                   className="text-field h-12 pr-24 font-mono text-sm uppercase tracking-[0.04em]"
-                  placeholder="NCRP-DEMO-26-84019"
+                  placeholder={defaultDemoCase.caseId}
                   autoComplete="off"
                 />
                 <Button type="submit" size="md" loading={loading} className="absolute right-1 top-1 h-10">

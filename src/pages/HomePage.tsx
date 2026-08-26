@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Phone } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
+import { brand } from '../data/brand'
 import { cx } from '../lib/cx'
 
 const triageOptions = [
@@ -12,7 +13,6 @@ const triageOptions = [
     detail: 'Then gather the transaction ID, amount, time and receiving account or UPI handle.',
     cta: 'Start financial report',
     route: '/report?type=financial',
-    urgent: true,
   },
   {
     id: 'account',
@@ -21,7 +21,6 @@ const triageOptions = [
     detail: 'Change the password, sign out other sessions and preserve login alerts before reporting.',
     cta: 'Report account misuse',
     route: '/report?type=account',
-    urgent: false,
   },
   {
     id: 'harassment',
@@ -30,7 +29,6 @@ const triageOptions = [
     detail: 'Save screenshots, profile links and timestamps. Block after evidence is safely captured.',
     cta: 'Start a sensitive report',
     route: '/report?type=harassment',
-    urgent: false,
   },
   {
     id: 'check',
@@ -39,7 +37,6 @@ const triageOptions = [
     detail: 'Search a phone number, UPI ID, email or website in the synthetic demo repository.',
     cta: 'Open suspect checker',
     route: '/check',
-    urgent: false,
   },
 ]
 
@@ -52,42 +49,45 @@ function Triage() {
   )
 
   return (
-    <div className="card p-5 sm:p-6">
-      <p className="eyebrow">Start here</p>
-      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">What happened?</h2>
+    <div className="mx-auto mt-16 max-w-xl text-left">
+      <div className="card bg-white/90 p-5 backdrop-blur-sm sm:p-6">
+        <p className="eyebrow">Start here</p>
+        <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">What happened?</h2>
 
-      <div className="mt-5 grid gap-2">
-        {triageOptions.map((option) => {
-          const active = option.id === selected
-          return (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() => setSelected(option.id)}
-              className={cx(
-                'flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-3 text-left text-[0.9rem] transition',
-                active
-                  ? 'border-brand bg-brand/[0.06] font-semibold text-brand'
-                  : 'border-black/[0.10] text-paper hover:border-brand/40 hover:bg-mist',
-              )}
-            >
-              {option.label}
-              {active ? <ArrowRight className="h-4 w-4 shrink-0" aria-hidden /> : null}
-            </button>
-          )
-        })}
-      </div>
+        <div className="mt-5 grid gap-2">
+          {triageOptions.map((option) => {
+            const active = option.id === selected
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setSelected(option.id)}
+                className={cx(
+                  'flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-3 text-left text-[0.9rem] transition',
+                  active
+                    ? 'border-brand bg-brand/[0.06] font-semibold text-brand'
+                    : 'border-black/[0.10] bg-white text-paper hover:border-brand/40 hover:bg-mist',
+                )}
+              >
+                {option.label}
+                {active ? <ArrowRight className="h-4 w-4 shrink-0" aria-hidden /> : null}
+              </button>
+            )
+          })}
+        </div>
 
-      <div className="mt-5 border-t border-black/[0.07] pt-5">
-        <p className="text-[0.95rem] font-medium text-paper">{current.title}</p>
-        <p className="mt-1.5 text-sm leading-6 text-muted">{current.detail}</p>
-        <button
-          type="button"
-          onClick={() => navigate(current.route)}
-          className={cx(buttonStyles('primary', 'lg'), 'mt-5 w-full')}
-        >
-          {current.cta}
-        </button>
+        <div className="mt-5 border-t border-black/[0.07] pt-5">
+          <p className="text-[0.95rem] font-medium text-paper">{current.title}</p>
+          <p className="mt-1.5 text-sm leading-6 text-muted">{current.detail}</p>
+          <button
+            type="button"
+            onClick={() => navigate(current.route)}
+            className={cx(buttonStyles('primary', 'lg'), 'mt-5 w-full')}
+          >
+            {current.cta}
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -156,27 +156,61 @@ const firstResponse = [
 export function HomePage() {
   return (
     <>
-      <section className="page-shell pb-12 pt-10 sm:pt-14">
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_.95fr] lg:items-start lg:gap-14">
-          <div>
-            <p className="eyebrow">Citizen cyber help</p>
-            <h1 className="mt-3 max-w-[16ch] text-[clamp(2rem,4.2vw,3rem)] font-semibold leading-[1.14] tracking-[-0.03em] text-paper">
-              Help should move faster than the scam.
-            </h1>
-            <p className="mt-5 max-w-md text-[0.95rem] leading-7 text-muted">
-              A calmer path from “something happened” to the right action — report an incident, check a
-              suspicious identifier, or understand what happens next.
-            </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link to="/report" className={buttonStyles('primary', 'lg')}>
-                Start a report
-              </Link>
-              <Link to="/check" className={buttonStyles('secondary', 'lg')}>
-                Check a number
-              </Link>
-            </div>
+      <section className="relative overflow-hidden pb-8 pt-16 text-center sm:pt-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="dot-field-full absolute inset-0" />
+          <div className="dot-field-fade absolute inset-0">
+            <div className="dot-field-side absolute inset-y-0 left-0 w-[32%]" />
+            <div className="dot-field-side absolute inset-y-0 right-0 w-[32%] origin-center scale-x-[-1]" />
           </div>
-          <Triage />
+        </div>
+
+        <div className="page-shell relative">
+        <Link to="/learn" className="pill-badge mx-auto">
+          <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] bg-brand text-[0.55rem] font-bold text-ink">
+            New
+          </span>
+          Independent prototype — fictional data only
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+
+        <h1 className="mx-auto mt-7 max-w-[16ch] text-[clamp(2.4rem,6vw,4.4rem)] font-bold leading-[1.08] tracking-[-0.045em] text-paper">
+          Help that moves faster than the scam
+          <span className="text-brand">.</span>
+        </h1>
+
+        <p className="mx-auto mt-5 max-w-xl text-[1.05rem] leading-7 text-muted">
+          A calmer path from “something happened” to the right action — report an incident, check a
+          suspicious identifier, or understand what happens next.
+        </p>
+
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link to="/report" className={buttonStyles('primary', 'lg')}>
+            Start a report
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+          <Link to="/check" className={buttonStyles('secondary', 'lg')}>
+            Check a number
+          </Link>
+        </div>
+
+        <a
+          href={`tel:${brand.helpline}`}
+          className="mx-auto mt-6 flex max-w-md items-center justify-between gap-3 rounded-xl border border-dashed border-black/15 bg-white/70 px-4 py-3 text-left backdrop-blur-sm transition hover:border-brand/40"
+        >
+          <p className="flex items-center gap-2 font-mono text-[0.8rem] text-paper">
+            <Phone className="h-3.5 w-3.5 text-muted" aria-hidden />
+            Call {brand.helpline} for financial fraud
+          </p>
+          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted" aria-hidden />
+        </a>
+
+        <Link to="/contact" className="mt-4 inline-flex items-center gap-1 text-sm text-muted hover:text-paper">
+          Need a real human? Contact us
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+
+        <Triage />
         </div>
       </section>
 
@@ -202,7 +236,7 @@ export function HomePage() {
             <Link
               key={item.href}
               to={item.href}
-              className="card group flex items-start justify-between gap-6 p-5 transition hover:border-brand/50 sm:p-6"
+              className="card group flex items-start justify-between gap-6 bg-white/90 p-5 backdrop-blur-sm transition hover:border-brand/50 sm:p-6"
             >
               <span>
                 <span className="block text-[1.05rem] font-semibold text-paper group-hover:text-brand">{item.title}</span>
@@ -217,7 +251,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-black/[0.07] bg-mist">
+      <section className="border-y border-black/[0.07] bg-white/70 backdrop-blur-sm">
         <div className="page-shell page-section">
           <p className="eyebrow">How it works</p>
           <h2 className="section-title mt-2 max-w-lg">Less portal. More guidance.</h2>
@@ -247,7 +281,7 @@ export function HomePage() {
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {firstResponse.map((item) => (
-            <div key={item.label} className="surface-soft p-5">
+            <div key={item.label} className="surface-soft bg-white/80 p-5 backdrop-blur-sm">
               <p className="eyebrow text-brand">{item.label}</p>
               <h3 className="mt-2 text-[1.05rem] font-semibold text-paper">{item.title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted">{item.detail}</p>

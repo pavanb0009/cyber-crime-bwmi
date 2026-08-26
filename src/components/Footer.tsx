@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { brand } from '../data/brand'
+import { BrandMark } from './BrandMark'
 
 const journeys = [
   { to: '/report', label: 'Register a complaint' },
@@ -14,17 +16,14 @@ const about = [
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-black/[0.07] bg-mist pb-24 pt-12 sm:pb-12">
+    <footer className="mt-16 border-t border-black/[0.07] bg-white/80 pb-24 pt-12 backdrop-blur-sm sm:pb-12">
       <div className="page-shell">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="max-w-sm">
-            <div className="flex items-center gap-3">
-              <img src="/emblem-dark.png" alt="" className="h-9 w-auto" />
-              <img src="/i4c-mark.png" alt="" className="h-6 w-auto" />
-            </div>
+            <BrandMark />
             <p className="mt-4 text-sm leading-6 text-muted">
-              A citizen-first reimagining of cybercrime reporting. No real complaint is filed and no
-              government system is contacted.
+              A citizen-first reimagining of cybercrime reporting, built as an independent prototype.
+              No real complaint is filed and no government system is contacted.
             </p>
           </div>
 
@@ -75,7 +74,7 @@ export function Footer() {
         </div>
 
         <p className="mt-12 border-t border-black/[0.07] pt-6 text-sm text-muted">
-          © 2026 Independent prototype · synthetic data by design
+          © 2026 {brand.name} · {brand.disclaimer} Synthetic data by design.
         </p>
       </div>
     </footer>

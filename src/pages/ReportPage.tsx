@@ -17,6 +17,7 @@ import {
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
+import { brand } from '../data/brand'
 import { channels, incidentTypes, indianStates } from '../data/content'
 import { cx } from '../lib/cx'
 import {
@@ -37,7 +38,7 @@ const steps = [
 
 function makeCaseId(): string {
   const number = Math.floor(10000 + Math.random() * 89999)
-  return `NCRP-DEMO-26-${number}`
+  return `${brand.casePrefix}-${number}`
 }
 
 function formatDateTime(value: string): string {
@@ -71,8 +72,8 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 function SuccessView({ record }: { record: CaseRecord }) {
   function downloadAcknowledgement() {
     const content = [
-      'RAKSHAK / 1930 — DEMO ACKNOWLEDGEMENT',
-      'Independent hackathon prototype — no government system was contacted.',
+      `${brand.name.toUpperCase()} — DEMO ACKNOWLEDGEMENT`,
+      `${brand.disclaimer} No government system was contacted.`,
       '',
       `Reference: ${record.caseId}`,
       `Created: ${record.createdAt}`,
