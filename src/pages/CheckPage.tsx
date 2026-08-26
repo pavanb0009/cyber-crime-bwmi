@@ -254,8 +254,9 @@ export function CheckPage() {
                         <Button variant="secondary" size="lg" onClick={() => {
                           navigator.clipboard?.writeText(checkedValue).catch(() => undefined)
                         }}>
-                          Copy identifier
+                          Copy identifierr
                         </Button>
+                        
                       </div>
                     </motion.div>
                   ) : (
