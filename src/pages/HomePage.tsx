@@ -176,12 +176,12 @@ export function HomePage() {
   return (
     <>
       <section className="relative isolate flex min-h-[calc(100dvh-4rem)] flex-col justify-center py-8">
-        {/* <img
-          src="/hero2.png"
+         <img
+          src="/hero3.png"
           alt=""
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-center"
-        /> */}
+        /> 
 
         <div className="page-shell flex flex-col items-center text-center">
           <p className="inline-flex rounded-full bg-brand/[0.08] px-3 py-1 text-[0.75rem] font-medium text-brand">
