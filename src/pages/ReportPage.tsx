@@ -149,11 +149,17 @@ export function ReportPage() {
   const [searchParams] = useSearchParams()
   const requestedType = searchParams.get('type') as IncidentTypeId | null
   const isValidRequestedType = incidentTypes.some((item) => item.id === requestedType)
+  const requestedAnonymous = searchParams.get('anonymous') === '1'
 
   const [step, setStep] = useState(1)
   const [draft, setDraft] = useState<ReportDraft>(() => {
     const saved = loadDraft()
-    return isValidRequestedType ? { ...saved, incidentType: requestedType! } : saved
+    if (!isValidRequestedType) return saved
+    return {
+      ...saved,
+      incidentType: requestedType!,
+      anonymous: requestedType === 'women-child' ? requestedAnonymous : false,
+    }
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [fileError, setFileError] = useState('')

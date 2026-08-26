@@ -26,7 +26,7 @@ export function SiteHeader() {
   }, [location.pathname])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-black/[0.04] bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-white/50 bg-white/45 backdrop-blur-2xl backdrop-saturate-150">
       <div className="page-shell grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4">
         <BrandMark />
 
@@ -38,8 +38,8 @@ export function SiteHeader() {
               end={link.to === '/'}
               className={({ isActive }) =>
                 cx(
-                  'text-[0.9rem] transition',
-                  isActive ? 'font-medium text-paper' : 'text-muted hover:text-paper',
+                  'text-[0.9rem] text-black transition hover:opacity-70',
+                  isActive ? 'font-semibold' : 'font-medium',
                 )
               }
             >
@@ -58,7 +58,7 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center text-paper lg:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center text-black lg:hidden"
             onClick={() => setMobileOpen((value) => !value)}
             aria-label="Open navigation"
             aria-expanded={mobileOpen}
@@ -83,7 +83,7 @@ export function SiteHeader() {
                   to={link.to}
                   end={link.to === '/'}
                   className={({ isActive }) =>
-                    cx('py-3 text-sm', isActive ? 'font-medium text-paper' : 'text-muted')
+                    cx('py-3 text-sm text-black', isActive ? 'font-semibold' : 'font-medium')
                   }
                 >
                   {link.label}

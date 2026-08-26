@@ -122,26 +122,28 @@ textarea:focus-visible {
     @apply font-medium text-brand transition hover:text-brandDark;
   }
 
-  /* Soft full-page texture — faint blue dots everywhere. */
-  .dot-field-full {
-    background-image: radial-gradient(rgba(22, 104, 207, 0.11) 1px, transparent 1.15px);
-    background-size: 18px 18px;
-  }
-
-  /* Stronger dots used on the left and right edges of the hero. */
-  .dot-field-side {
-    background-image: radial-gradient(rgba(22, 104, 207, 0.38) 1.15px, transparent 1.15px);
-    background-size: 18px 18px;
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 35%, transparent 100%);
-    mask-image: linear-gradient(to right, #000 0%, #000 35%, transparent 100%);
-  }
-
-  .dot-field-fade {
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
-  }
-
   .pill-badge {
     @apply inline-flex items-center gap-2 rounded-full border border-brand/15 bg-brand/[0.07] px-3 py-1.5 text-[0.8rem] font-medium text-brand;
+  }
+
+  /* Hotspot sits on the header's bottom edge so the glass nav frosts the
+     blue, and the wash blooms down into the hero. */
+  .top-glow {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 10;
+    width: min(1600px, 140%);
+    height: 440px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 58% 80% at 50% 4rem,
+      rgba(22, 104, 207, 0.34) 0%,
+      rgba(48, 128, 224, 0.24) 26%,
+      rgba(96, 162, 236, 0.13) 48%,
+      rgba(160, 200, 244, 0.05) 66%,
+      transparent 80%
+    );
   }
 }

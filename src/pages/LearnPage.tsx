@@ -89,7 +89,7 @@ export function LearnPage() {
         aside="Clear language, no shame, and an action in every section."
       />
 
-      <section className="page-shell">
+      <section id="safety" className="page-shell scroll-mt-24">
         <div className="grid gap-4 sm:grid-cols-3">
           {quickActions.map((item) => {
             const inner = (
@@ -109,7 +109,7 @@ export function LearnPage() {
         </div>
       </section>
 
-      <section className="page-shell page-section">
+      <section id="digest" className="page-shell page-section scroll-mt-24">
         <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-8">
           <div>
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -206,7 +206,7 @@ export function LearnPage() {
             </div>
           </div>
 
-          <aside className="lg:sticky lg:top-6 lg:self-start">
+          <aside id="awareness" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
             <div className="card p-5 sm:p-6">
               <div>
                 <p className="eyebrow">60-second check</p>

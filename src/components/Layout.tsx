@@ -7,12 +7,20 @@ export function Layout() {
   const location = useLocation()
 
   useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1)
+      const frame = window.requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'auto', block: 'start' })
+      })
+      return () => window.cancelAnimationFrame(frame)
+    }
     window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [location.pathname])
+  }, [location.pathname, location.hash])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-white">
       <SiteHeader />
+      <div className="top-glow" aria-hidden />
       <main>
         <Outlet />
       </main>

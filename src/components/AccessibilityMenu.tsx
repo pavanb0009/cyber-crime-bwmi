@@ -29,7 +29,7 @@ export function AccessibilityMenu() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="text-sm text-muted transition hover:text-paper"
+        className="text-sm font-medium text-black transition hover:opacity-70"
         aria-label="Accessibility settings"
         aria-expanded={open}
       >
