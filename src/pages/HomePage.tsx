@@ -16,10 +16,9 @@ import { Link } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
 import { cx } from '../lib/cx'
 
-// Drop PNGs into /public with these filenames. Empty slots stay as placeholders.
 const heroCards = [
   {
-    src: '/hero-arc-1.png',
+    src: '/cards/women_children.png',
     icon: ShieldCheck,
     label: 'Women & children',
     action: 'Report anonymously',
@@ -28,7 +27,7 @@ const heroCards = [
     visibility: '',
   },
   {
-    src: '/hero-arc-2.png',
+    src: '/cards/financial_fraud.png',
     icon: BadgeIndianRupee,
     label: 'Financial fraud',
     action: 'Call 1930 first',
@@ -37,7 +36,7 @@ const heroCards = [
     visibility: '',
   },
   {
-    src: '/hero-arc-3.png',
+    src: '/cards/hacked_account.png',
     icon: UserRoundX,
     label: 'Hacked account',
     action: 'Secure & report',
@@ -46,7 +45,7 @@ const heroCards = [
     visibility: '',
   },
   {
-    src: '/hero-arc-4.png',
+    src: '/cards/suspicious_number.png',
     icon: Search,
     label: 'Suspicious number',
     action: 'Check identifier',
@@ -55,7 +54,7 @@ const heroCards = [
     visibility: '',
   },
   {
-    src: '/hero-arc-5.png',
+    src: '/cards/your_complaint.png',
     icon: FileSearch,
     label: 'Your complaint',
     action: 'Track status',
@@ -134,14 +133,14 @@ function HeroCard({
   )
 
   const cardClass = cx(
-    'group block w-full min-w-0 overflow-hidden rounded-[1.5rem] bg-white shadow-[0_14px_34px_rgba(16,16,18,0.10)] transition hover:shadow-[0_18px_44px_rgba(16,16,18,0.16)]',
+    'group block w-full min-w-0 overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_14px_34px_rgba(16,16,18,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(16,16,18,0.14)]',
     offset,
     visibility,
   )
 
   const body = (
     <>
-      <span className="relative block aspect-[4/5] w-full bg-[#f4f0ec]">
+      <span className="relative block aspect-[6/7] w-full bg-white">
         <img
           src={src}
           alt=""
@@ -149,15 +148,18 @@ function HeroCard({
           onError={(event) => {
             event.currentTarget.style.display = 'none'
           }}
-          className={cx('absolute inset-0 h-full w-full object-cover', loaded ? 'opacity-100' : 'opacity-0')}
+          className={cx(
+            'absolute inset-0 h-full w-full object-contain p-2',
+            loaded ? 'opacity-100' : 'opacity-0',
+          )}
         />
         {!loaded ? (
           <span className="absolute inset-0 flex items-center justify-center">
-            <ImagePlus className="h-6 w-6 text-[#cfc6bd]" aria-hidden />
+            <ImagePlus className="h-6 w-6 text-[#d6dbe2]" aria-hidden />
           </span>
         ) : null}
       </span>
-      <span className="block px-3.5 py-3 text-left">{content}</span>
+      <span className="block border-t border-black/[0.05] px-3.5 py-3 text-left">{content}</span>
     </>
   )
 
