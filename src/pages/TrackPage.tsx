@@ -1,14 +1,73 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, ChevronRight } from 'lucide-react'
+import { Check, ChevronRight, CircleDollarSign } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { brand } from '../data/brand'
 import { cx } from '../lib/cx'
 import { defaultCase, findCase, loadCases } from '../lib/storage'
-import type { CaseRecord } from '../types'
+import type { CaseRecord, MoneyRecovery } from '../types'
 import { useTranslation } from 'react-i18next'
+
+function formatMoney(value: number): string {
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value)
+}
+
+function MoneyRecoveryTracker({ recovery }: { recovery: MoneyRecovery }) {
+  const steps = [
+    { label: 'Reported', amount: recovery.reported, done: true },
+    { label: 'Traced', amount: recovery.traced, done: recovery.traced > 0 },
+    { label: 'Lien marked', amount: recovery.lien, done: recovery.lien > 0 },
+    { label: 'Restoration review', amount: recovery.restorationEligible, done: recovery.stage === 'review' || recovery.stage === 'refunded' },
+    { label: 'Refund', amount: recovery.stage === 'refunded' ? recovery.restorationEligible : 0, done: recovery.stage === 'refunded' },
+  ]
+  const activeIndex = recovery.stage === 'reported' ? 0 : recovery.stage === 'traced' ? 1 : recovery.stage === 'lien' ? 2 : recovery.stage === 'review' ? 3 : 4
+
+  return (
+    <div className="rounded-2xl border border-brand/20 bg-brand/[0.03] p-5 sm:p-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="eyebrow text-brand">Money recovery tracker</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">Where is the money now?</h3>
+        </div>
+        <span className="pill-badge"><CircleDollarSign className="h-3.5 w-3.5" /> Financial case</span>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ['Reported loss', recovery.reported],
+          ['Amount traced', recovery.traced],
+          ['Lien marked', recovery.lien],
+          ['Eligible for restoration', recovery.restorationEligible],
+        ].map(([label, value]) => (
+          <div key={String(label)} className="rounded-xl border border-black/[0.07] bg-white p-4">
+            <p className="font-mono text-[0.57rem] font-bold uppercase tracking-[0.12em] text-muted">{label}</p>
+            <p className="mt-2 text-xl font-bold tracking-[-0.03em] text-paper">{formatMoney(Number(value))}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 overflow-x-auto pb-1">
+        <div className="min-w-[640px]">
+          <div className="relative grid grid-cols-5 gap-2">
+            <div className="absolute left-[10%] right-[10%] top-3 h-px bg-black/[0.12]" />
+            <div className="absolute left-[10%] top-3 h-px bg-brand" style={{ width: `${(activeIndex / 4) * 80}%` }} />
+            {steps.map((item, index) => (
+              <div key={item.label} className="relative z-10 text-center">
+                <span className={cx('mx-auto flex h-6 w-6 items-center justify-center rounded-full border-4 border-white', index < activeIndex ? 'bg-brand' : index === activeIndex ? 'bg-white ring-[3px] ring-inset ring-brand' : 'bg-black/15')}>
+                  {index < activeIndex ? <Check className="h-3 w-3 text-ink" /> : null}
+                </span>
+                <p className={cx('mt-2 text-xs font-semibold', index <= activeIndex ? 'text-paper' : 'text-muted')}>{item.label}</p>
+                <p className="mt-1 font-mono text-[0.58rem] text-muted">{item.amount ? formatMoney(item.amount) : 'Pending'}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function getCase(reference: string): CaseRecord | undefined {
   const clean = reference.trim().toUpperCase()
@@ -25,6 +84,9 @@ function downloadStatus(record: CaseRecord) {
     `Status: ${record.statusLabel}`,
     `Progress: ${record.progress}%`,
     `Assigned unit: ${record.assignedUnit}`,
+    record.recovery
+      ? `Reported: ${formatMoney(record.recovery.reported)} | Traced: ${formatMoney(record.recovery.traced)} | Lien: ${formatMoney(record.recovery.lien)} | Restoration eligible: ${formatMoney(record.recovery.restorationEligible)}`
+      : '',
     '',
     'TIMELINE',
     ...record.timeline.map((item) => `- ${item.label} | ${item.timestamp} | ${item.detail}`),
@@ -163,6 +225,12 @@ export function TrackPage() {
                       <p className="mt-2 text-sm font-medium leading-6 text-paper">Wait for the next timeline update</p>
                     </div>
                   </div>
+
+                  {record.recovery ? (
+                    <div className="mt-7">
+                      <MoneyRecoveryTracker recovery={record.recovery} />
+                    </div>
+                  ) : null}
 
                   <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>

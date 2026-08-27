@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
@@ -247,11 +248,26 @@ export function CheckPage() {
 
                       <div className="mt-6 flex flex-col gap-3 border-t border-black/[0.07] pt-5 sm:flex-row">
                         <Link
-                          to="/report?type=suspicious-content"
+                          to={
+                            result.risk === 'high'
+                              ? `/report?type=financial&mode=emergency&suspect=${encodeURIComponent(checkedValue)}`
+                              : `/report?type=suspicious-content&suspect=${encodeURIComponent(checkedValue)}`
+                          }
                           className={buttonStyles(result.risk === 'high' ? 'danger' : 'primary', 'lg')}
                         >
-                          Report this identifier
+                          {result.risk === 'high' ? (
+                            <>
+                              {t('check.alreadyPaid')} <ArrowRight className="h-4 w-4" />
+                            </>
+                          ) : (
+                            'Report this identifier'
+                          )}
                         </Link>
+                        {result.risk === 'high' ? (
+                          <Link to={`/report?type=suspicious-content&suspect=${encodeURIComponent(checkedValue)}`} className={buttonStyles('secondary', 'lg')}>
+                            Report this identifier
+                          </Link>
+                        ) : null}
                         <Button variant="secondary" size="lg" onClick={() => {
                           navigator.clipboard?.writeText(checkedValue).catch(() => undefined)
                         }}>
@@ -288,13 +304,19 @@ export function CheckPage() {
             </div>
 
             <div className="rounded-2xl bg-alert p-5 text-ink">
-              <p className="text-sm font-semibold">Already lost money?</p>
+              <p className="text-sm font-semibold">{t('home.lostMoney')}</p>
               <p className="mt-2 text-xs leading-5 text-white/75">Do not stop at a suspect check. Call 1930 and file a financial-fraud complaint.</p>
-              <a
-                href="tel:1930"
+              <Link
+                to="/report?type=financial&mode=emergency"
                 className="mt-4 flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"
               >
-                Call 1930
+                {t('home.lostMoney')}
+              </Link>
+              <a
+                href="tel:1930"
+                className="mt-2 flex h-9 w-full items-center justify-center rounded-lg bg-white/10 text-sm font-semibold text-white hover:bg-white/15"
+              >
+                {t('actions.call1930', { ns: 'common' })}
               </a>
             </div>
 

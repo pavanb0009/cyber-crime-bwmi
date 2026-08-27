@@ -92,6 +92,18 @@ export const defaultCase: CaseRecord = {
   progress: 68,
   statusLabel: 'Under review by state cyber cell',
   assignedUnit: 'Cyber Crime Cell — Bengaluru Urban',
+  amount: '85,000',
+  paymentMethod: 'UPI',
+  transactionId: '412345678901',
+  recipientIdentifier: 'refunddesk@upi',
+  nextAction: 'Beneficiary tracing and lien review',
+  recovery: {
+    reported: 85000,
+    traced: 65000,
+    lien: 40000,
+    restorationEligible: 40000,
+    stage: 'review',
+  },
   timeline: [
     {
       label: 'Complaint submitted',
