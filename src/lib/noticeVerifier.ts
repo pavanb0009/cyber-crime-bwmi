@@ -324,7 +324,7 @@ export function analyseNoticeText(rawText: string, fileName = ''): NoticeAnalysi
       ? 'High risk — strong indicators of a fake notice'
       : verdict === 'suspicious'
         ? 'Suspicious — verify before you act'
-        : 'Format looks consistent — still verify independently'
+        : 'Format looks consistent, still verify independently'
 
   const summary =
     verdict === 'high-risk'

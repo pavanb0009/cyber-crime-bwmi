@@ -21,10 +21,12 @@
     "framer-motion": "latest",
     "i18next": "^26.4.0",
     "lucide-react": "latest",
+    "pdfjs-dist": "^6.2.108",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^17.0.12",
-    "react-router-dom": "latest"
+    "react-router-dom": "latest",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "latest",

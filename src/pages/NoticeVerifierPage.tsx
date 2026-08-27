@@ -26,6 +26,7 @@ import {
   type NoticeSignal,
   type NoticeVerdict,
 } from '../lib/noticeVerifier'
+import { extractTextFromFile } from '../lib/ocr'
 import { clearSession, patchSearchParams, readSession, writeSession } from '../lib/session'
 import { useSearchParams } from 'react-router-dom'
 
@@ -207,6 +208,8 @@ export function NoticeVerifierPage() {
   const [fileName, setFileName] = useState(saved?.fileName ?? '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [extracting, setExtracting] = useState(false)
+  const [extractStage, setExtractStage] = useState('')
   const [result, setResult] = useState<NoticeAnalysis | null>(saved?.result ?? null)
   const fileRef = useRef<HTMLInputElement>(null)
   const view = searchParams.get('view')
@@ -239,17 +242,23 @@ export function NoticeVerifierPage() {
     }
     setFileName(file.name)
     void putFiles('notice-file', [file])
-    if (/\.txt$/i.test(file.name)) {
-      try {
-        const nextText = await file.text()
-        setText(nextText)
-        persist({ text: nextText, fileName: file.name, result: null })
-      } catch {
-        setError('Could not read the text file.')
-      }
-    } else {
+    setExtracting(true)
+    setExtractStage('Opening document…')
+    try {
+      const extracted = await extractTextFromFile(file, (stage, ratio) => {
+        setExtractStage(ratio != null ? `${stage} · ${Math.round(ratio * 100)}%` : stage)
+      })
+      setText(extracted.text)
+      persist({ text: extracted.text, fileName: file.name, result: null })
+      setExtractStage('Checking the notice…')
+      await runVerify(extracted.text, file.name, { delay: false })
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : 'Could not read this file.'
+      setError(message)
       persist({ fileName: file.name, result: null })
-      setError('File attached. Paste the notice text below so it can be analysed (OCR is not enabled in this prototype).')
+    } finally {
+      setExtracting(false)
+      setExtractStage('')
     }
   }
 
@@ -282,6 +291,8 @@ export function NoticeVerifierPage() {
     setText('')
     setFileName('')
     setError('')
+    setExtracting(false)
+    setExtractStage('')
     setResult(null)
     clearSession('notice')
     void clearFiles('notice-file')
@@ -330,7 +341,9 @@ export function NoticeVerifierPage() {
                     const dropped = event.dataTransfer.files[0]
                     if (dropped) void handleFile(dropped)
                   }}
-                  onClick={() => fileRef.current?.click()}
+                  onClick={() => {
+                    if (!extracting) fileRef.current?.click()
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault()
@@ -341,8 +354,15 @@ export function NoticeVerifierPage() {
                   tabIndex={0}
                 >
                   {fileName ? <FileText className="mx-auto h-8 w-8 text-brand" /> : <Upload className="mx-auto h-8 w-8 text-brand" />}
-                  <h3 className="mt-3 text-base font-semibold text-paper">{fileName || 'Drop a notice PDF or image here, or click to upload'}</h3>
-                  <p className="mt-1 text-sm text-muted">PDF, PNG, JPG, WEBP or TXT · up to 15 MB</p>
+                  <h3 className="mt-3 text-base font-semibold text-paper">
+                    {extracting ? extractStage || 'Reading the notice…' : fileName || 'Drop a notice PDF or image here, or click to upload'}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted">
+                    {extracting
+                      ? 'Searchable PDFs are read directly. Scanned pages are OCR’d in this browser.'
+                      : 'PDF, PNG, JPG, WEBP or TXT · up to 15 MB. Text is extracted automatically.'}
+                  </p>
+                  {extracting ? <div className="scan-line mx-auto mt-4 max-w-md" /> : null}
                   <div className="mt-4">
                     <span className={cx(buttonStyles(fileName ? 'secondary' : 'primary', 'md'), 'pointer-events-none')}>
                       {fileName ? 'Choose another file' : 'Choose file'}
@@ -373,10 +393,11 @@ export function NoticeVerifierPage() {
                     }}
                     rows={7}
                     className="text-area min-h-[10rem]"
-                    placeholder="Paste the notice text — authority, reference number, officer, phone, email, links and any payment instruction."
+                    placeholder="Upload a file above, or paste the notice text here if you already have it."
+                    disabled={extracting}
                   />
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                    <Button onClick={() => void runVerify()} loading={loading}>
+                    <Button onClick={() => void runVerify()} loading={loading || extracting} disabled={extracting}>
                       <ShieldAlert className="h-4 w-4" /> Verify notice
                     </Button>
                     {(text || fileName) ? (
