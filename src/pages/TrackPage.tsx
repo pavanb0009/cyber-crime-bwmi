@@ -1,25 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronRight } from 'lucide-react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { brand } from '../data/brand'
 import { cx } from '../lib/cx'
-import { defaultDemoCase, findCase, loadCases } from '../lib/storage'
+import { defaultCase, findCase, loadCases } from '../lib/storage'
 import type { CaseRecord } from '../types'
 import { useTranslation } from 'react-i18next'
 
 function getCase(reference: string): CaseRecord | undefined {
   const clean = reference.trim().toUpperCase()
-  if (clean === defaultDemoCase.caseId) return defaultDemoCase
+  if (clean === defaultCase.caseId) return defaultCase
   return findCase(clean)
 }
 
 function downloadStatus(record: CaseRecord) {
   const lines = [
-    `${brand.name.toUpperCase()} — DEMO CASE STATUS`,
-    `${brand.disclaimer} This is not an official complaint record.`,
+    `${brand.name.toUpperCase()} — COMPLAINT STATUS`,
     '',
     `Reference: ${record.caseId}`,
     `Created: ${record.createdAt}`,
@@ -62,7 +61,7 @@ export function TrackPage() {
     const found = getCase(clean)
     if (!found) {
       setRecord(null)
-      setError(t('track.noMatch', { id: defaultDemoCase.caseId }))
+      setError(t('track.noMatch'))
     } else {
       setRecord(found)
       setReference(found.caseId)
@@ -91,13 +90,13 @@ export function TrackPage() {
           <button
             type="button"
             onClick={() => {
-              setReference(defaultDemoCase.caseId)
-              void runSearch(defaultDemoCase.caseId)
+              setReference(defaultCase.caseId)
+              void runSearch(defaultCase.caseId)
             }}
             className="w-full text-left"
           >
-            <p className="text-sm font-medium text-paper">{t('track.demoCase')}</p>
-            <p className="link-accent mt-1 font-mono text-sm">{defaultDemoCase.caseId}</p>
+            <p className="text-sm font-medium text-paper">{t('track.recentCase')}</p>
+            <p className="link-accent mt-1 font-mono text-sm">{defaultCase.caseId}</p>
           </button>
         }
       />
@@ -121,25 +120,12 @@ export function TrackPage() {
                     setError('')
                   }}
                   className="text-field h-12 pr-24 font-mono text-sm uppercase tracking-[0.04em]"
-                  placeholder={defaultDemoCase.caseId}
+                  placeholder={defaultCase.caseId}
                   autoComplete="off"
                 />
                 <Button type="submit" size="md" loading={loading} className="absolute right-1 top-1 h-10">
                   {t('track.track')}
                 </Button>
-              </div>
-              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-muted">{t('track.onlyLocal')}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setReference(defaultDemoCase.caseId)
-                    void runSearch(defaultDemoCase.caseId)
-                  }}
-                  className="link-accent text-left text-sm"
-                >
-                  {t('track.fillDemo')}
-                </button>
               </div>
               {error ? (
                 <p className="mt-3 text-sm font-semibold text-alert">{error}</p>
@@ -210,7 +196,7 @@ export function TrackPage() {
                     <aside className="space-y-4">
                       <div className="surface-soft p-5">
                         <p className="text-sm font-medium text-paper">What happens next</p>
-                        <p className="mt-3 text-sm leading-6 text-muted">The active stage is shown in black. In a real integration, notifications would appear only when an official case event is received.</p>
+                        <p className="mt-3 text-sm leading-6 text-muted">{t('track.nextUpdate')}</p>
                       </div>
                       <Button variant="secondary" size="lg" className="w-full" onClick={() => downloadStatus(record)}>
                         Download status
@@ -227,17 +213,17 @@ export function TrackPage() {
                 </motion.div>
               ) : (
                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">A timeline you can actually understand.</h3>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-muted">Enter a local demo reference or use the reviewer case to see assignment, progress and next action.</p>
+                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">{t('track.emptyTitle')}</h3>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-muted">{t('track.emptyBody')}</p>
                   <button
                     type="button"
                     onClick={() => {
-                      setReference(defaultDemoCase.caseId)
-                      void runSearch(defaultDemoCase.caseId)
+                      setReference(defaultCase.caseId)
+                      void runSearch(defaultCase.caseId)
                     }}
                     className={cx(buttonStyles('primary', 'md'), 'mt-5 w-fit')}
                   >
-                    Open reviewer demo
+                    {t('track.openRecent')}
                   </button>
                 </motion.div>
               )}
@@ -247,7 +233,7 @@ export function TrackPage() {
 
         {recentCases.length ? (
           <div className="mx-auto mt-6 max-w-5xl">
-            <p className="eyebrow mb-3">Created in this browser</p>
+            <p className="eyebrow mb-3">{t('track.recent')}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {recentCases.slice(0, 4).map((item) => (
                 <button

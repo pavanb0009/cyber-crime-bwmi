@@ -73,12 +73,7 @@ export function Footer() {
         </div>
 
         <p className="mt-12 border-t border-black/[0.07] pt-6 text-sm text-muted">
-          {t('footer.copyright', {
-            year,
-            name: brand.name,
-            disclaimer: t('prototype.disclaimer', { ns: 'common' }),
-            synthetic: t('prototype.synthetic', { ns: 'common' }),
-          })}
+          {t('footer.copyright', { year, name: brand.name })}
         </p>
       </div>
     </footer>

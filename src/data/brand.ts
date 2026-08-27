@@ -1,9 +1,7 @@
-// Single source of truth for the prototype's identity. This is an independent
-// project, so nothing here may imply a government service or authority.
+// Single source of truth for the product identity used across pages and exports.
 export const brand = {
   name: 'Cyber Rakshak',
   tagline: 'Cybercrime help that moves faster than the scam',
-  disclaimer: 'Independent prototype. Not an official government service.',
   helpline: '1930',
-  casePrefix: 'RK-DEMO-26',
+  casePrefix: 'CR-2026',
 } as const

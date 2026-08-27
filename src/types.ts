@@ -71,8 +71,6 @@ export type SafetyGuideId =
 
 export type SafetyGuideCategory = 'Money' | 'Accounts' | 'Harassment' | 'Family' | 'General'
 
-export type DemoSuspectId = 'demo-phone' | 'demo-upi' | 'demo-email' | 'demo-url'
-
 /** A translated label paired with the stable English value stored in a draft or case. */
 export interface LocalizedOption {
   value: string

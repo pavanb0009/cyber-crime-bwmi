@@ -42,7 +42,7 @@ export const incidentTypes: IncidentType[] = [
     id: 'women-child',
     title: 'Women or child related crime',
     description: 'Sensitive content, exploitation, grooming or sexual abuse material.',
-    hint: 'Anonymous reporting is available in this prototype.',
+    hint: 'You can file this report anonymously.',
     icon: EyeOff,
     tone: 'signal',
   },
@@ -125,7 +125,7 @@ export const identifierConfig: Record<
     label: 'Mobile number',
     placeholder: '10-digit number',
     example: '9876543210',
-    helper: 'Enter without +91. Demo values only.',
+    helper: 'Enter without +91.',
   },
   upi: {
     label: 'UPI ID',
@@ -143,24 +143,24 @@ export const identifierConfig: Record<
     label: 'Website or app URL',
     placeholder: 'https://example.com',
     example: 'https://secure-update.example',
-    helper: 'Paste the full address. The .example domain is synthetic.',
+    helper: 'Paste the full address, including https://',
   },
 }
 
-export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, SuspectResult>>> = {
+export const suspectReports: Partial<Record<IdentifierType, Record<string, SuspectResult>>> = {
   phone: {
     '9876543210': {
       risk: 'high',
       score: 87,
       title: 'Strong warning signals found',
       summary:
-        'This synthetic number appears across multiple demo complaints involving payment collection and impersonation.',
+        'This number appears across multiple complaints involving payment collection and impersonation.',
       reports: 142,
       firstSeen: '18 May 2026',
       lastSeen: 'Today',
       pattern: 'Fake customer-care / investment collection scam',
       related: ['refunddesk@upi', 'secure-update.example', 'Telegram @supportdesk11'],
-      signals: ['Repeated UPI collection requests', 'Bank-support impersonation', 'Multiple states in demo data'],
+      signals: ['Repeated UPI collection requests', 'Bank-support impersonation', 'Reported from multiple states'],
       nextSteps: ['Do not send money or OTPs', 'Block the number after saving evidence', 'Report the identifier or file a complaint'],
     },
   },
@@ -170,7 +170,7 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
       score: 92,
       title: 'Do not transact with this handle',
       summary:
-        'The demo repository links this UPI ID with fake refund and remote-access scams.',
+        'Reports link this UPI ID with fake refund and remote-access scams.',
       reports: 86,
       firstSeen: '02 June 2026',
       lastSeen: 'Today',
@@ -186,7 +186,7 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
       score: 64,
       title: 'Use extra caution',
       summary:
-        'This synthetic sender resembles a service address and appears in demo phishing reports.',
+        'This sender imitates a service address and appears in phishing reports.',
       reports: 19,
       firstSeen: '11 July 2026',
       lastSeen: '24 August 2026',
@@ -200,9 +200,9 @@ export const demoSuspectResults: Partial<Record<IdentifierType, Record<string, S
     'https://secure-update.example': {
       risk: 'high',
       score: 91,
-      title: 'Known demo phishing pattern',
+      title: 'Known phishing pattern',
       summary:
-        'This synthetic domain is flagged for imitating a security-update page and collecting login details.',
+        'This domain is flagged for imitating a security-update page and collecting login details.',
       reports: 61,
       firstSeen: '29 July 2026',
       lastSeen: 'Today',
@@ -287,7 +287,7 @@ export const safetyGuides: SafetyGuide[] = [
       'Verify the person through a separate trusted channel.',
       'Never share an OTP, PIN, screen or remote-access control.',
       'Treat “act now” pressure and guaranteed returns as warning signs.',
-      'Check the phone, UPI ID, email or URL in the demo suspect checker.',
+      'Check the phone, UPI ID, email or URL in the suspect checker.',
     ],
   },
 ]

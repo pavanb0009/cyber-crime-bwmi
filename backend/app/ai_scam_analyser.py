@@ -10,7 +10,7 @@ Design goals
 ------------
 * Structured output. We force the model to answer with a JSON schema derived from a
   Pydantic model, so the rest of the pipeline gets typed, predictable data.
-* Never break the demo. If Ollama is not installed, not running, or the model is not
+* Keep serving. If Ollama is not installed, not running, or the model is not
   pulled, ``analyse_with_ai`` returns ``None`` and the caller falls back to the
   deterministic rule engine. The app keeps working with reduced intelligence rather
   than erroring out on stage.

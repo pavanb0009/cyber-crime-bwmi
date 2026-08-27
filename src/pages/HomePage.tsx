@@ -26,10 +26,10 @@ const heroCardMeta = [
 ] as const
 
 const learningMeta = [
-  { href: '/learn', icon: BookOpen, key: 'manual', iconClass: 'bg-[#e8f1fb] text-brand' },
-  { href: '/learn#safety', icon: ShieldCheck, key: 'safety', iconClass: 'bg-[#e7f6ec] text-[#1f8a4c]' },
-  { href: '/learn#awareness', icon: Monitor, key: 'awareness', iconClass: 'bg-[#eef1f6] text-[#2b4c7e]' },
-  { href: '/learn#digest', icon: FileText, key: 'digest', iconClass: 'bg-[#f8f1e3] text-[#b45309]' },
+  { href: '/learn', icon: BookOpen, key: 'manual', iconClass: 'bg-[#eaf2fd] text-brand' },
+  { href: '/learn#safety', icon: ShieldCheck, key: 'safety', iconClass: 'bg-[#e8f7ee] text-[#1f8a4c]' },
+  { href: '/learn#awareness', icon: Monitor, key: 'awareness', iconClass: 'bg-[#eef1f7] text-[#2b4c7e]' },
+  { href: '/learn#digest', icon: FileText, key: 'digest', iconClass: 'bg-[#fdf3e4] text-[#b45309]' },
 ] as const
 
 function HeroCard({
@@ -166,26 +166,50 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-black/[0.06] bg-[#f3f4f6] py-10 sm:py-12">
+      <section className="relative isolate overflow-hidden border-t border-black/[0.05] bg-gradient-to-b from-white via-[#f6f8fc] to-white py-14 sm:py-16">
         <div className="page-shell">
-          <h2 className="text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('home.learning')}</h2>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-brand/[0.08] px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-brand">
+                {t('home.learning')}
+              </p>
+              <h2 className="mt-3 max-w-[26ch] text-[clamp(1.5rem,2.8vw,2.1rem)] font-bold leading-[1.12] tracking-[-0.035em] text-paper">
+                {t('home.learningTitle')}
+              </h2>
+            </div>
+            <Link
+              to="/learn"
+              className="group inline-flex shrink-0 items-center gap-1.5 text-[0.9rem] font-semibold text-brand transition hover:text-brandDark"
+            >
+              {t('home.learningAll')}
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {learningMeta.map((item) => {
               const Icon = item.icon
               return (
                 <Link
                   key={item.key}
                   to={item.href}
-                  className="group flex flex-col rounded-xl border border-black/[0.08] bg-white p-5 transition hover:border-brand/50 hover:shadow-card"
+                  className="group flex flex-col rounded-[1.5rem] border border-black/[0.06] bg-white p-5 shadow-[0_14px_34px_rgba(16,16,18,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(16,16,18,0.12)] sm:p-6"
                 >
-                  <span className={cx('inline-flex h-11 w-11 items-center justify-center rounded-lg', item.iconClass)}>
+                  <span
+                    className={cx(
+                      'inline-flex h-11 w-11 items-center justify-center rounded-2xl ring-1 ring-inset ring-black/[0.04]',
+                      item.iconClass,
+                    )}
+                  >
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
-                  <h3 className="mt-4 text-[0.95rem] font-bold uppercase tracking-[0.04em] text-paper">
+                  <h3 className="mt-5 text-[1.02rem] font-semibold leading-snug tracking-[-0.02em] text-paper">
                     {t(`home.learn.${item.key}.title`)}
                   </h3>
-                  <p className="mt-2 flex-1 text-sm leading-6 text-muted">{t(`home.learn.${item.key}.description`)}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand group-hover:text-brandDark">
+                  <p className="mt-2 flex-1 text-[0.875rem] leading-6 text-muted">
+                    {t(`home.learn.${item.key}.description`)}
+                  </p>
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-[0.82rem] font-semibold text-brand">
                     {t('actions.readMore', { ns: 'common' })}
                     <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden />
                   </span>

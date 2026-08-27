@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
-import { demoSuspectResults, identifierConfig } from '../data/content'
+import { identifierConfig, suspectReports } from '../data/content'
 import { cx } from '../lib/cx'
 import type { IdentifierType, SuspectResult } from '../types'
 import { useTranslation } from 'react-i18next'
@@ -35,11 +35,11 @@ function validate(type: IdentifierType, value: string): string {
 function clearResult(type: IdentifierType): SuspectResult {
   return {
     risk: 'clear',
-    title: 'No matching report in the demo repository',
-    summary: `This synthetic ${identifierConfig[type].label.toLowerCase()} is not present in the small demo dataset. That is not proof that it is safe.`,
+    title: 'No reports found for this identifier',
+    summary: `This ${identifierConfig[type].label.toLowerCase()} has not been reported yet. That is not proof that it is safe.`,
     reports: 0,
     firstSeen: null,
-    signals: ['No exact demo match', 'Repository coverage is intentionally limited', 'Scammers change identifiers quickly'],
+    signals: ['No matching reports', 'New scam identifiers appear every day', 'Scammers change identifiers quickly'],
     nextSteps: ['Verify through another trusted channel', 'Do not share OTPs, PINs or screen access', 'Report anything suspicious or harmful'],
   }
 }
@@ -96,7 +96,7 @@ export function CheckPage() {
     setResult(null)
     await new Promise((resolve) => window.setTimeout(resolve, 720))
     const key = normalise(type, inputValue)
-    const matched = demoSuspectResults[type]?.[key]
+    const matched = suspectReports[type]?.[key]
     setResult(matched ?? clearResult(type))
     setCheckedValue(inputValue.trim())
     setLoading(false)
@@ -122,7 +122,6 @@ export function CheckPage() {
         eyebrow={t('check.eyebrow')}
         title={t('check.title')}
         description={t('check.description')}
-        aside={t('check.aside')}
       />
 
       <section className="page-shell pb-4">
@@ -195,7 +194,7 @@ export function CheckPage() {
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-muted">{config.helper}</p>
                     <button type="button" onClick={useExample} className="link-accent text-left text-sm">
-                      Try flagged demo
+                      {t('check.tryReported')}
                     </button>
                   </div>
                   {error ? (
@@ -208,8 +207,8 @@ export function CheckPage() {
                 <AnimatePresence mode="wait">
                   {loading ? (
                     <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
-                      <p className="text-base font-medium text-paper">Checking…</p>
-                      <p className="mt-2 max-w-sm text-sm leading-6 text-muted">Comparing the identifier against the local demo repository.</p>
+                      <p className="text-base font-medium text-paper">{t('check.checking')}</p>
+                      <p className="mt-2 max-w-sm text-sm leading-6 text-muted">{t('check.matching')}</p>
                     </motion.div>
                   ) : result ? (
                     <motion.div key={`${result.risk}-${checkedValue}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
@@ -221,7 +220,9 @@ export function CheckPage() {
                         <p className={cx('mt-2 max-w-2xl text-sm leading-6', riskStyles[result.risk].body)}>{result.summary}</p>
                         <p className={cx('mt-4 text-sm', riskStyles[result.risk].body)}>
                           Checked: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
-                          {result.reports !== null ? ` · ${result.reports} demo reports · first seen ${result.firstSeen ?? '—'}` : null}
+                          {result.reports !== null
+                            ? ` · ${t('check.reports', { count: result.reports })} · first seen ${result.firstSeen ?? '—'}`
+                            : null}
                         </p>
                       </div>
 
@@ -260,8 +261,8 @@ export function CheckPage() {
                     </motion.div>
                   ) : (
                     <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">Check before you pay, click or reply.</h3>
-                      <p className="mt-2 max-w-md text-sm leading-6 text-muted">Choose an identifier above or use the flagged demo value to see a complete result.</p>
+                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">{t('check.emptyTitle')}</h3>
+                      <p className="mt-2 max-w-md text-sm leading-6 text-muted">{t('check.emptyBody')}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -298,7 +299,7 @@ export function CheckPage() {
             </div>
 
             <div className="surface-soft p-5">
-              <p className="text-sm leading-6 text-muted">A repository can contain errors and never covers every scam. A clean result cannot certify that an identifier is safe.</p>
+              <p className="text-sm leading-6 text-muted">{t('check.caveat')}</p>
             </div>
           </aside>
         </div>

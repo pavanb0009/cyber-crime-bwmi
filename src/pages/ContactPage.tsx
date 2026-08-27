@@ -34,7 +34,6 @@ export function ContactPage() {
         eyebrow={t('contact.eyebrow')}
         title={t('contact.title')}
         description={t('contact.description')}
-        aside={t('contact.aside')}
       />
 
       <section className="page-shell page-section pt-0">
@@ -54,13 +53,6 @@ export function ContactPage() {
               <p className="mt-2 text-sm leading-6 text-muted">{channel.note}</p>
             </a>
           ))}
-        </div>
-
-        <div className="surface-soft mt-4 p-5 sm:p-7">
-          <p className="text-base font-semibold text-paper">{t('contact.about')}</p>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            {t('contact.aboutBody')}
-          </p>
         </div>
       </section>
     </>

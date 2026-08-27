@@ -178,7 +178,7 @@ export function getActionPlan(type: IncidentTypeId): string[] {
     'women-child': [
       'Move the affected person to safety and stop ongoing contact.',
       'Preserve identifiers and message details without redistributing illegal material.',
-      'Use the sensitive reporting route; anonymous reporting is available in this prototype.',
+      'Use the sensitive reporting route; anonymous reporting is available.',
       'Seek local authorities immediately if there is a direct risk of harm.',
     ],
     'suspicious-content': [
@@ -214,6 +214,6 @@ export function buildIncidentTimeline(draft: ReportDraft): Array<{ time: string;
     if (draft.contactChanged === 'yes') items.push({ time: fmt(add(18)), event: 'Linked email/phone change reported' })
   }
   if (draft.evidenceItems.length) items.push({ time: fmt(add(25)), event: `${draft.evidenceItems.length} evidence item${draft.evidenceItems.length === 1 ? '' : 's'} preserved` })
-  items.push({ time: 'Now', event: 'Cyber Rakshak demo complaint prepared for submission' })
+  items.push({ time: 'Now', event: 'Complaint prepared for submission' })
   return items
 }

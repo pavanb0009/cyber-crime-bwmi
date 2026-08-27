@@ -34,16 +34,3 @@ npm run build
 # Add the real commands you ran.
 ```
 
-### Result
-
-Summarise what worked, what failed and the next task.
-
----
-
-## Suggested evidence to retain
-
-- Actual Codex conversation or task history
-- Git commits that correspond to the sessions
-- Before/after screenshots
-- Build or test output
-- Notes showing human review rather than unverified generation

@@ -2,7 +2,7 @@ import { brand } from '../data/brand'
 import type { CaseRecord, ReportDraft } from '../types'
 
 const DRAFT_KEY = 'rakshak-report-draft-v1'
-const CASES_KEY = 'rakshak-demo-cases-v1'
+const CASES_KEY = 'rakshak-cases-v1'
 
 export const emptyDraft: ReportDraft = {
   incidentType: '',
@@ -82,16 +82,16 @@ export function findCase(caseId: string): CaseRecord | undefined {
   return loadCases().find((item) => item.caseId.toLowerCase() === caseId.toLowerCase())
 }
 
-export const defaultDemoCase: CaseRecord = {
+export const defaultCase: CaseRecord = {
   caseId: `${brand.casePrefix}-84019`,
   createdAt: '24 August 2026, 18:42',
   incidentType: 'financial',
   state: 'Karnataka',
-  description: 'Synthetic demo complaint: fake customer-care UPI collection request.',
+  description: 'Fake customer-care UPI collection request.',
   anonymous: false,
   progress: 68,
   statusLabel: 'Under review by state cyber cell',
-  assignedUnit: 'Demo Cyber Cell — Bengaluru Urban',
+  assignedUnit: 'Cyber Crime Cell — Bengaluru Urban',
   timeline: [
     {
       label: 'Complaint submitted',

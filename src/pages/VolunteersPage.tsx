@@ -18,7 +18,6 @@ export function VolunteersPage() {
         eyebrow={t('volunteers.eyebrow')}
         title={t('volunteers.title')}
         description={t('volunteers.description')}
-        aside={t('volunteers.aside')}
       />
 
       <section className="page-shell page-section pt-0">

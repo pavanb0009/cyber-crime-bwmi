@@ -68,7 +68,6 @@ export function LearnPage() {
         eyebrow={t('learn.eyebrow')}
         title={t('learn.title')}
         description={t('learn.description')}
-        aside={t('learn.aside')}
       />
 
       <section id="safety" className="page-shell scroll-mt-24">
@@ -249,7 +248,7 @@ export function LearnPage() {
               <button type="button" onClick={() => setAnswers(scamQuestions.map(() => false))} className="mt-3 w-full text-center text-xs font-semibold text-muted hover:text-paper">Reset checklist</button>
             </div>
 
-            <p className="mt-5 text-sm leading-6 text-muted">For immediate physical danger, contact local emergency services. This prototype is not a substitute for professional or legal advice.</p>
+            <p className="mt-5 text-sm leading-6 text-muted">For immediate physical danger, contact local emergency services.</p>
           </aside>
         </div>
       </section>

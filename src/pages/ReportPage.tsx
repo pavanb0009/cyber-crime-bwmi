@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Clock3,
   Download,
-  FileCheck2,
   Plus,
   ShieldCheck,
   Trash2,
@@ -29,13 +28,6 @@ import {
   saveDraft,
 } from '../lib/storage'
 import type { CaseRecord, IncidentTypeId, ReportDraft } from '../types'
-
-const steps = [
-  { id: 1, label: 'What happened', short: 'Incident' },
-  { id: 2, label: 'Tell us the details', short: 'Details' },
-  { id: 3, label: 'Add evidence', short: 'Evidence' },
-  { id: 4, label: 'Review and submit', short: 'Review' },
-]
 
 function makeCaseId(): string {
   const number = Math.floor(10000 + Math.random() * 89999)
@@ -73,8 +65,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 function SuccessView({ record }: { record: CaseRecord }) {
   function downloadAcknowledgement() {
     const content = [
-      `${brand.name.toUpperCase()} — DEMO ACKNOWLEDGEMENT`,
-      `${brand.disclaimer} No government system was contacted.`,
+      `${brand.name.toUpperCase()} — ACKNOWLEDGEMENT`,
       '',
       `Reference: ${record.caseId}`,
       `Created: ${record.createdAt}`,
@@ -82,7 +73,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
       `State: ${record.state}`,
       `Incident type: ${record.incidentType}`,
       '',
-      'Keep this fictional reference to test the Track Complaint journey.',
+      'Keep this reference to track your complaint.',
     ].join('\n')
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -100,23 +91,23 @@ function SuccessView({ record }: { record: CaseRecord }) {
       className="card overflow-hidden"
     >
       <div className="bg-brand px-6 py-8 text-ink sm:px-8 sm:py-10">
-        <p className="eyebrow text-white/70">Demo complaint created</p>
+        <p className="eyebrow text-white/70">Complaint registered</p>
         <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
           You now have a clear next step.
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">
-          This is a synthetic acknowledgement for the prototype. No live portal, police system, bank or government service was contacted.
+          Save your acknowledgement number. You can check the status any time from Track.
         </p>
       </div>
 
       <div className="p-5 sm:p-7">
         <div className="surface-soft p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
           <div>
-            <p className="eyebrow">Demo acknowledgement number</p>
+            <p className="eyebrow">Acknowledgement number</p>
             <p className="mt-2 break-all font-mono text-xl font-bold text-brand sm:text-2xl">{record.caseId}</p>
           </div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/[0.12] bg-white px-3 py-2 text-xs font-semibold text-paper sm:mt-0">
-            <Clock3 className="h-3.5 w-3.5" /> Initial triage simulated
+            <Clock3 className="h-3.5 w-3.5" /> Initial triage in progress
           </div>
         </div>
 
@@ -135,7 +126,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link to={`/track?case=${encodeURIComponent(record.caseId)}`} className={buttonStyles('primary', 'lg')}>
-            Track this demo case <ArrowRight className="h-4 w-4" />
+            Track this complaint <ArrowRight className="h-4 w-4" />
           </Link>
           <Button variant="secondary" size="lg" onClick={downloadAcknowledgement}>
             <Download className="h-4 w-4" /> Download acknowledgement
@@ -217,15 +208,15 @@ export function ReportPage() {
     }
     if (step === 4) {
       if (!draft.anonymous) {
-        if (draft.fullName.trim().length < 2) nextErrors.fullName = 'Add a fictional demo name.'
+        if (draft.fullName.trim().length < 2) nextErrors.fullName = 'Enter your full name.'
         if (!/^\d{10}$/.test(draft.mobile.replace(/\s/g, ''))) {
-          nextErrors.mobile = 'Use a 10-digit fictional demo number.'
+          nextErrors.mobile = 'Enter a 10-digit mobile number.'
         }
       }
       if (draft.email && !/^\S+@\S+\.\S+$/.test(draft.email)) {
-        nextErrors.email = 'Use a valid fictional email format.'
+        nextErrors.email = 'Enter a valid email address.'
       }
-      if (!draft.consent) nextErrors.consent = 'Confirm the prototype and synthetic-data notice.'
+      if (!draft.consent) nextErrors.consent = 'Confirm the declaration to continue.'
     }
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -253,28 +244,6 @@ export function ReportPage() {
     update('evidenceNames', names)
   }
 
-  function addDemoEvidence() {
-    update('evidenceNames', Array.from(new Set([...draft.evidenceNames, 'upi-transaction-demo.png', 'chat-timeline-demo.pdf'])))
-    setFileError('')
-  }
-
-  function fillDemoDetails() {
-    const now = new Date()
-    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
-    setDraft((current) => ({
-      ...current,
-      occurredAt: local,
-      state: current.state || 'Karnataka',
-      channel: current.channel || (current.incidentType === 'financial' ? 'UPI / payment app' : 'WhatsApp / Telegram'),
-      amount: current.incidentType === 'financial' ? '24,500' : current.amount,
-      transactionId: current.incidentType === 'financial' ? 'DEMO-UPI-84019' : current.transactionId,
-      description:
-        current.incidentType === 'financial'
-          ? 'A caller claiming to be customer support asked me to approve a UPI collect request for a refund. The payment was debited after I approved it.'
-          : 'A fictional demo incident occurred through repeated messages from an unknown account. I saved the profile URL, timestamps and screenshots before blocking it.',
-    }))
-  }
-
   async function submitReport() {
     if (!validateCurrentStep() || !draft.incidentType) return
     setSubmitting(true)
@@ -293,11 +262,11 @@ export function ReportPage() {
       anonymous: draft.anonymous,
       progress: 22,
       statusLabel: 'Complaint received — initial triage',
-      assignedUnit: 'Assignment pending (demo)',
+      assignedUnit: 'Assignment pending',
       timeline: [
         {
           label: 'Complaint submitted',
-          detail: `${draft.evidenceNames.length} evidence item${draft.evidenceNames.length === 1 ? '' : 's'} included in the demo package.`,
+          detail: `${draft.evidenceNames.length} evidence item${draft.evidenceNames.length === 1 ? '' : 's'} included with the complaint.`,
           timestamp: createdAt,
           status: 'done',
         },
@@ -309,13 +278,13 @@ export function ReportPage() {
         },
         {
           label: 'Jurisdiction assignment',
-          detail: 'The relevant cyber cell would receive the case next.',
+          detail: 'The relevant cyber cell receives the case next.',
           timestamp: 'Pending',
           status: 'pending',
         },
         {
           label: 'Officer review',
-          detail: 'Evidence review would begin after assignment.',
+          detail: 'Evidence review begins after assignment.',
           timestamp: 'Pending',
           status: 'pending',
         },
@@ -344,7 +313,6 @@ export function ReportPage() {
         eyebrow={t('report.eyebrow')}
         title={t('report.title')}
         description={t('report.description')}
-        aside={t('report.aside')}
       />
 
       <section className="page-shell pb-4">
@@ -477,15 +445,10 @@ export function ReportPage() {
 
                   {step === 2 ? (
                     <motion.div key="step-2" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <p className="eyebrow">Step 2 of 4</p>
-                          <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step2Title')}</h2>
-                          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Approximate details are okay. Focus on who contacted you, what they asked, and what happened next.</p>
-                        </div>
-                        <Button type="button" variant="secondary" size="sm" onClick={fillDemoDetails} className="shrink-0">
-                          <FileCheck2 className="h-4 w-4" /> Use demo details
-                        </Button>
+                      <div>
+                        <p className="eyebrow">{t('report.stepOf', { n: 2 })}</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step2Title')}</h2>
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{t('report.step2Help')}</p>
                       </div>
 
                       <div className="mt-7 grid gap-5 sm:grid-cols-2">
@@ -535,7 +498,7 @@ export function ReportPage() {
                             </div>
                             <div>
                               <label className="field-label" htmlFor="transactionId">Transaction ID <span className="font-normal text-muted">(optional)</span></label>
-                              <input id="transactionId" value={draft.transactionId} onChange={(event) => update('transactionId', event.target.value)} className="text-field" placeholder="DEMO-UPI-84019" />
+                              <input id="transactionId" value={draft.transactionId} onChange={(event) => update('transactionId', event.target.value)} className="text-field" placeholder="412345678901" />
                             </div>
                           </>
                         ) : null}
@@ -561,9 +524,9 @@ export function ReportPage() {
 
                   {step === 3 ? (
                     <motion.div key="step-3" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <p className="eyebrow">Step 3 of 4</p>
-                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">Preserve the proof, not the clutter.</h2>
-                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add screenshots, transaction receipts, chat exports or a short document. The prototype stores file names only.</p>
+                      <p className="eyebrow">{t('report.stepOf', { n: 3 })}</p>
+                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step3Title')}</h2>
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add screenshots, transaction receipts, chat exports or a short document.</p>
 
                       <div
                         className="mt-6 rounded-2xl border border-dashed border-black/[0.18] bg-mist p-7 text-center transition hover:border-brand hover:bg-brand/[0.03] sm:p-10"
@@ -575,12 +538,9 @@ export function ReportPage() {
                       >
                         <h3 className="text-lg font-semibold text-paper">Drop evidence here</h3>
                         <p className="mt-2 text-sm text-muted">PNG, JPG, PDF or text · up to 5 MB each · maximum 6 items</p>
-                        <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
+                        <div className="mt-5 flex justify-center">
                           <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
                             <Plus className="h-4 w-4" /> Choose files
-                          </Button>
-                          <Button type="button" variant="ghost" size="sm" onClick={addDemoEvidence}>
-                            Add demo evidence
                           </Button>
                         </div>
                         <input
@@ -601,7 +561,7 @@ export function ReportPage() {
                               <div className="flex min-w-0 items-center gap-3">
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-paper">{name}</p>
-                                  <p className="mt-0.5 font-mono text-[0.57rem] uppercase tracking-[0.12em] text-muted">Stored locally · demo only</p>
+                                  <p className="mt-0.5 font-mono text-[0.57rem] uppercase tracking-[0.12em] text-muted">Attached</p>
                                 </div>
                               </div>
                               <button
@@ -634,20 +594,20 @@ export function ReportPage() {
 
                   {step === 4 ? (
                     <motion.div key="step-4" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <p className="eyebrow">Step 4 of 4</p>
-                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">Review once. Submit with confidence.</h2>
-                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">This final screen makes the privacy boundary and every submitted detail visible before the action.</p>
+                      <p className="eyebrow">{t('report.stepOf', { n: 4 })}</p>
+                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step4Title')}</h2>
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Check every detail once before you submit.</p>
 
                       {!draft.anonymous ? (
                         <div className="mt-6 rounded-2xl border border-black/[0.08] p-5 sm:p-6">
                           <div className="mb-5">
-                            <h3 className="text-base font-semibold text-paper">Fictional demo contact</h3>
-                            <p className="mt-0.5 text-xs text-muted">Used only to complete the prototype journey.</p>
+                            <h3 className="text-base font-semibold text-paper">Your contact details</h3>
+                            <p className="mt-0.5 text-xs text-muted">Used to send updates on this complaint.</p>
                           </div>
                           <div className="grid gap-5 sm:grid-cols-2">
                             <div>
                               <label className="field-label" htmlFor="fullName">Full name</label>
-                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className="text-field" placeholder="Aarav Demo" />
+                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className="text-field" placeholder="Your full name" />
                               <FieldError>{errors.fullName}</FieldError>
                             </div>
                             <div>
@@ -665,7 +625,7 @@ export function ReportPage() {
                       ) : (
                         <div className="mt-6 rounded-xl border border-black/[0.08] p-5">
                           <p className="text-sm font-medium text-paper">Anonymous reporting selected</p>
-                          <p className="mt-1 text-sm leading-6 text-muted">No name, mobile number or email will be included in this demo record.</p>
+                          <p className="mt-1 text-sm leading-6 text-muted">No name, mobile number or email will be included with this complaint.</p>
                         </div>
                       )}
 
@@ -691,8 +651,8 @@ export function ReportPage() {
                           className="mt-1 h-4 w-4 accent-brand"
                         />
                         <span>
-                          <span className="block text-sm font-semibold text-paper">I understand this is an independent prototype using synthetic data.</span>
-                          <span className="mt-1 block text-xs leading-5 text-muted">Submitting creates a local demo record only. It is not a complaint to the Government of India or any police authority.</span>
+                          <span className="block text-sm font-semibold text-paper">I confirm the details in this complaint are true to the best of my knowledge.</span>
+                          <span className="mt-1 block text-xs leading-5 text-muted">False information may delay the investigation of this complaint.</span>
                         </span>
                       </label>
                       <FieldError>{errors.consent}</FieldError>
@@ -710,7 +670,7 @@ export function ReportPage() {
                     </Button>
                   ) : (
                     <Button size="lg" onClick={submitReport} loading={submitting}>
-                      <ShieldCheck className="h-4 w-4" /> Create demo complaint
+                      <ShieldCheck className="h-4 w-4" /> Submit complaint
                     </Button>
                   )}
                 </div>
@@ -731,11 +691,11 @@ export function ReportPage() {
               </div>
 
               <div className="surface-soft p-5">
-                <p className="text-sm font-medium text-paper">What stays private</p>
+                <p className="text-sm font-medium text-paper">What to include</p>
                 <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
-                  <li>No API calls or live government integration.</li>
-                  <li>File contents never leave this device.</li>
-                  <li>Drafts use browser storage only.</li>
+                  <li>What happened, in the order it happened.</li>
+                  <li>Screenshots, receipts and chat exports.</li>
+                  <li>Never add passwords, PINs or OTPs.</li>
                 </ul>
               </div>
 
@@ -750,9 +710,6 @@ export function ReportPage() {
                 </a>
               </div>
 
-              <div className="rounded-2xl border border-black/[0.07] p-4">
-                <p className="text-sm leading-6 text-muted">In production, OTP, identity verification, jurisdiction routing and police-system handoff would require approved secure integrations.</p>
-              </div>
             </aside>
           </div>
         )}
