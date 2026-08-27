@@ -203,3 +203,63 @@ export interface CopilotResult {
   signals: string[]
   route: 'Emergency financial flow' | 'Standard report'
 }
+
+export type CallRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+
+export interface CallTranscriptSegment {
+  start: number
+  end: number
+  text: string
+  // Added by the AI layer. Present when the backend returns enriched segments.
+  original_text?: string
+  english_text?: string
+  signals?: string[]
+}
+
+export interface CallSignal {
+  id: string
+  label: string
+  detected: boolean
+  weight: number
+}
+
+export interface CallEvidence extends CallTranscriptSegment {
+  signal: string
+  signal_label: string
+}
+
+export interface CallThreat {
+  type: string
+  severity: number
+  evidence: string
+  explanation?: string
+}
+
+export interface CallAnalysisResponse {
+  file_name: string
+  language: string
+  language_probability: number
+  duration: number
+  transcript: string
+  // New fields from the AI layer. Optional so older responses still type-check.
+  original_transcript?: string
+  english_transcript?: string
+  segments: CallTranscriptSegment[]
+  analysis: {
+    engine?: 'ai+rules' | 'rules'
+    scam_type: string
+    scam_label: string
+    // "How strongly does this resemble a scam" vs "how dangerous is it right now".
+    scam_likelihood?: number
+    risk_score: number
+    risk_level: CallRiskLevel
+    confidence?: number
+    summary?: string
+    recommended_action: 'HANG_UP_NOW' | 'VERIFY_INDEPENDENTLY' | 'STAY_ALERT'
+    signals: CallSignal[]
+    threats?: CallThreat[]
+    evidence: CallEvidence[]
+    recommended_actions: string[]
+    disclaimer: string
+  }
+}

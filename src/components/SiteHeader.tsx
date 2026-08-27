@@ -11,6 +11,7 @@ const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/report', label: 'Report' },
   { to: '/check', label: 'Check' },
+  { to: '/call-scanner', label: 'Call scan' },
   { to: '/track', label: 'Track' },
   { to: '/learn', label: 'Help' },
   { to: '/volunteers', label: 'Volunteers' },
@@ -30,7 +31,7 @@ export function SiteHeader() {
       <div className="page-shell grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4">
         <BrandMark />
 
-        <nav className="hidden items-center justify-center gap-7 lg:flex" aria-label="Primary navigation">
+        <nav className="hidden items-center justify-center gap-5 lg:flex" aria-label="Primary navigation">
           {navLinks.map((link) => (
             <NavLink
               key={link.to}

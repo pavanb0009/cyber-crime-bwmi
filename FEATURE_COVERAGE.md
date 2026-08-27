@@ -20,6 +20,7 @@ This rebuild is additive. Existing routes, hero assets, incident cards, Learn, V
 14. Smart Evidence Assistant — extracted demo fields + evidence completeness score + missing evidence.
 15. Automatic incident timeline generated from the structured complaint.
 16. Bank Account Freeze / Lien Help — separate optional support flow inside Track.
+17. Open-source call scanner — local Hindi/English/Hinglish transcription, timestamped suspicious phrases, bilingual scam-signal rules and explainable risk scoring.
 
 ## Existing UI retained
 
@@ -36,4 +37,4 @@ This rebuild is additive. Existing routes, hero assets, incident cards, Learn, V
 
 ## Prototype boundary
 
-All police/bank/1930 actions are explicitly simulated. There are no live integrations. Local evidence analysis is deterministic and does not upload file contents.
+All police/bank/1930 actions are explicitly simulated, with no external government or banking integrations. Report and screenshot evidence remains browser-local and deterministic. Call recordings are sent only to the separately started local FastAPI service, where faster-whisper transcribes them and the bilingual rule engine scores scam signals; no paid or cloud AI API is used.
