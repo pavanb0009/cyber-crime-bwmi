@@ -6,43 +6,25 @@ import { buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { safetyGuides } from '../data/content'
 import { cx } from '../lib/cx'
-
-const categories = ['All', 'Money', 'Accounts', 'Harassment', 'Family', 'General'] as const
-
-const quickActions = [
-  {
-    title: 'Money moved',
-    action: 'Call 1930 first',
-    detail: 'Then contact your bank or payment provider.',
-    href: 'tel:1930',
-    external: true,
-  },
-  {
-    title: 'Account taken over',
-    action: 'Secure access',
-    detail: 'Change passwords from a trusted device and sign out other sessions.',
-    href: '/report?type=account',
-    external: false,
-  },
-  {
-    title: 'Threats or harassment',
-    action: 'Preserve evidence',
-    detail: 'Save links, timestamps and messages before blocking.',
-    href: '/report?type=harassment',
-    external: false,
-  },
-]
-
-const scamQuestions = [
-  'Are you being pressured to act immediately?',
-  'Were you asked for an OTP, PIN or screen access?',
-  'Does the payment go to a personal or unfamiliar UPI ID?',
-  'Are you promised a guaranteed refund, reward or return?',
-  'Do they avoid verification through an official channel?',
-]
+import { useTranslation } from 'react-i18next'
 
 export function LearnPage() {
-  const [category, setCategory] = useState<(typeof categories)[number]>('All')
+  const { t } = useTranslation(['pages', 'common'])
+  const categories = [
+    { id: 'All', label: t('learn.all') },
+    { id: 'Money', label: t('learn.catMoney') },
+    { id: 'Accounts', label: t('learn.catAccounts') },
+    { id: 'Harassment', label: t('learn.catHarassment') },
+    { id: 'Family', label: t('learn.catFamily') },
+    { id: 'General', label: t('learn.catGeneral') },
+  ] as const
+  const quickActions = [
+    { title: t('learn.money'), action: t('learn.moneyAction'), detail: t('learn.moneyDetail'), href: 'tel:1930', external: true },
+    { title: t('learn.account'), action: t('learn.accountAction'), detail: t('learn.accountDetail'), href: '/report?type=account', external: false },
+    { title: t('learn.threat'), action: t('learn.threatAction'), detail: t('learn.threatDetail'), href: '/report?type=harassment', external: false },
+  ]
+  const scamQuestions = [t('learn.q1'), t('learn.q2'), t('learn.q3'), t('learn.q4'), t('learn.q5')]
+  const [category, setCategory] = useState<(typeof categories)[number]['id']>('All')
   const [query, setQuery] = useState('')
   const [openGuide, setOpenGuide] = useState<string | null>(safetyGuides[0].id)
   const [answers, setAnswers] = useState<boolean[]>(scamQuestions.map(() => false))
@@ -64,29 +46,29 @@ export function LearnPage() {
   const assessment =
     score >= 3
       ? {
-          title: 'Stop. Strong scam signals are present.',
-          detail: 'Do not pay, approve a request, share access or continue the conversation. Verify independently and report suspicious identifiers.',
+          title: t('learn.strongTitle'),
+          detail: t('learn.strongDetail'),
           tone: 'solid',
         }
       : score >= 1
         ? {
-            title: 'Pause and verify independently.',
-            detail: 'One signal can be enough to justify caution. Open the official service directly or call a trusted number you already know.',
-            tone: 'filled',
-          }
+          title: t('learn.pauseTitle'),
+          detail: t('learn.pauseDetail'),
+          tone: 'filled',
+        }
         : {
-            title: 'No selected warning signals — still verify.',
-            detail: 'This checklist cannot certify safety. Check the identifier and use an independent trusted channel before acting.',
-            tone: 'outline',
-          }
+          title: t('learn.noneTitle'),
+          detail: t('learn.noneDetail'),
+          tone: 'outline',
+        }
 
   return (
     <>
       <PageIntro
-        eyebrow="Learning corner"
-        title="Safety advice for the next five minutes."
-        description="Long awareness pages become short, situation-based playbooks: what to do now, what evidence to keep, and what never to share."
-        aside="Clear language, no shame, and an action in every section."
+        eyebrow={t('learn.eyebrow')}
+        title={t('learn.title')}
+        description={t('learn.description')}
+        aside={t('learn.aside')}
       />
 
       <section id="safety" className="page-shell scroll-mt-24">
@@ -114,10 +96,10 @@ export function LearnPage() {
           <div>
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Situation playbooks</p>
-                <h2 className="section-title mt-2">Find the right guide.</h2>
+                <p className="eyebrow">{t('learn.playbooks')}</p>
+                <h2 className="section-title mt-2">{t('learn.findGuide')}</h2>
               </div>
-              <span className="text-sm text-muted">{filteredGuides.length} results</span>
+              <span className="text-sm text-muted">{t('learn.results', { count: filteredGuides.length })}</span>
             </div>
 
             <div className="surface p-4 sm:p-5">
@@ -137,17 +119,17 @@ export function LearnPage() {
               <div className="mt-3 flex gap-4 overflow-x-auto border-b border-black/[0.08]">
                 {categories.map((item) => (
                   <button
-                    key={item}
+                    key={item.id}
                     type="button"
-                    onClick={() => setCategory(item)}
+                    onClick={() => setCategory(item.id)}
                     className={cx(
                       '-mb-px shrink-0 border-b-2 py-2 text-sm transition',
-                      category === item
+                      category === item.id
                         ? 'border-brand font-semibold text-brand'
                         : 'border-transparent text-muted hover:text-paper',
                     )}
                   >
-                    {item}
+                    {item.label}
                   </button>
                 ))}
               </div>
@@ -174,7 +156,7 @@ export function LearnPage() {
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{guide.summary}</p>
                       </div>
                       <span className={cx('mt-1 shrink-0 text-sm text-muted', open && 'text-paper')}>
-                        {open ? 'Close' : 'Open'}
+                        {open ? t('actions.close', { ns: 'common' }) : t('actions.open', { ns: 'common' })}
                       </span>
                     </button>
                     <AnimatePresence initial={false}>
@@ -209,10 +191,10 @@ export function LearnPage() {
           <aside id="awareness" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
             <div className="card p-5 sm:p-6">
               <div>
-                <p className="eyebrow">60-second check</p>
-                <h2 className="section-title mt-2">Does this feel like a scam?</h2>
+                <p className="eyebrow">{t('learn.scamCheck')}</p>
+                <h2 className="section-title mt-2">{t('learn.scamTitle')}</h2>
               </div>
-              <p className="mt-3 text-sm leading-6 text-muted">Select every signal that is present. This is guidance, not a safety certificate.</p>
+              <p className="mt-3 text-sm leading-6 text-muted">{t('learn.scamHelp')}</p>
 
               <div className="mt-6 space-y-2">
                 {scamQuestions.map((question, index) => (

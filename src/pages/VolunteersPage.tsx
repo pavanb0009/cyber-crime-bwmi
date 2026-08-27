@@ -1,34 +1,24 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { PageIntro } from '../components/PageIntro'
 import { buttonStyles } from '../components/Button'
 import { cx } from '../lib/cx'
 
-const roles = [
-  {
-    title: 'Cyber awareness promoter',
-    description:
-      'Run local awareness sessions on fraud patterns, safe payments and how to preserve evidence.',
-  },
-  {
-    title: 'Cyber volunteer — unlawful content flagger',
-    description:
-      'Flag harmful or unlawful content you come across so the right unit can review it.',
-  },
-  {
-    title: 'Cyber expert',
-    description:
-      'Support investigations with skills in forensics, malware analysis, networks or cryptography.',
-  },
-]
-
 export function VolunteersPage() {
+  const { t } = useTranslation('pages')
+  const roles = [
+    { title: t('volunteers.r1'), description: t('volunteers.r1d') },
+    { title: t('volunteers.r2'), description: t('volunteers.r2d') },
+    { title: t('volunteers.r3'), description: t('volunteers.r3d') },
+  ]
+
   return (
     <>
       <PageIntro
-        eyebrow="Cyber volunteers"
-        title="Help your neighbourhood stay safer online."
-        description="This prototype shows how a volunteer programme could be presented: clear roles, honest expectations and no access to complaint data."
-        aside="Volunteers support awareness and flagging. They never handle complaints."
+        eyebrow={t('volunteers.eyebrow')}
+        title={t('volunteers.title')}
+        description={t('volunteers.description')}
+        aside={t('volunteers.aside')}
       />
 
       <section className="page-shell page-section pt-0">
@@ -42,18 +32,18 @@ export function VolunteersPage() {
         </div>
 
         <div className="surface-soft mt-4 p-5 sm:p-7">
-          <p className="eyebrow">Before you apply</p>
+          <p className="eyebrow">{t('volunteers.before')}</p>
           <ul className="mt-4 grid gap-3 text-sm leading-6 text-paper">
-            <li>Volunteers never receive complainant details, case files or investigation access.</li>
-            <li>Registration in a real programme requires identity verification by the state nodal officer.</li>
-            <li>This page is part of an independent prototype, so no application is submitted anywhere.</li>
+            <li>{t('volunteers.b1')}</li>
+            <li>{t('volunteers.b2')}</li>
+            <li>{t('volunteers.b3')}</li>
           </ul>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/learn" className={cx(buttonStyles('primary', 'lg'))}>
-              Read the safety library
+              {t('volunteers.safetyLibrary')}
             </Link>
             <Link to="/contact" className={cx(buttonStyles('secondary', 'lg'))}>
-              Contact the team
+              {t('volunteers.contactTeam')}
             </Link>
           </div>
         </div>

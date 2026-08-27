@@ -1,10 +1,18 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from './Footer'
 import { SiteHeader } from './SiteHeader'
 
 export function Layout() {
   const location = useLocation()
+  const { t } = useTranslation(['common', 'pages'])
+
+  useEffect(() => {
+    document.title = t('meta.title')
+    const description = document.querySelector('meta[name="description"]')
+    if (description) description.setAttribute('content', t('meta.description'))
+  }, [t])
 
   useEffect(() => {
     if (location.hash) {
@@ -30,7 +38,7 @@ export function Layout() {
         href="tel:1930"
         className="fixed inset-x-4 bottom-4 z-40 flex h-12 items-center justify-center rounded-xl bg-alert text-sm font-semibold text-ink shadow-soft sm:hidden"
       >
-        Financial fraud? Call 1930
+        {t('helpline.financial', { number: '1930' })}
       </a>
     </div>
   )

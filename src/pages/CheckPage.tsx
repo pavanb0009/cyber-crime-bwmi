@@ -1,28 +1,12 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  AlertTriangle,
-  ArrowRight,
-  FileImage,
-  Link2,
-  ScanSearch,
-  ShieldAlert,
-  Sparkles,
-  Upload,
-} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { demoSuspectResults, identifierConfig } from '../data/content'
 import { cx } from '../lib/cx'
 import type { IdentifierType, SuspectResult } from '../types'
-
-const identifierTypes: Array<{ id: IdentifierType; label: string }> = [
-  { id: 'phone', label: 'Phone' },
-  { id: 'upi', label: 'UPI ID' },
-  { id: 'email', label: 'Email' },
-  { id: 'url', label: 'Website' },
-]
+import { useTranslation } from 'react-i18next'
 
 function normalise(type: IdentifierType, value: string): string {
   const trimmed = value.trim().toLowerCase()
@@ -51,14 +35,10 @@ function validate(type: IdentifierType, value: string): string {
 function clearResult(type: IdentifierType): SuspectResult {
   return {
     risk: 'clear',
-    score: 18,
     title: 'No matching report in the demo repository',
     summary: `This synthetic ${identifierConfig[type].label.toLowerCase()} is not present in the small demo dataset. That is not proof that it is safe.`,
     reports: 0,
     firstSeen: null,
-    lastSeen: null,
-    pattern: 'No exact synthetic match',
-    related: [],
     signals: ['No exact demo match', 'Repository coverage is intentionally limited', 'Scammers change identifiers quickly'],
     nextSteps: ['Verify through another trusted channel', 'Do not share OTPs, PINs or screen access', 'Report anything suspicious or harmful'],
   }
@@ -66,113 +46,42 @@ function clearResult(type: IdentifierType): SuspectResult {
 
 const riskStyles = {
   high: {
-    label: 'High risk',
-    panel: 'border-alert/40 bg-alert/[0.055]',
-    badge: 'bg-alert text-white',
-    meter: 'bg-alert',
+    labelKey: 'check.highRisk' as const,
+    panel: 'border-alert bg-alert',
+    title: 'text-ink',
+    body: 'text-white/75',
+    badge: 'bg-white text-alert',
   },
   medium: {
-    label: 'Use caution',
-    panel: 'border-[#d97706]/30 bg-[#d97706]/[0.045]',
-    badge: 'bg-[#d97706] text-white',
-    meter: 'bg-[#d97706]',
+    labelKey: 'check.caution' as const,
+    panel: 'border-alert/30 bg-alert/[0.05]',
+    title: 'text-paper',
+    body: 'text-muted',
+    badge: 'bg-alert text-ink',
   },
   clear: {
-    label: 'No demo match',
-    panel: 'border-brand/25 bg-brand/[0.035]',
-    badge: 'bg-brand text-white',
-    meter: 'bg-brand',
+    labelKey: 'check.noMatch' as const,
+    panel: 'border-brand/30 bg-brand/[0.04]',
+    title: 'text-paper',
+    body: 'text-muted',
+    badge: 'bg-brand text-ink',
   },
-}
-
-function RiskResult({ result, checkedValue }: { result: SuspectResult; checkedValue: string }) {
-  const style = riskStyles[result.risk]
-  const suspectParam = encodeURIComponent(checkedValue)
-  return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-      <div className={cx('rounded-2xl border p-5 sm:p-6', style.panel)}>
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <span className={cx('inline-flex rounded-full px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.1em]', style.badge)}>
-              {style.label}
-            </span>
-            <h3 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{result.title}</h3>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{result.summary}</p>
-          </div>
-          <div className="shrink-0 rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm">
-            <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted">Risk score</p>
-            <p className="mt-1 text-3xl font-bold tracking-[-0.04em] text-paper">{result.score ?? 50}<span className="text-sm font-medium text-muted">/100</span></p>
-          </div>
-        </div>
-        <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-black/[0.08]">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${result.score ?? 50}%` }} className={cx('h-full rounded-full', style.meter)} />
-        </div>
-        <div className="mt-4 grid gap-2 text-xs text-muted sm:grid-cols-2 lg:grid-cols-4">
-          <p><span className="font-semibold text-paper">Checked:</span> {checkedValue}</p>
-          <p><span className="font-semibold text-paper">Reports:</span> {result.reports ?? '—'} simulated</p>
-          <p><span className="font-semibold text-paper">First:</span> {result.firstSeen ?? '—'}</p>
-          <p><span className="font-semibold text-paper">Last:</span> {result.lastSeen ?? '—'}</p>
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <div className="surface-soft p-5">
-          <p className="eyebrow">Threat intelligence</p>
-          <p className="mt-2 text-sm font-semibold text-paper">{result.pattern ?? 'Pattern not established'}</p>
-          <ul className="mt-4 space-y-2">
-            {result.signals.map((signal) => (
-              <li key={signal} className="flex gap-2 text-sm leading-6 text-muted">
-                <ShieldAlert className="mt-1 h-4 w-4 shrink-0 text-alert" /> {signal}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="surface p-5">
-          <p className="eyebrow">Related identifiers</p>
-          {result.related?.length ? (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {result.related.map((item) => (
-                <span key={item} className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.08] bg-mist px-2.5 py-1.5 font-mono text-[0.68rem] text-paper">
-                  <Link2 className="h-3 w-3 text-brand" /> {item}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-3 text-sm leading-6 text-muted">No linked synthetic identifiers in this demo result.</p>
-          )}
-          <p className="eyebrow mt-5">Recommended now</p>
-          <ol className="mt-3 space-y-2">
-            {result.nextSteps.map((step, index) => (
-              <li key={step} className="flex gap-2 text-sm leading-6 text-muted"><span className="font-mono text-xs font-bold text-brand">0{index + 1}</span>{step}</li>
-            ))}
-          </ol>
-        </div>
-      </div>
-
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <Link to={`/report?type=suspicious-content&suspect=${suspectParam}`} className={buttonStyles('secondary', 'lg')}>
-          Report this identifier
-        </Link>
-        <Link to={`/report?type=financial&mode=emergency&suspect=${suspectParam}`} className={buttonStyles('danger', 'lg')}>
-          I already paid <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-    </motion.div>
-  )
 }
 
 export function CheckPage() {
-  const [mode, setMode] = useState<'identifier' | 'screenshot'>('identifier')
+  const { t } = useTranslation('pages')
+  const identifierTypes: Array<{ id: IdentifierType; label: string }> = [
+    { id: 'phone', label: t('check.phone') },
+    { id: 'upi', label: t('check.upi') },
+    { id: 'email', label: t('check.email') },
+    { id: 'url', label: t('check.website') },
+  ]
   const [type, setType] = useState<IdentifierType>('phone')
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SuspectResult | null>(null)
   const [checkedValue, setCheckedValue] = useState('')
-  const [scanFile, setScanFile] = useState('')
-  const [scanLoading, setScanLoading] = useState(false)
-  const [scanDone, setScanDone] = useState(false)
-  const fileRef = useRef<HTMLInputElement>(null)
   const config = identifierConfig[type]
 
   async function runCheck(inputValue = value) {
@@ -185,7 +94,7 @@ export function CheckPage() {
     setError('')
     setLoading(true)
     setResult(null)
-    await new Promise((resolve) => window.setTimeout(resolve, 650))
+    await new Promise((resolve) => window.setTimeout(resolve, 720))
     const key = normalise(type, inputValue)
     const matched = demoSuspectResults[type]?.[key]
     setResult(matched ?? clearResult(type))
@@ -201,168 +110,197 @@ export function CheckPage() {
     setCheckedValue('')
   }
 
-  async function scanScreenshot(fileName: string) {
-    setScanFile(fileName)
-    setScanDone(false)
-    setScanLoading(true)
-    await new Promise((resolve) => window.setTimeout(resolve, 900))
-    setScanLoading(false)
-    setScanDone(true)
+  function useExample() {
+    setValue(config.example)
+    setError('')
+    void runCheck(config.example)
   }
 
   return (
     <>
       <PageIntro
-        eyebrow="Check before you trust"
-        title="One place to scan the signal."
-        description="Check a phone, UPI ID, email or website — or run a local demo analysis on a suspicious chat screenshot. Results are synthetic and deterministic for this prototype."
-        aside="No file contents are uploaded. Screenshot analysis is simulated locally for the hackathon demo."
+        eyebrow={t('check.eyebrow')}
+        title={t('check.title')}
+        description={t('check.description')}
+        aside={t('check.aside')}
       />
 
       <section className="page-shell pb-4">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-5 flex rounded-xl border border-black/[0.08] bg-mist p-1">
-            <button type="button" onClick={() => setMode('identifier')} className={cx('flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition', mode === 'identifier' ? 'bg-white text-brand shadow-sm' : 'text-muted hover:text-paper')}>
-              <ScanSearch className="mr-2 inline h-4 w-4" /> Identifier scanner
-            </button>
-            <button type="button" onClick={() => setMode('screenshot')} className={cx('flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition', mode === 'screenshot' ? 'bg-white text-brand shadow-sm' : 'text-muted hover:text-paper')}>
-              <FileImage className="mr-2 inline h-4 w-4" /> Screenshot scanner
-            </button>
-          </div>
-
-          {mode === 'identifier' ? (
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div>
             <div className="card overflow-hidden">
               <div className="border-b border-black/[0.07] p-5 sm:p-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="eyebrow">Synthetic intelligence repository</p>
-                    <h2 className="section-title mt-2">What do you want to check?</h2>
-                  </div>
-                  <span className="pill-badge"><Sparkles className="h-3.5 w-3.5" /> Demo threat intelligence</span>
-                </div>
+                <p className="eyebrow">{t('check.scan')}</p>
+                <h2 className="section-title mt-2">{t('check.whatCheck')}</h2>
 
-                <div className="mt-6 flex gap-5 overflow-x-auto border-b border-black/[0.08]">
+                <div className="mt-6 flex gap-5 border-b border-black/[0.08]">
                   {identifierTypes.map((item) => {
                     const active = type === item.id
                     return (
-                      <button key={item.id} type="button" onClick={() => chooseType(item.id)} className={cx('-mb-px shrink-0 border-b-2 py-2 text-sm transition', active ? 'border-brand font-semibold text-brand' : 'border-transparent text-muted hover:text-paper')}>
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => chooseType(item.id)}
+                        className={cx(
+                          '-mb-px border-b-2 py-2 text-sm transition',
+                          active
+                            ? 'border-brand font-semibold text-brand'
+                            : 'border-transparent text-muted hover:text-paper',
+                        )}
+                      >
                         {item.label}
                       </button>
                     )
                   })}
                 </div>
 
-                <form className="mt-6" onSubmit={(event) => { event.preventDefault(); void runCheck() }}>
+                <form
+                  className="mt-6"
+                  onSubmit={(event) => {
+                    event.preventDefault()
+                    void runCheck()
+                  }}
+                >
                   <label htmlFor="identifier" className="field-label">{config.label}</label>
                   <div className="relative">
-                    <input id="identifier" value={value} inputMode={type === 'phone' ? 'numeric' : 'text'} onChange={(event) => { setValue(event.target.value); setError('') }} className="text-field h-12 pr-24 text-base" placeholder={config.placeholder} autoComplete="off" />
-                    <Button type="submit" size="md" loading={loading} className="absolute right-1 top-1 h-10">Check</Button>
+                    <input
+                      id="identifier"
+                      value={value}
+                      inputMode={type === 'phone' ? 'numeric' : 'text'}
+                      onChange={(event) => {
+                        setValue(event.target.value)
+                        setError('')
+                      }}
+                      className="text-field h-12 pr-24 text-base"
+                      placeholder={config.placeholder}
+                      autoComplete="off"
+                    />
+                    {value ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setValue('')
+                          setResult(null)
+                        }}
+                        className="absolute right-[5.6rem] top-1/2 -translate-y-1/2 text-sm text-muted hover:text-paper"
+                        aria-label="Clear input"
+                      >
+                        Clear
+                      </button>
+                    ) : null}
+                    <Button type="submit" size="md" loading={loading} className="absolute right-1 top-1 h-10">
+                      Check
+                    </Button>
                   </div>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-muted">{config.helper}</p>
-                    <button type="button" onClick={() => { setValue(config.example); setError(''); void runCheck(config.example) }} className="link-accent text-left text-sm">Try flagged demo</button>
+                    <button type="button" onClick={useExample} className="link-accent text-left text-sm">
+                      Try flagged demo
+                    </button>
                   </div>
-                  {error ? <p className="mt-3 text-sm font-semibold text-alert">{error}</p> : null}
+                  {error ? (
+                    <p className="mt-3 text-sm font-semibold text-alert">{error}</p>
+                  ) : null}
                 </form>
               </div>
 
-              <div className="min-h-[26rem] p-5 sm:p-6">
+              <div className="min-h-[22rem] p-5 sm:p-6">
                 <AnimatePresence mode="wait">
                   {loading ? (
-                    <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[18rem] flex-col items-start justify-center">
-                      <div className="scan-line w-full max-w-md" />
-                      <p className="mt-5 text-base font-medium text-paper">Correlating synthetic reports…</p>
-                      <p className="mt-2 max-w-sm text-sm leading-6 text-muted">Checking repeat complaints, identifier relationships and known demo patterns.</p>
+                    <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
+                      <p className="text-base font-medium text-paper">Checking…</p>
+                      <p className="mt-2 max-w-sm text-sm leading-6 text-muted">Comparing the identifier against the local demo repository.</p>
                     </motion.div>
                   ) : result ? (
-                    <RiskResult key={`${result.risk}-${checkedValue}`} result={result} checkedValue={checkedValue} />
+                    <motion.div key={`${result.risk}-${checkedValue}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                      <div className={cx('rounded-2xl border p-5 sm:p-6', riskStyles[result.risk].panel)}>
+                        <span className={cx('inline-flex rounded-full px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.1em]', riskStyles[result.risk].badge)}>
+                          {t(riskStyles[result.risk].labelKey)}
+                        </span>
+                        <h3 className={cx('mt-3 text-xl font-semibold tracking-[-0.02em] sm:text-2xl', riskStyles[result.risk].title)}>{result.title}</h3>
+                        <p className={cx('mt-2 max-w-2xl text-sm leading-6', riskStyles[result.risk].body)}>{result.summary}</p>
+                        <p className={cx('mt-4 text-sm', riskStyles[result.risk].body)}>
+                          Checked: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
+                          {result.reports !== null ? ` · ${result.reports} demo reports · first seen ${result.firstSeen ?? '—'}` : null}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 grid gap-6 md:grid-cols-2">
+                        <div>
+                          <p className="eyebrow">Why this result</p>
+                          <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
+                            {result.signals.map((signal) => (
+                              <li key={signal} className="text-sm leading-6 text-paper">{signal}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="eyebrow">What to do next</p>
+                          <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
+                            {result.nextSteps.map((step) => (
+                              <li key={step} className="text-sm leading-6 text-paper">{step}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex flex-col gap-3 border-t border-black/[0.07] pt-5 sm:flex-row">
+                        <Link
+                          to="/report?type=suspicious-content"
+                          className={buttonStyles(result.risk === 'high' ? 'danger' : 'primary', 'lg')}
+                        >
+                          Report this identifier
+                        </Link>
+                        <Button variant="secondary" size="lg" onClick={() => {
+                          navigator.clipboard?.writeText(checkedValue).catch(() => undefined)
+                        }}>
+                          Copy identifier
+                        </Button>
+                      </div>
+                    </motion.div>
                   ) : (
-                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[18rem] flex-col justify-center">
-                      <ShieldAlert className="h-8 w-8 text-brand" />
-                      <h3 className="mt-4 text-xl font-semibold tracking-[-0.02em] text-paper">Check before you click, trust or pay.</h3>
-                      <p className="mt-2 max-w-lg text-sm leading-6 text-muted">The demo result explains why an identifier is risky, linked synthetic identifiers, and what to do next — not just a red/green label.</p>
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
+                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">Check before you pay, click or reply.</h3>
+                      <p className="mt-2 max-w-md text-sm leading-6 text-muted">Choose an identifier above or use the flagged demo value to see a complete result.</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             </div>
-          ) : (
-            <div className="card overflow-hidden">
-              <div className="border-b border-black/[0.07] p-5 sm:p-6">
-                <p className="eyebrow">Screenshot scam scanner</p>
-                <h2 className="section-title mt-2">Drop a suspicious chat screenshot.</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">For the hackathon, any selected image follows a deterministic synthetic analysis path so the demo is reliable. Nothing leaves this browser.</p>
-              </div>
-              <div className="p-5 sm:p-6">
-                {!scanDone && !scanLoading ? (
-                  <div className="rounded-2xl border border-dashed border-black/[0.18] bg-mist p-8 text-center sm:p-12">
-                    <Upload className="mx-auto h-7 w-7 text-brand" />
-                    <h3 className="mt-4 text-lg font-semibold text-paper">Choose a WhatsApp or Telegram screenshot</h3>
-                    <p className="mt-2 text-sm text-muted">PNG / JPG · local demo analysis only</p>
-                    <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
-                      <Button variant="secondary" onClick={() => fileRef.current?.click()}>Choose screenshot</Button>
-                      <Button variant="ghost" onClick={() => void scanScreenshot('whatsapp-investment-demo.png')}>Use prepared demo</Button>
-                    </div>
-                    <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void scanScreenshot(file.name) }} />
-                  </div>
-                ) : scanLoading ? (
-                  <div className="flex min-h-[20rem] flex-col justify-center">
-                    <div className="scan-line w-full max-w-lg" />
-                    <p className="mt-5 text-base font-semibold text-paper">Reading visible scam signals…</p>
-                    <p className="mt-2 text-sm text-muted">Simulating OCR, identifier extraction and scam classification.</p>
-                  </div>
-                ) : (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                    <div className="rounded-2xl border border-alert/30 bg-alert/[0.045] p-5 sm:p-6">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <span className="inline-flex rounded-full bg-alert px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-white">High risk · 92/100</span>
-                          <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-paper">Suspicious message detected</h3>
-                          <p className="mt-2 text-sm leading-6 text-muted">Likely scam: <span className="font-semibold text-paper">KYC / bank impersonation</span></p>
-                        </div>
-                        <div className="rounded-lg border border-black/[0.08] bg-white px-3 py-2 font-mono text-[0.68rem] text-muted">{scanFile}</div>
-                      </div>
-                    </div>
+          </div>
 
-                    <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_.9fr]">
-                      <div className="surface-soft p-5">
-                        <p className="eyebrow">Extracted automatically · simulated</p>
-                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                          {[
-                            ['Phone', '+91 9876543210'],
-                            ['UPI', 'refunddesk@upi'],
-                            ['URL', 'secure-kyc-update.example'],
-                            ['Platform', 'WhatsApp'],
-                          ].map(([label, data]) => (
-                            <div key={label} className="rounded-xl border border-black/[0.07] bg-white p-3">
-                              <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted">{label}</p>
-                              <p className="mt-1 break-all text-sm font-semibold text-paper">{data}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="surface p-5">
-                        <p className="eyebrow">Detected phrases</p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {['“Account will be blocked”', '“Complete KYC immediately”', 'Urgent payment request'].map((phrase) => <span key={phrase} className="rounded-lg bg-alert/[0.06] px-2.5 py-1.5 text-xs font-medium text-alert">{phrase}</span>)}
-                        </div>
-                        <div className="mt-5 flex gap-2 text-sm leading-6 text-muted">
-                          <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-alert" />
-                          <p>Do not click, do not share OTP/PIN, and verify directly through the bank’s official channel.</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                      <Link to="/report?type=suspicious-content&suspect=secure-kyc-update.example" className={buttonStyles('secondary', 'lg')}>Report this evidence</Link>
-                      <Link to="/report?type=financial&mode=emergency&suspect=refunddesk%40upi" className={buttonStyles('danger', 'lg')}>I already paid <ArrowRight className="h-4 w-4" /></Link>
-                      <Button variant="ghost" size="lg" onClick={() => { setScanDone(false); setScanFile('') }}>Scan another</Button>
-                    </div>
-                  </motion.div>
-                )}
+          <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+            <div className="surface-soft p-5">
+              <p className="eyebrow">Before you trust it</p>
+              <div className="mt-4 space-y-4">
+                {[
+                  ['Verify separately', 'Call a known number or open the service directly.'],
+                  ['Ignore urgency', 'Pressure to act now is a common warning signal.'],
+                  ['Protect control', 'Never share OTPs, PINs or remote screen access.'],
+                ].map(([title, detail]) => (
+                  <div key={title}>
+                    <p className="text-sm font-medium text-paper">{title}</p>
+                    <p className="mt-1 text-sm leading-6 text-muted">{detail}</p>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
+
+            <div className="rounded-2xl bg-alert p-5 text-ink">
+              <p className="text-sm font-semibold">Already lost money?</p>
+              <p className="mt-2 text-xs leading-5 text-white/75">Do not stop at a suspect check. Call 1930 and file a financial-fraud complaint.</p>
+              <a
+                href="tel:1930"
+                className="mt-4 flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"
+              >
+                Call 1930
+              </a>
+            </div>
+
+            <div className="surface-soft p-5">
+              <p className="text-sm leading-6 text-muted">A repository can contain errors and never covers every scam. A clean result cannot certify that an identifier is safe.</p>
+            </div>
+          </aside>
         </div>
       </section>
     </>

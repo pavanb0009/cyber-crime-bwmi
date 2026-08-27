@@ -1,8 +1,12 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import { common } from './common'
+import { pages } from './pages'
 
-export const supportedLocales = ['en', 'hi', 'te', 'ta', 'kn', 'ml', 'mr', 'bn'] as const
+export const supportedLocales = [
+  'en', 'hi', 'te', 'ta', 'kn', 'ml', 'mr', 'bn', 'gu', 'pa', 'ur', 'or', 'as',
+  'ne', 'kok', 'mai', 'brx', 'doi', 'sa', 'sat', 'ks', 'sd', 'mni',
+] as const
 export type AppLocale = (typeof supportedLocales)[number]
 
 export const localeNames: Record<AppLocale, string> = {
@@ -14,20 +18,62 @@ export const localeNames: Record<AppLocale, string> = {
   ml: 'മലയാളം',
   mr: 'मराठी',
   bn: 'বাংলা',
+  gu: 'ગુજરાતી',
+  pa: 'ਪੰਜਾਬੀ',
+  ur: 'اردو',
+  or: 'ଓଡ଼ିଆ',
+  as: 'অসমীয়া',
+  ne: 'नेपाली',
+  kok: 'कोंकणी',
+  mai: 'मैथिली',
+  brx: 'बरʼ',
+  doi: 'डोगरी',
+  sa: 'संस्कृतम्',
+  sat: 'ᱥᱟᱱᱛᱟᱲᱤ',
+  ks: 'کٲشُر',
+  sd: 'سنڌي',
+  mni: 'মৈতৈলোন্',
 }
 
-export const intlLocales: Record<AppLocale, string> = {
-  en: 'en-IN',
-  hi: 'hi-IN',
-  te: 'te-IN',
-  ta: 'ta-IN',
-  kn: 'kn-IN',
-  ml: 'ml-IN',
-  mr: 'mr-IN',
-  bn: 'bn-IN',
+export const localeEnglishNames: Record<AppLocale, string> = {
+  en: 'English',
+  hi: 'Hindi',
+  te: 'Telugu',
+  ta: 'Tamil',
+  kn: 'Kannada',
+  ml: 'Malayalam',
+  mr: 'Marathi',
+  bn: 'Bengali',
+  gu: 'Gujarati',
+  pa: 'Punjabi',
+  ur: 'Urdu',
+  or: 'Odia',
+  as: 'Assamese',
+  ne: 'Nepali',
+  kok: 'Konkani',
+  mai: 'Maithili',
+  brx: 'Bodo',
+  doi: 'Dogri',
+  sa: 'Sanskrit',
+  sat: 'Santali',
+  ks: 'Kashmiri',
+  sd: 'Sindhi',
+  mni: 'Manipuri',
 }
+
+export const languageGroups: Array<{ id: string; locales: AppLocale[] }> = [
+  { id: 'popular', locales: ['en', 'hi'] },
+  { id: 'south', locales: ['te', 'ta', 'kn', 'ml'] },
+  { id: 'west', locales: ['mr', 'gu', 'kok'] },
+  { id: 'east', locales: ['bn', 'as', 'or', 'mni'] },
+  { id: 'north', locales: ['pa', 'ur', 'ne', 'doi', 'ks', 'sd'] },
+  { id: 'other', locales: ['mai', 'brx', 'sa', 'sat'] },
+]
 
 const LANGUAGE_KEY = 'rakshak-language'
+const rtlLocales = new Set<AppLocale>(['ur', 'ks', 'sd'])
+const commonCatalog = common as unknown as Record<string, (typeof common)['en']>
+const pagesCatalog = pages as unknown as Record<string, (typeof pages)['en']>
 
 export function normalizeLocale(value?: string | null): AppLocale {
   const language = value?.toLowerCase().split('-')[0]
@@ -53,16 +99,50 @@ export function persistLocale(locale: AppLocale): void {
 }
 
 const resources = Object.fromEntries(
-  supportedLocales.map((locale) => [locale, { common: common[locale] }]),
+  supportedLocales.map((locale) => [
+    locale,
+    {
+      common: commonCatalog[locale] ?? commonCatalog.hi ?? common.en,
+      pages: pagesCatalog[locale] ?? pages.en,
+    },
+  ]),
 )
 
 void i18n.use(initReactI18next).init({
   resources,
   lng: initialLocale(),
-  fallbackLng: 'en',
+  fallbackLng: {
+    brx: ['hi', 'en'],
+    doi: ['hi', 'en'],
+    kok: ['hi', 'en'],
+    mai: ['hi', 'en'],
+    sa: ['hi', 'en'],
+    ne: ['hi', 'en'],
+    sat: ['hi', 'en'],
+    mr: ['hi', 'en'],
+    gu: ['hi', 'en'],
+    pa: ['hi', 'en'],
+    as: ['hi', 'en'],
+    or: ['hi', 'en'],
+    ks: ['ur', 'en'],
+    sd: ['ur', 'en'],
+    mni: ['bn', 'en'],
+    default: ['en'],
+  },
   defaultNS: 'common',
+  ns: ['common', 'pages'],
   interpolation: { escapeValue: false },
   returnNull: false,
 })
+
+function applyDocumentLocale(localeValue?: string) {
+  const locale = normalizeLocale(localeValue)
+  document.documentElement.lang = locale
+  document.documentElement.dir = rtlLocales.has(locale) ? 'rtl' : 'ltr'
+  persistLocale(locale)
+}
+
+applyDocumentLocale(i18n.resolvedLanguage)
+i18n.on('languageChanged', applyDocumentLocale)
 
 export default i18n

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Minus, Plus, X } from 'lucide-react'
+import { Check, Minus, Plus, Settings, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './Button'
 
 export function AccessibilityMenu() {
+  const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
   const [largeText, setLargeText] = useState(false)
   const [reduceMotion, setReduceMotion] = useState(false)
@@ -29,25 +31,25 @@ export function AccessibilityMenu() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="text-sm font-medium text-black transition hover:opacity-70"
-        aria-label="Accessibility settings"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-black transition hover:bg-black/[0.04]"
+        aria-label={t('accessibility.label')}
         aria-expanded={open}
       >
-        Accessibility
+        <Settings className="h-4 w-4" aria-hidden />
       </button>
 
       {open ? (
         <div className="card absolute right-0 top-9 z-50 w-72 p-4">
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-paper">Accessibility</p>
-              <p className="mt-1 text-xs leading-5 text-muted">Preferences apply instantly.</p>
+              <p className="text-sm font-bold text-paper">{t('accessibility.label')}</p>
+              <p className="mt-1 text-xs leading-5 text-muted">{t('accessibility.preferences')}</p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               className="rounded-lg p-1.5 text-muted hover:bg-black/[0.04] hover:text-paper"
-              aria-label="Close accessibility menu"
+              aria-label={t('accessibility.close')}
             >
               <X className="h-4 w-4" />
             </button>
@@ -60,8 +62,8 @@ export function AccessibilityMenu() {
               className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
             >
               <span>
-                <span className="block text-sm font-semibold text-paper">Larger text</span>
-                <span className="mt-0.5 block text-xs text-muted">Increase interface scale</span>
+                <span className="block text-sm font-semibold text-paper">{t('accessibility.largerText')}</span>
+                <span className="mt-0.5 block text-xs text-muted">{t('accessibility.largerTextHint')}</span>
               </span>
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
                 {largeText ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
@@ -73,8 +75,8 @@ export function AccessibilityMenu() {
               className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
             >
               <span>
-                <span className="block text-sm font-semibold text-paper">Reduce motion</span>
-                <span className="mt-0.5 block text-xs text-muted">Minimise animated effects</span>
+                <span className="block text-sm font-semibold text-paper">{t('accessibility.reduceMotion')}</span>
+                <span className="mt-0.5 block text-xs text-muted">{t('accessibility.reduceMotionHint')}</span>
               </span>
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
                 {reduceMotion ? <Check className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
@@ -85,7 +87,7 @@ export function AccessibilityMenu() {
             setLargeText(false)
             setReduceMotion(false)
           }}>
-            Reset preferences
+            {t('accessibility.reset')}
           </Button>
         </div>
       ) : null}

@@ -1,38 +1,40 @@
 import { PageIntro } from '../components/PageIntro'
 import { cx } from '../lib/cx'
-
-const channels = [
-  {
-    label: 'Financial fraud helpline',
-    value: '1930',
-    href: 'tel:1930',
-    note: 'Call immediately if money has left your account. Every minute matters.',
-    urgent: true,
-  },
-  {
-    label: 'Women and child safety helpline',
-    value: '1098',
-    href: 'tel:1098',
-    note: 'For urgent concerns involving a child.',
-    urgent: true,
-  },
-  {
-    label: 'Official cybercrime portal',
-    value: 'cybercrime.gov.in',
-    href: 'https://cybercrime.gov.in/',
-    note: 'File a real complaint on the government portal.',
-    urgent: false,
-  },
-]
+import { useTranslation } from 'react-i18next'
 
 export function ContactPage() {
+  const { t } = useTranslation('pages')
+  const channels = [
+    {
+      label: t('contact.financial'),
+      value: '1930',
+      href: 'tel:1930',
+      note: t('contact.financialNote'),
+      urgent: true,
+    },
+    {
+      label: t('contact.child'),
+      value: '1098',
+      href: 'tel:1098',
+      note: t('contact.childNote'),
+      urgent: true,
+    },
+    {
+      label: t('contact.portal'),
+      value: 'cybercrime.gov.in',
+      href: 'https://cybercrime.gov.in/',
+      note: t('contact.portalNote'),
+      urgent: false,
+    },
+  ]
+
   return (
     <>
       <PageIntro
-        eyebrow="Contact us"
-        title="Where to reach a real human."
-        description="This prototype cannot receive messages or file complaints. Use the official channels below when you need actual help."
-        aside="Helplines are staffed by the respective official services, not by this prototype."
+        eyebrow={t('contact.eyebrow')}
+        title={t('contact.title')}
+        description={t('contact.description')}
+        aside={t('contact.aside')}
       />
 
       <section className="page-shell page-section pt-0">
@@ -55,11 +57,9 @@ export function ContactPage() {
         </div>
 
         <div className="surface-soft mt-4 p-5 sm:p-7">
-          <p className="text-base font-semibold text-paper">About this prototype</p>
+          <p className="text-base font-semibold text-paper">{t('contact.about')}</p>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Every page here is an independent design exploration of cybercrime reporting. No government
-            system is contacted, all suspect data is synthetic, and any complaint you create stays inside
-            this browser.
+            {t('contact.aboutBody')}
           </p>
         </div>
       </section>

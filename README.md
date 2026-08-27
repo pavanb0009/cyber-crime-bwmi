@@ -16,11 +16,10 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 
 | Journey | Working behaviour |
 |---|---|
-| Home / response navigator | Existing hero and incident cards preserved, plus “I just lost money” Golden Minutes entry and a local natural-language Cybercrime Copilot |
-| Report cybercrime | Existing four-step journey preserved and expanded with contextual forms by incident, Golden Minutes mode, voice input, evidence classification, completeness score, extraction, auto timeline, action plan, review, consent and acknowledgement generation |
-| Check suspect | Existing phone/UPI/email/URL scanner preserved and expanded with 0–100 risk scoring, linked identifiers, patterns, “report this identifier”, “I already paid”, and a deterministic screenshot scam scanner |
-| Call scanner | Real local Hindi/English/Hinglish audio transcription with faster-whisper, timestamped evidence, bilingual scam-signal rules and an explainable 0–100 risk score |
-| Track complaint | Existing local case search/timeline preserved, plus a financial Money Recovery Tracker and optional frozen-account/lien-help demo flow |
+| Home / response navigator | Interactive incident triage, urgent 1930 escalation, clear route selection and responsive layout |
+| Report cybercrime | Four-step form, incident categories, women/child anonymous option, contextual financial-fraud warning, validation, local autosave, evidence-name handling, review, consent and acknowledgement generation |
+| Check suspect | Phone, UPI ID, email and URL validation; synthetic repository lookup; high/caution/no-match results; signal explanations and next actions |
+| Track complaint | Search by demo reference, locally created cases, progress ring, assigned unit, plain-language status timeline and downloadable text status |
 | Learning corner | Searchable/filterable situation playbooks, emergency actions, expandable guidance and an interactive scam-signal checklist |
 | Accessibility | Keyboard focus states, larger-text mode, reduced-motion mode, mobile-first controls and a persistent mobile 1930 action |
 
@@ -42,7 +41,7 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 
 | Feature | Demo value |
 |---|---|
-| Track case | `RK-DEMO-26-84021` |
+| Track case | `RK-DEMO-26-84019` |
 | Flagged phone | `9876543210` |
 | Flagged UPI ID | `refunddesk@upi` |
 | Caution email | `support-kys@example.com` |
@@ -66,60 +65,6 @@ npm run build
 npm run preview
 ```
 
-### Run the local call scanner
-
-Requirement: Python 3.9+. `faster-whisper` uses PyAV, whose wheel bundles the needed FFmpeg libraries, so a separate FFmpeg install is not required for this upload flow.
-
-From the project root:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
-cd backend && uvicorn app.main:app --port 8000
-```
-
-Keep that terminal open, then run the React app in a second terminal. Open **Call scan** and upload an audio recording.
-
-The first analysis downloads the open-source model (`large-v3-turbo`, roughly 1.6 GB), so it needs internet access once. Everything after that runs locally with no paid API key.
-
-Notes from testing on CPU:
-
-- `large-v3-turbo` is the default because `small` produces largely unusable Hindi, and turbo is also faster in practice since it decodes with fewer layers.
-- Transcription takes roughly as long as the recording itself, so keep demo clips to 30–60 seconds.
-- Selecting **Hindi** or **English** in the UI is measurably more accurate than auto detect on short or noisy clips.
-- To trade accuracy for a smaller download: `WHISPER_MODEL=small uvicorn app.main:app --port 8000`.
-
-### Enable the AI semantic layer (recommended)
-
-The scanner has two intelligence modes:
-
-- **AI + rules** — a local open-source LLM (Qwen3 via [Ollama](https://ollama.com/download)) translates the call to English, understands the manipulation pattern, and returns an explainable **AI Scam Likelihood** plus quoted threat evidence. The deterministic rule engine runs alongside it as an explainability and safety layer.
-- **Rules only** — if Ollama is not running, the app automatically falls back to the deterministic Hindi/English signal engine. Nothing breaks; the analysis is simply less nuanced.
-
-To turn on the AI layer, install Ollama and pull the model once:
-
-```bash
-ollama pull qwen3:4b        # ~2.5 GB, fine on a laptop
-# or, with more memory, for stronger classification:
-ollama pull qwen3:8b        # ~5.2 GB
-```
-
-With Ollama running, start the backend as usual. Select a different model with:
-
-```bash
-OLLAMA_MODEL=qwen3:8b uvicorn app.main:app --port 8000
-```
-
-Check which mode is live at any time via `GET /health` (`"ai_engine": "ollama"` vs `"rules-only"`). The result panel also shows an **AI semantic analysis** / **Rule engine only** badge so a reviewer can see which path produced the result.
-
-Two scores are shown, deliberately kept separate:
-
-- **AI Scam Likelihood** — how strongly the conversation resembles known scam behaviour (from the LLM).
-- **Behavioural Risk** — how dangerous the requests happening in the call are right now (from the weighted rule signals).
-
-Hard overrides guarantee that unmistakable combinations — authority impersonation + threat + isolation/payment (digital arrest), or credential + remote-access requests — can never be scored as safe, regardless of which layer read the call.
-
 ## Instant no-install preview
 
 `preview.html` is a dependency-free visual preview of the homepage direction. It includes the interactive response navigator and can be opened directly in a browser. It is not a substitute for the React application; the complete workflows live in `src/`.
@@ -136,10 +81,6 @@ Hard overrides guarantee that unmistakable combinations — authority impersonat
 - Lucide icons
 - Fontsource variable fonts
 - Browser `localStorage` for synthetic drafts and cases
-- Python + FastAPI for local audio processing
-- faster-whisper + Silero VAD for open-source speech recognition
-- Qwen3 (via Ollama) for local translation + semantic scam analysis, with graceful fallback
-- Deterministic Hindi/English scam-signal and risk engine (explainability + safety layer)
 
 ## Project structure
 
@@ -151,36 +92,24 @@ src/
 │   ├── Button.tsx
 │   ├── Footer.tsx
 │   ├── Layout.tsx
+│   ├── Navigation.tsx
 │   ├── PageIntro.tsx
 │   ├── PrototypeBar.tsx
-│   └── SiteHeader.tsx
-├── data/
-│   ├── brand.ts
-│   └── content.ts
+│   └── SectionLabel.tsx
+├── data/content.ts
 ├── lib/
 │   ├── cx.ts
-│   ├── intelligence.ts
 │   └── storage.ts
 ├── pages/
 │   ├── CheckPage.tsx
-│   ├── CallScannerPage.tsx
-│   ├── ContactPage.tsx
 │   ├── HomePage.tsx
 │   ├── LearnPage.tsx
 │   ├── ReportPage.tsx
-│   ├── TrackPage.tsx
-│   └── VolunteersPage.tsx
+│   └── TrackPage.tsx
 ├── App.tsx
 ├── index.css
 ├── main.tsx
 └── types.ts
-backend/
-├── app/
-│   ├── main.py              # FastAPI endpoints, Whisper transcription, response assembly
-│   ├── ai_scam_analyser.py  # Qwen3/Ollama translation + semantic analysis (primary)
-│   ├── fusion.py            # Combines LLM + rules, hard overrides, final scores
-│   └── scam_detector.py     # Deterministic signal engine (explainability + fallback)
-└── requirements.txt
 ```
 
 ## Product decisions
@@ -197,13 +126,13 @@ Financial fraud is treated differently because speed matters. The 1930 call acti
 
 The tracking experience avoids opaque internal codes. It shows what is completed, the active stage, who currently owns the case and what the citizen should expect next.
 
-### 4. Secure, consistent, not decorative
+### 4. Premium, not decorative
 
-The rebuild keeps the existing white/blue Cyber Rakshak visual system, cards, hero assets and navigation patterns. Security cues are added through restrained scanning motion, local-data labels, evidence sealing language, structured risk panels and clearly separated emergency states rather than replacing the UI with a different theme.
+The visual hook is an “incident command centre”: dark civic calm, signal-lime priority states, restrained scanning motion, editorial typography and a custom network field. Motion and contrast always support hierarchy rather than adding spectacle for its own sake.
 
 ### 5. Honest prototype boundary
 
-The independent-prototype disclosure is persistent. No official logo is copied. All IDs, complaint counts, people, domains and case events are fictional. Report-flow evidence stays in the browser; call recordings are sent only to the separately started local FastAPI service for transcription.
+The independent-prototype disclosure is persistent. No official logo is copied. All IDs, complaint counts, people, domains and case events are fictional. File contents are never uploaded; only file names are stored in the local draft.
 
 ## Existing-service coverage
 
@@ -217,7 +146,7 @@ The prototype retains the portal’s primary citizen-facing services while simpl
 - Suspicious-identifier reporting handoff
 - Cyber-safety learning content
 
-The pre-existing Volunteers and Contact screens remain available so earlier UI work is not removed. They are not connected to live government or law-enforcement systems.
+Volunteer and law-enforcement-only workflows are intentionally outside this citizen MVP.
 
 ## Production integration boundaries
 

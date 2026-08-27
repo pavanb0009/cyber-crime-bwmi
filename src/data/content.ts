@@ -218,6 +218,7 @@ export const safetyGuides: SafetyGuide[] = [
   {
     id: 'money-moved',
     category: 'Money',
+    categoryLabel: 'Money',
     title: 'Money just left your account',
     summary: 'The order of action matters. Call first, preserve proof second, file the report third.',
     readingTime: '2 min',
@@ -232,6 +233,7 @@ export const safetyGuides: SafetyGuide[] = [
   {
     id: 'account-taken',
     category: 'Accounts',
+    categoryLabel: 'Accounts',
     title: 'Your account has been taken over',
     summary: 'Regain control from a trusted device and capture the trail before it disappears.',
     readingTime: '3 min',
@@ -246,6 +248,7 @@ export const safetyGuides: SafetyGuide[] = [
   {
     id: 'being-harassed',
     category: 'Harassment',
+    categoryLabel: 'Harassment',
     title: 'Someone is harassing or threatening you',
     summary: 'Protect yourself, keep evidence intact and avoid escalating the exchange.',
     readingTime: '3 min',
@@ -260,6 +263,7 @@ export const safetyGuides: SafetyGuide[] = [
   {
     id: 'child-safety',
     category: 'Family',
+    categoryLabel: 'Family',
     title: 'A child may be at risk online',
     summary: 'Stay calm, move the child to safety and avoid redistributing harmful material.',
     readingTime: '4 min',
@@ -274,6 +278,7 @@ export const safetyGuides: SafetyGuide[] = [
   {
     id: 'before-paying',
     category: 'General',
+    categoryLabel: 'General',
     title: 'Before you pay a stranger online',
     summary: 'A one-minute pause can reveal the most common pressure tactics.',
     readingTime: '1 min',
