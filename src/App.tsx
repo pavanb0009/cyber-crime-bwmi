@@ -5,6 +5,7 @@ import { CheckPage } from './pages/CheckPage'
 import { ContactPage } from './pages/ContactPage'
 import { HomePage } from './pages/HomePage'
 import { LearnPage } from './pages/LearnPage'
+import { NoticeVerifierPage } from './pages/NoticeVerifierPage'
 import { ReportPage } from './pages/ReportPage'
 import { TrackPage } from './pages/TrackPage'
 import { VolunteersPage } from './pages/VolunteersPage'
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="report" element={<ReportPage />} />
         <Route path="check" element={<CheckPage />} />
         <Route path="call-scanner" element={<CallScannerPage />} />
+        <Route path="notice-verifier" element={<NoticeVerifierPage />} />
         <Route path="track" element={<TrackPage />} />
         <Route path="learn" element={<LearnPage />} />
         <Route path="volunteers" element={<VolunteersPage />} />

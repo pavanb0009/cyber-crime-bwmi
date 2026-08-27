@@ -14,6 +14,7 @@ const navKeys = [
   { to: '/track', key: 'nav.track' },
   { to: '/check', key: 'nav.check' },
   { to: '/call-scanner', key: 'nav.callScan' },
+  { to: '/notice-verifier', key: 'nav.noticeVerifier' },
   { to: '/volunteers', key: 'nav.volunteers' },
   { to: '/learn', key: 'nav.learn' },
   { to: '/contact', key: 'nav.contact' },
