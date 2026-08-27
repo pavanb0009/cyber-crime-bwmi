@@ -2,11 +2,11 @@
 
 ## Product name
 
-**RAKSHAK — Cybercrime help that moves faster than the scam**
+**CyberDesk — Citizen cybercrime helpdesk**
 
 ## Submission summary
 
-Cybercrime victims rarely arrive at a public portal thinking in legal categories. They arrive thinking, “Money left my account,” “Someone took my account,” or “I am being threatened.” Rakshak redesigns the citizen journey around that moment of panic.
+Cybercrime victims rarely arrive at a public portal thinking in legal categories. They arrive thinking, “Money left my account,” “Someone took my account,” or “I am being threatened.” CyberDesk redesigns the citizen journey around that moment of panic.
 
 The homepage works as a response navigator: it asks what happened, immediately surfaces time-critical guidance such as calling 1930 for financial fraud, and then moves the citizen into a focused journey. The prototype includes a four-step complaint flow with local autosave, evidence guidance, anonymous reporting for sensitive women/child incidents, a synthetic acknowledgement and a trackable case timeline. It also includes a suspect checker for phone numbers, UPI IDs, emails and websites, plus short situation-based safety playbooks.
 
@@ -31,7 +31,7 @@ The product asks a plain-language question, identifies urgency, explains what ev
 ## 90-second demo script
 
 **0–15 seconds — Home**  
-“This is Rakshak. Instead of asking citizens to understand the portal, it starts with what happened. I’ll choose ‘Money left my account.’ Notice that calling 1930 appears before the online form.”
+“This is CyberDesk. Instead of asking citizens to understand the portal, it starts with what happened. I’ll choose ‘Money left my account.’ Notice that calling 1930 appears before the online form.”
 
 **15–50 seconds — Report**  
 “The report is four short steps. Categories are plain-language. I’ll use demo details, add synthetic evidence, review exactly what will be submitted and acknowledge the prototype boundary. The draft is saved locally throughout.”

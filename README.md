@@ -1,10 +1,10 @@
-# RAKSHAK
+# CyberDesk
 
 A citizen-first redesign of India’s cybercrime reporting experience, built as an **independent hackathon prototype** with React, TypeScript and Tailwind CSS.
 
-![Rakshak desktop preview](./preview-desktop.png)
+![CyberDesk desktop preview](./preview-desktop.png)
 
-The concept begins with the moment a citizen is actually in: confused, anxious and unsure which portal category to choose. Instead of exposing the information architecture first, Rakshak asks **“What happened?”**, surfaces the urgent action, and moves the person into one of three clear outcomes:
+The concept begins with the moment a citizen is actually in: confused, anxious and unsure which portal category to choose. Instead of exposing the information architecture first, CyberDesk asks **“What happened?”**, surfaces the urgent action, and moves the person into one of three clear outcomes:
 
 1. Report an incident.
 2. Check a suspicious identifier.

@@ -29,7 +29,7 @@ export function BrandMark({
       <BrandGlyph className="h-5 w-5 shrink-0 sm:h-[1.35rem] sm:w-[1.35rem]" />
       <span className="min-w-0">
         <span className="block truncate text-[1.05rem] font-bold leading-none tracking-[-0.04em] text-black">
-          {brand.name.toLowerCase()}
+          {brand.name}
         </span>
         {showTagline ? (
           <span className="mt-1 hidden truncate text-[0.75rem] leading-tight text-muted sm:block">

@@ -1,4 +1,4 @@
-# Cyber Rakshak rebuild — feature coverage
+# CyberDesk rebuild — feature coverage
 
 This rebuild is additive. Existing routes, hero assets, incident cards, Learn, Volunteers, Contact, accessibility controls, local draft storage, identifier checks and local complaint tracking remain in the project.
 
