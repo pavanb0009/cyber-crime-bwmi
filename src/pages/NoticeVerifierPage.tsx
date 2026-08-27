@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -15,9 +15,10 @@ import {
   Upload,
   UserRound,
 } from 'lucide-react'
-import { Button } from '../components/Button'
+import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { cx } from '../lib/cx'
+import { clearFiles, getFiles, putFiles } from '../lib/fileStore'
 import {
   analyseNoticeText,
   demoNotices,
@@ -25,6 +26,8 @@ import {
   type NoticeSignal,
   type NoticeVerdict,
 } from '../lib/noticeVerifier'
+import { clearSession, patchSearchParams, readSession, writeSession } from '../lib/session'
+import { useSearchParams } from 'react-router-dom'
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024
 const ACCEPTED = /\.(pdf|png|jpg|jpeg|webp|txt)$/i
@@ -191,13 +194,37 @@ function VerifierResult({ analysis, onReset }: { analysis: NoticeAnalysis; onRes
   )
 }
 
+type NoticeSession = {
+  text: string
+  fileName: string
+  result: NoticeAnalysis | null
+}
+
 export function NoticeVerifierPage() {
-  const [text, setText] = useState('')
-  const [fileName, setFileName] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const saved = readSession<NoticeSession>('notice')
+  const [text, setText] = useState(saved?.text ?? '')
+  const [fileName, setFileName] = useState(saved?.fileName ?? '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<NoticeAnalysis | null>(null)
+  const [result, setResult] = useState<NoticeAnalysis | null>(saved?.result ?? null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const view = searchParams.get('view')
+  const demoId = searchParams.get('demo')
+  const showResult = view === 'result' && result
+
+  function persist(next: Partial<NoticeSession>) {
+    writeSession('notice', {
+      text,
+      fileName,
+      result,
+      ...next,
+    })
+  }
+
+  function writeQuery(patch: Record<string, string | null>, replace = false) {
+    setSearchParams((current) => patchSearchParams(current, patch), { replace })
+  }
 
   async function handleFile(file: File) {
     setError('')
@@ -211,30 +238,34 @@ export function NoticeVerifierPage() {
       return
     }
     setFileName(file.name)
-    // Plain-text notices can be read directly. PDFs/images carry no extractable
-    // text in this client-only prototype, so we prompt the user to paste the
-    // notice text (this is where OCR would slot in for a production build).
+    void putFiles('notice-file', [file])
     if (/\.txt$/i.test(file.name)) {
       try {
-        setText(await file.text())
+        const nextText = await file.text()
+        setText(nextText)
+        persist({ text: nextText, fileName: file.name, result: null })
       } catch {
         setError('Could not read the text file.')
       }
     } else {
+      persist({ fileName: file.name, result: null })
       setError('File attached. Paste the notice text below so it can be analysed (OCR is not enabled in this prototype).')
     }
   }
 
-  async function runVerify(inputText = text, inputName = fileName) {
+  async function runVerify(inputText = text, inputName = fileName, options: { delay?: boolean; demo?: string | null } = {}) {
+    const { delay = true, demo = demoId } = options
     if (!inputText.trim()) {
       setError('Paste the notice text or load a demo document to analyse.')
       return
     }
     setError('')
     setLoading(true)
-    setResult(null)
-    await new Promise((resolve) => window.setTimeout(resolve, 620))
-    setResult(analyseNoticeText(inputText, inputName))
+    if (delay) await new Promise((resolve) => window.setTimeout(resolve, 320))
+    const analysis = analyseNoticeText(inputText, inputName)
+    setResult(analysis)
+    persist({ text: inputText, fileName: inputName, result: analysis })
+    writeQuery({ view: 'result', demo: demo ?? null })
     setLoading(false)
   }
 
@@ -244,7 +275,7 @@ export function NoticeVerifierPage() {
     setText(demo.text)
     setFileName(demo.fileName)
     setError('')
-    void runVerify(demo.text, demo.fileName)
+    void runVerify(demo.text, demo.fileName, { demo: id })
   }
 
   function reset() {
@@ -252,49 +283,77 @@ export function NoticeVerifierPage() {
     setFileName('')
     setError('')
     setResult(null)
+    clearSession('notice')
+    void clearFiles('notice-file')
     if (fileRef.current) fileRef.current.value = ''
+    setSearchParams({}, { replace: true })
   }
+
+  useEffect(() => {
+    void getFiles('notice-file').then((files) => {
+      if (files[0] && !fileName) setFileName(files[0].name)
+    })
+  }, [fileName])
+
+  useEffect(() => {
+    if (demoId && view === 'result' && !result) {
+      const demo = demoNotices.find((d) => d.id === demoId)
+      if (demo) {
+        setText(demo.text)
+        setFileName(demo.fileName)
+        void runVerify(demo.text, demo.fileName, { delay: false, demo: demoId })
+      }
+    }
+    if (view !== 'result') {
+      setResult((current) => current)
+    }
+    // Restore the notice identified by the query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demoId, view])
 
   return (
     <>
-      <PageIntro
-        eyebrow="Universal notice verifier"
-        title="Check any official-looking notice before you believe it."
-        description="Upload or paste a notice claiming to be from CBI, RBI, Police, ED, Customs, TRAI or a court. It extracts the claimed authority, reference, contacts and payment demand, then flags scam signals fully on-device."
-      />
+      <PageIntro title="Verify a notice" />
 
       <section className="page-shell pb-14">
         <div className="mx-auto max-w-5xl">
-          {result ? (
+          {showResult && result ? (
             <VerifierResult analysis={result} onReset={reset} />
           ) : (
             <div className="card overflow-hidden">
               <div className="border-b border-black/[0.07] p-5 sm:p-6">
-                <p className="eyebrow">Step 1 · Load a notice</p>
-                <h2 className="section-title mt-2">Upload a file or paste the notice text</h2>
-
                 <div
-                  className={cx('mt-5 rounded-2xl border border-dashed p-6 text-center transition sm:p-8', fileName ? 'border-brand/35 bg-brand/[0.035]' : 'border-black/[0.18] bg-mist')}
+                  className={cx('drop-zone', fileName && 'border-solid border-brand/40 bg-brand/[0.06]')}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {
                     event.preventDefault()
                     const dropped = event.dataTransfer.files[0]
                     if (dropped) void handleFile(dropped)
                   }}
+                  onClick={() => fileRef.current?.click()}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      fileRef.current?.click()
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   {fileName ? <FileText className="mx-auto h-8 w-8 text-brand" /> : <Upload className="mx-auto h-8 w-8 text-brand" />}
-                  <h3 className="mt-3 text-base font-semibold text-paper">{fileName || 'Drop a notice PDF or image here'}</h3>
+                  <h3 className="mt-3 text-base font-semibold text-paper">{fileName || 'Drop a notice PDF or image here, or click to upload'}</h3>
                   <p className="mt-1 text-sm text-muted">PDF, PNG, JPG, WEBP or TXT · up to 15 MB</p>
                   <div className="mt-4">
-                    <Button variant={fileName ? 'secondary' : 'primary'} onClick={() => fileRef.current?.click()}>
+                    <span className={cx(buttonStyles(fileName ? 'secondary' : 'primary', 'md'), 'pointer-events-none')}>
                       {fileName ? 'Choose another file' : 'Choose file'}
-                    </Button>
+                    </span>
                   </div>
                   <input
                     ref={fileRef}
                     type="file"
                     accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
                     className="sr-only"
+                    onClick={(event) => event.stopPropagation()}
                     onChange={(event) => {
                       const selected = event.target.files?.[0]
                       if (selected) void handleFile(selected)
@@ -310,10 +369,11 @@ export function NoticeVerifierPage() {
                     onChange={(event) => {
                       setText(event.target.value)
                       setError('')
+                      persist({ text: event.target.value, result: null })
                     }}
                     rows={7}
-                    className="text-field min-h-[8rem] resize-y py-3 text-sm leading-6"
-                    placeholder="Paste the full text of the notice here — authority name, reference number, officer, phone/email, links and any payment instruction."
+                    className="text-area min-h-[10rem]"
+                    placeholder="Paste the notice text — authority, reference number, officer, phone, email, links and any payment instruction."
                   />
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                     <Button onClick={() => void runVerify()} loading={loading}>
@@ -332,9 +392,8 @@ export function NoticeVerifierPage() {
               </div>
 
               <div className="p-5 sm:p-6">
-                <p className="eyebrow">Or try a demo document</p>
-                <p className="mt-2 text-sm leading-6 text-muted">Eight sample notices — four safe-looking, four fake — to see the verdict on both.</p>
-                <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+                <p className="text-sm font-semibold text-paper">Try a sample notice</p>
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
                   {demoNotices.map((demo) => {
                     const fake = demo.expected === 'high-risk'
                     return (

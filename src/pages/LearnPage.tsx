@@ -64,11 +64,7 @@ export function LearnPage() {
 
   return (
     <>
-      <PageIntro
-        eyebrow={t('learn.eyebrow')}
-        title={t('learn.title')}
-        description={t('learn.description')}
-      />
+      <PageIntro title={t('learn.eyebrow')} />
 
       <section id="safety" className="page-shell scroll-mt-24">
         <div className="grid gap-4 sm:grid-cols-3">
@@ -93,11 +89,8 @@ export function LearnPage() {
       <section id="digest" className="page-shell page-section scroll-mt-24">
         <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-8">
           <div>
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="eyebrow">{t('learn.playbooks')}</p>
-                <h2 className="section-title mt-2">{t('learn.findGuide')}</h2>
-              </div>
+            <div className="mb-4 flex items-end justify-between gap-3">
+              <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('learn.playbooks')}</h2>
               <span className="text-sm text-muted">{t('learn.results', { count: filteredGuides.length })}</span>
             </div>
 
@@ -189,11 +182,7 @@ export function LearnPage() {
 
           <aside id="awareness" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
             <div className="card p-5 sm:p-6">
-              <div>
-                <p className="eyebrow">{t('learn.scamCheck')}</p>
-                <h2 className="section-title mt-2">{t('learn.scamTitle')}</h2>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-muted">{t('learn.scamHelp')}</p>
+              <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('learn.scamCheck')}</h2>
 
               <div className="mt-6 space-y-2">
                 {scamQuestions.map((question, index) => (
@@ -202,10 +191,10 @@ export function LearnPage() {
                     type="button"
                     onClick={() => setAnswers((current) => current.map((value, itemIndex) => itemIndex === index ? !value : value))}
                     className={cx(
-                      'flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition',
+                      'flex w-full items-start gap-3 rounded-xl border-2 p-3.5 text-left transition',
                       answers[index]
-                        ? 'border-brand bg-brand/[0.05]'
-                        : 'border-black/[0.10] bg-white hover:border-brand/40',
+                        ? 'border-brand bg-brand/[0.06]'
+                        : 'border-[#c5d0de] bg-[#eef3f9] hover:border-brand/50 hover:bg-white',
                     )}
                   >
                     <span className={cx(

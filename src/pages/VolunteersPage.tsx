@@ -14,11 +14,7 @@ export function VolunteersPage() {
 
   return (
     <>
-      <PageIntro
-        eyebrow={t('volunteers.eyebrow')}
-        title={t('volunteers.title')}
-        description={t('volunteers.description')}
-      />
+      <PageIntro title={t('volunteers.eyebrow')} />
 
       <section className="page-shell page-section pt-0">
         <div className="grid gap-4 sm:grid-cols-3">

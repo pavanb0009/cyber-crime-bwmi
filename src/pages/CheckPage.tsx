@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { identifierConfig, suspectReports } from '../data/content'
 import { cx } from '../lib/cx'
+import { patchSearchParams, writeSession } from '../lib/session'
 import type { IdentifierType, SuspectResult } from '../types'
 import { useTranslation } from 'react-i18next'
 
@@ -71,22 +72,36 @@ const riskStyles = {
 
 export function CheckPage() {
   const { t } = useTranslation('pages')
+  const [searchParams, setSearchParams] = useSearchParams()
   const identifierTypes: Array<{ id: IdentifierType; label: string }> = [
     { id: 'phone', label: t('check.phone') },
     { id: 'upi', label: t('check.upi') },
     { id: 'email', label: t('check.email') },
     { id: 'url', label: t('check.website') },
   ]
-  const [type, setType] = useState<IdentifierType>('phone')
-  const [value, setValue] = useState('')
+  const queryType = (['phone', 'upi', 'email', 'url'].includes(searchParams.get('type') ?? '')
+    ? searchParams.get('type')
+    : 'phone') as IdentifierType
+  const queryValue = searchParams.get('q') ?? ''
+  const [type, setType] = useState<IdentifierType>(queryType)
+  const [value, setValue] = useState(queryValue)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SuspectResult | null>(null)
   const [checkedValue, setCheckedValue] = useState('')
+  const hydratedQuery = useRef('')
   const config = identifierConfig[type]
 
-  async function runCheck(inputValue = value) {
-    const validationError = validate(type, inputValue)
+  function writeQuery(nextType: IdentifierType, nextValue: string | null, replace = false) {
+    setSearchParams(
+      (current) => patchSearchParams(current, { type: nextType, q: nextValue }),
+      { replace },
+    )
+  }
+
+  async function runCheck(inputValue = value, options: { delay?: boolean; syncUrl?: boolean; nextType?: IdentifierType } = {}) {
+    const { delay = true, syncUrl = true, nextType = type } = options
+    const validationError = validate(nextType, inputValue)
     if (validationError) {
       setError(validationError)
       setResult(null)
@@ -95,11 +110,15 @@ export function CheckPage() {
     setError('')
     setLoading(true)
     setResult(null)
-    await new Promise((resolve) => window.setTimeout(resolve, 720))
-    const key = normalise(type, inputValue)
-    const matched = suspectReports[type]?.[key]
-    setResult(matched ?? clearResult(type))
+    if (delay) await new Promise((resolve) => window.setTimeout(resolve, 420))
+    const key = normalise(nextType, inputValue)
+    const matched = suspectReports[nextType]?.[key]
+    const nextResult = matched ?? clearResult(nextType)
+    setResult(nextResult)
     setCheckedValue(inputValue.trim())
+    hydratedQuery.current = `${nextType}:${inputValue.trim()}`
+    writeSession('check', { type: nextType, q: inputValue.trim() })
+    if (syncUrl) writeQuery(nextType, inputValue.trim())
     setLoading(false)
   }
 
@@ -109,31 +128,44 @@ export function CheckPage() {
     setError('')
     setResult(null)
     setCheckedValue('')
+    writeQuery(nextType, null)
   }
 
   function useExample() {
-    setValue(config.example)
+    const example = identifierConfig[type].example
+    setValue(example)
     setError('')
-    void runCheck(config.example)
+    void runCheck(example)
   }
+
+  useEffect(() => {
+    setType(queryType)
+    if (queryValue) {
+      setValue(queryValue)
+      if (hydratedQuery.current === `${queryType}:${queryValue}`) return
+      hydratedQuery.current = `${queryType}:${queryValue}`
+      void runCheck(queryValue, { delay: false, syncUrl: false, nextType: queryType })
+      return
+    }
+    hydratedQuery.current = ''
+    setResult(null)
+    setCheckedValue('')
+    // Keep the typed value when browser back clears the query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryType, queryValue])
 
   return (
     <>
-      <PageIntro
-        eyebrow={t('check.eyebrow')}
-        title={t('check.title')}
-        description={t('check.description')}
-      />
+      <PageIntro title={t('check.eyebrow')} />
 
       <section className="page-shell pb-4">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div>
             <div className="card overflow-hidden">
               <div className="border-b border-black/[0.07] p-5 sm:p-6">
-                <p className="eyebrow">{t('check.scan')}</p>
-                <h2 className="section-title mt-2">{t('check.whatCheck')}</h2>
+                <label className="field-label">{t('check.whatCheck')}</label>
 
-                <div className="mt-6 flex gap-5 border-b border-black/[0.08]">
+                <div className="mt-3 flex flex-wrap gap-2">
                   {identifierTypes.map((item) => {
                     const active = type === item.id
                     return (
@@ -142,10 +174,10 @@ export function CheckPage() {
                         type="button"
                         onClick={() => chooseType(item.id)}
                         className={cx(
-                          '-mb-px border-b-2 py-2 text-sm transition',
+                          'rounded-lg border-2 px-3.5 py-2 text-sm font-medium transition',
                           active
-                            ? 'border-brand font-semibold text-brand'
-                            : 'border-transparent text-muted hover:text-paper',
+                            ? 'border-brand bg-brand/[0.08] text-brand'
+                            : 'border-[#c5d0de] bg-[#eef3f9] text-muted hover:border-brand/50 hover:text-paper',
                         )}
                       >
                         {item.label}
@@ -155,7 +187,7 @@ export function CheckPage() {
                 </div>
 
                 <form
-                  className="mt-6"
+                  className="mt-5"
                   onSubmit={(event) => {
                     event.preventDefault()
                     void runCheck()
@@ -204,11 +236,11 @@ export function CheckPage() {
                 </form>
               </div>
 
-              <div className="min-h-[22rem] p-5 sm:p-6">
+              <div className="min-h-[8rem] p-5 sm:p-6">
                 <AnimatePresence mode="wait">
                   {loading ? (
-                    <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
-                      <p className="text-base font-medium text-paper">{t('check.checking')}</p>
+                    <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-8">
+                      <p className="text-sm font-medium text-paper">{t('check.checking')}</p>
                       <p className="mt-2 max-w-sm text-sm leading-6 text-muted">{t('check.matching')}</p>
                     </motion.div>
                   ) : result ? (
@@ -276,9 +308,8 @@ export function CheckPage() {
                       </div>
                     </motion.div>
                   ) : (
-                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">{t('check.emptyTitle')}</h3>
-                      <p className="mt-2 max-w-md text-sm leading-6 text-muted">{t('check.emptyBody')}</p>
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-6">
+                      <p className="max-w-md text-sm leading-6 text-muted">{t('check.emptyBody')}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -287,20 +318,13 @@ export function CheckPage() {
           </div>
 
           <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-            <div className="surface-soft p-5">
-              <p className="eyebrow">Before you trust it</p>
-              <div className="mt-4 space-y-4">
-                {[
-                  ['Verify separately', 'Call a known number or open the service directly.'],
-                  ['Ignore urgency', 'Pressure to act now is a common warning signal.'],
-                  ['Protect control', 'Never share OTPs, PINs or remote screen access.'],
-                ].map(([title, detail]) => (
-                  <div key={title}>
-                    <p className="text-sm font-medium text-paper">{title}</p>
-                    <p className="mt-1 text-sm leading-6 text-muted">{detail}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="surface-soft p-4">
+              <p className="text-sm font-medium text-paper">Before you trust it</p>
+              <ul className="mt-3 space-y-2 text-sm leading-5 text-muted">
+                <li>Verify through a number or site you already know.</li>
+                <li>Pressure to act now is a warning sign.</li>
+                <li>Never share OTPs, PINs or screen access.</li>
+              </ul>
             </div>
 
             <div className="rounded-2xl bg-alert p-5 text-ink">

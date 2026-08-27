@@ -132,23 +132,40 @@ textarea:focus-visible {
   }
 
   .field-label {
-    @apply mb-2 block text-sm font-medium text-paper;
+    @apply mb-1.5 block text-[0.8rem] font-semibold text-paper;
   }
 
   .field-help {
-    @apply mt-2 text-sm leading-6 text-muted;
+    @apply mt-1.5 text-xs leading-5 text-muted;
   }
 
   .text-field {
-    @apply h-12 w-full rounded-lg border border-black/10 bg-white px-4 text-sm text-paper placeholder:text-muted/70 transition duration-150 hover:border-black/20 focus:border-brand focus:outline-none;
+    @apply h-12 w-full rounded-lg border-2 border-[#c5d0de] bg-[#eef3f9] px-3.5 text-[0.95rem] text-paper caret-brand shadow-[inset_0_1px_2px_rgba(22,40,72,.08)] transition duration-150 placeholder:text-[#7d8796] hover:border-brand/45 hover:bg-[#f7fafd] focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/15;
   }
 
   .text-area {
-    @apply min-h-32 w-full resize-y rounded-lg border border-black/10 bg-white px-4 py-3 text-sm leading-6 text-paper placeholder:text-muted/70 transition duration-150 hover:border-black/20 focus:border-brand focus:outline-none;
+    @apply min-h-36 w-full resize-y rounded-lg border-2 border-[#c5d0de] bg-[#eef3f9] px-3.5 py-3 text-[0.95rem] text-paper caret-brand shadow-[inset_0_1px_2px_rgba(22,40,72,.08)] transition duration-150 placeholder:text-[#7d8796] hover:border-brand/45 hover:bg-[#f7fafd] focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/15;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      rgba(22, 104, 207, 0.08) 28px
+    );
+    background-attachment: local;
+    line-height: 28px;
+  }
+
+  .text-field:not(:placeholder-shown),
+  .text-area:not(:placeholder-shown) {
+    @apply border-[#b7c4d4] bg-white;
   }
 
   .select-field {
-    @apply h-12 w-full appearance-none rounded-lg border border-black/10 bg-white px-4 text-sm text-paper transition duration-150 hover:border-black/20 focus:border-brand focus:outline-none;
+    @apply h-12 w-full appearance-none rounded-lg border-2 border-[#c5d0de] bg-[#eef3f9] px-3.5 pr-10 text-[0.95rem] text-paper shadow-[inset_0_1px_2px_rgba(22,40,72,.08)] transition duration-150 hover:border-brand/45 hover:bg-[#f7fafd] focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/15;
+  }
+
+  .drop-zone {
+    @apply cursor-pointer rounded-xl border-2 border-dashed border-brand/40 bg-[#eef3f9] p-8 text-center shadow-[inset_0_1px_2px_rgba(22,40,72,.05)] transition hover:border-brand hover:bg-brand/[0.07] sm:p-10;
   }
 
   .link-accent {

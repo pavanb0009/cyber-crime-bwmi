@@ -30,11 +30,7 @@ export function ContactPage() {
 
   return (
     <>
-      <PageIntro
-        eyebrow={t('contact.eyebrow')}
-        title={t('contact.title')}
-        description={t('contact.description')}
-      />
+      <PageIntro title={t('contact.eyebrow')} />
 
       <section className="page-shell page-section pt-0">
         <div className="grid gap-4 sm:grid-cols-3">

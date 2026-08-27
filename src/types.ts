@@ -121,6 +121,7 @@ export interface ReportDraft {
   threatType: string
   suspiciousIdentifier: string
   malwareApp: string
+  otherIncident: string
   description: string
   evidenceNames: string[]
   evidenceItems: EvidenceItem[]

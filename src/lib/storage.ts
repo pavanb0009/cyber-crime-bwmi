@@ -24,6 +24,7 @@ export const emptyDraft: ReportDraft = {
   threatType: '',
   suspiciousIdentifier: '',
   malwareApp: '',
+  otherIncident: '',
   description: '',
   evidenceNames: [],
   evidenceItems: [],

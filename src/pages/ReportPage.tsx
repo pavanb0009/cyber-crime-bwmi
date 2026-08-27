@@ -24,14 +24,17 @@ import { brand } from '../data/brand'
 import { channels, incidentTypes, indianStates } from '../data/content'
 import { cx } from '../lib/cx'
 import { useTranslation } from 'react-i18next'
+import { clearFiles, getFiles, putFiles } from '../lib/fileStore'
 import {
   classifyEvidenceName,
   classifyIncident,
   evidenceCompleteness,
 } from '../lib/intelligence'
+import { patchSearchParams, writeSession } from '../lib/session'
 import {
   clearDraft,
   emptyDraft,
+  findCase,
   loadDraft,
   saveCase,
   saveDraft,
@@ -115,41 +118,22 @@ function SuccessView({ record }: { record: CaseRecord }) {
       animate={{ opacity: 1, y: 0 }}
       className="card overflow-hidden"
     >
-      <div className="bg-brand px-6 py-8 text-ink sm:px-8 sm:py-10">
-        <p className="eyebrow text-white/70">Complaint registered</p>
-        <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
-          You now have a clear next step.
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">
-          Save your acknowledgement number. You can check the status any time from Track.
-        </p>
+      <div className="border-b border-black/[0.07] bg-mist px-5 py-4 sm:px-6">
+        <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">Complaint registered</h2>
       </div>
 
-      <div className="p-5 sm:p-7">
-        <div className="surface-soft p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
-          <div>
-            <p className="eyebrow">Acknowledgement number</p>
-            <p className="mt-2 break-all font-mono text-xl font-bold text-brand sm:text-2xl">{record.caseId}</p>
-          </div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/[0.12] bg-white px-3 py-2 text-xs font-semibold text-paper sm:mt-0">
-            <Clock3 className="h-3.5 w-3.5" /> Initial triage in progress
+      <div className="p-5 sm:p-6">
+        <label className="field-label">Acknowledgement number</label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <p className="flex-1 break-all rounded-lg border-2 border-brand/30 bg-[#eef3f9] px-3.5 py-3 font-mono text-xl font-bold text-brand sm:text-2xl">
+            {record.caseId}
+          </p>
+          <div className="inline-flex items-center gap-2 rounded-lg border border-black/[0.12] bg-white px-3 py-2 text-xs font-semibold text-paper">
+            <Clock3 className="h-3.5 w-3.5" /> Initial triage
           </div>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {[
-            ['01', 'Save the reference'],
-            ['02', 'Preserve original evidence'],
-            ['03', 'Check status in Track'],
-          ].map(([number, label]) => (
-            <div key={number} className="rounded-xl border border-black/[0.07] p-4">
-              <span className="font-mono text-xs font-bold text-brand">{number}</span>
-              <p className="mt-2 text-sm font-semibold text-paper">{label}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <Link to={`/track?case=${encodeURIComponent(record.caseId)}`} className={buttonStyles('primary', 'lg')}>
             Track this complaint <ArrowRight className="h-4 w-4" />
           </Link>
@@ -170,15 +154,17 @@ export function ReportPage() {
     { id: 3, label: t('report.steps.evidence'), short: t('report.steps.evidence') },
     { id: 4, label: t('report.steps.review'), short: t('report.steps.review') },
   ]
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const requestedType = searchParams.get('type') as IncidentTypeId | null
   const isValidRequestedType = incidentTypes.some((item) => item.id === requestedType)
   const requestedAnonymous = searchParams.get('anonymous') === '1'
   const requestedEmergency = searchParams.get('mode') === 'emergency'
   const requestedSuspect = searchParams.get('suspect') ?? ''
   const requestedStory = searchParams.get('story') ?? ''
+  const doneId = searchParams.get('done')
+  const parsedStep = Number.parseInt(searchParams.get('step') || '1', 10)
+  const step = Number.isFinite(parsedStep) ? Math.min(4, Math.max(1, parsedStep)) : 1
 
-  const [step, setStep] = useState(1)
   const [draft, setDraft] = useState<ReportDraft>(() => {
     const saved = loadDraft()
     const next = { ...saved }
@@ -203,17 +189,34 @@ export function ReportPage() {
   const [fileError, setFileError] = useState('')
   const [savedLabel, setSavedLabel] = useState('Draft ready')
   const [submitting, setSubmitting] = useState(false)
-  const [completedCase, setCompletedCase] = useState<CaseRecord | null>(null)
+  const [completedCase, setCompletedCase] = useState<CaseRecord | null>(() => {
+    const id = new URLSearchParams(window.location.search).get('done')
+    return id ? findCase(id) ?? null : null
+  })
   const [copilotResult, setCopilotResult] = useState<CopilotResult | null>(null)
   const [listening, setListening] = useState(false)
-  const [emergencyLanding, setEmergencyLanding] = useState(requestedEmergency && !draft.emergencyCaptured)
+  const emergencyLanding = requestedEmergency && !draft.emergencyCaptured
   const [emergencyActionsReady, setEmergencyActionsReady] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const evidenceFilesRef = useRef<File[]>([])
 
   const selectedIncident = useMemo(
     () => incidentTypes.find((item) => item.id === draft.incidentType),
     [draft.incidentType],
   )
+
+  function writeParams(patch: Record<string, string | null | undefined>, replace = false) {
+    setSearchParams((current) => patchSearchParams(current, patch), { replace })
+  }
+
+  function goToStep(nextStep: number, replace = false) {
+    writeParams({ step: String(nextStep), done: null, mode: null }, replace)
+  }
+
+  function openEmergency() {
+    update('incidentType', 'financial')
+    writeParams({ mode: 'emergency', done: null, type: 'financial' })
+  }
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -225,10 +228,38 @@ export function ReportPage() {
   }, [draft])
 
   useEffect(() => {
-    if (requestedEmergency && !draft.emergencyCaptured) {
-      setEmergencyLanding(true)
+    if (doneId) {
+      const found = findCase(doneId)
+      if (found) setCompletedCase(found)
+      return
     }
-  }, [requestedEmergency, draft.emergencyCaptured])
+    setCompletedCase(null)
+  }, [doneId])
+
+  useEffect(() => {
+    if (doneId || requestedEmergency) return
+    if (!searchParams.get('step')) {
+      writeParams({ step: '1' }, true)
+    }
+    // Initialise the step query once so browser back stays inside this report.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    void getFiles('report-evidence').then((files) => {
+      evidenceFilesRef.current = files
+      if (!files.length) return
+      const names = files.map((file) => file.name)
+      setDraft((current) => {
+        if (current.evidenceNames.length) return current
+        return {
+          ...current,
+          evidenceNames: names,
+          evidenceItems: names.map(classifyEvidenceName),
+        }
+      })
+    })
+  }, [])
 
   function update<K extends keyof ReportDraft>(key: K, value: ReportDraft[K]) {
     setDraft((current) => ({ ...current, [key]: value }))
@@ -293,6 +324,9 @@ export function ReportPage() {
     if (step === 1 && !draft.incidentType) {
       nextErrors.incidentType = 'Choose the option that best matches what happened.'
     }
+    if (step === 1 && draft.incidentType === 'other' && draft.otherIncident.trim().length < 8) {
+      nextErrors.otherIncident = t('report.otherRequired')
+    }
     if (step === 2) {
       if (!draft.occurredAt) nextErrors.occurredAt = 'Add the approximate date and time.'
       if (!draft.state) nextErrors.state = 'Choose the state or union territory of the incident.'
@@ -325,12 +359,12 @@ export function ReportPage() {
 
   function nextStep() {
     if (!validateCurrentStep()) return
-    setStep((current) => Math.min(4, current + 1))
+    goToStep(Math.min(4, step + 1))
   }
 
   function previousStep() {
     setErrors({})
-    setStep((current) => Math.max(1, current - 1))
+    goToStep(Math.max(1, step - 1))
   }
 
   function addFiles(files: FileList | File[]) {
@@ -341,7 +375,17 @@ export function ReportPage() {
       return
     }
     setFileError('')
-    const names = Array.from(new Set([...draft.evidenceNames, ...list.map((file) => file.name)])).slice(0, 8)
+    const incoming = Array.from(files)
+    const merged = [...evidenceFilesRef.current]
+    for (const file of incoming) {
+      if (!merged.some((item) => item.name === file.name && item.size === file.size)) {
+        merged.push(file)
+      }
+    }
+    const nextFiles = merged.slice(0, 8)
+    evidenceFilesRef.current = nextFiles
+    void putFiles('report-evidence', nextFiles)
+    const names = nextFiles.map((file) => file.name)
     setDraft((current) => ({
       ...current,
       evidenceNames: names,
@@ -458,7 +502,9 @@ export function ReportPage() {
       createdAt,
       incidentType: draft.incidentType,
       state: draft.state || 'Not specified',
-      description: draft.description,
+      description: draft.incidentType === 'other' && draft.otherIncident.trim()
+        ? `${draft.otherIncident.trim()}. ${draft.description}`
+        : draft.description,
       anonymous: draft.anonymous,
       progress: isFinancial ? 48 : 22,
       statusLabel: isFinancial
@@ -484,47 +530,35 @@ export function ReportPage() {
       timeline,
     }
     saveCase(record)
-    clearDraft()
+    writeSession('track', { caseId: record.caseId })
     setCompletedCase(record)
     setSubmitting(false)
+    writeParams({ done: record.caseId, step: null, mode: null })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function startOver() {
     clearDraft()
+    void clearFiles('report-evidence')
+    evidenceFilesRef.current = []
     setDraft({ ...emptyDraft })
     setCompletedCase(null)
-    setStep(1)
     setErrors({})
     setCopilotResult(null)
-    setEmergencyLanding(false)
     setEmergencyActionsReady(false)
+    setSearchParams({ step: '1' }, { replace: true })
   }
-
-  const progress = (step / steps.length) * 100
 
   if (emergencyLanding && !completedCase) {
     return (
       <>
-        <PageIntro
-          eyebrow={t('report.emergency.eyebrow')}
-          title={t('report.emergency.title')}
-          description={t('report.emergency.description')}
-        />
+        <PageIntro title={t('report.emergency.title')} />
         <section className="page-shell pb-4">
           <div className="mx-auto max-w-5xl">
             <div className="overflow-hidden rounded-2xl border border-alert/20 bg-white shadow-card">
-              <div className="bg-alert px-5 py-5 text-ink sm:px-7">
-                <div className="flex items-start gap-3">
-                  <Zap className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="font-mono text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white/65">
-                      {t('report.emergency.mode')}
-                    </p>
-                    <h2 className="mt-1 text-xl font-semibold sm:text-2xl">{t('report.emergency.headline')}</h2>
-                    <p className="mt-2 text-sm leading-6 text-white/75">{t('report.emergency.help')}</p>
-                  </div>
-                </div>
+              <div className="flex items-center gap-3 bg-alert px-5 py-3.5 text-ink sm:px-6">
+                <Zap className="h-4 w-4 shrink-0" />
+                <p className="text-sm font-semibold">{t('report.emergency.help')}</p>
               </div>
 
               <div className="p-5 sm:p-7">
@@ -606,8 +640,7 @@ export function ReportPage() {
                         variant="ghost"
                         size="lg"
                         onClick={() => {
-                          setEmergencyLanding(false)
-                          setStep(1)
+                          setSearchParams({ step: '1' }, { replace: true })
                         }}
                       >
                         {t('report.emergency.useNormal')}
@@ -642,8 +675,7 @@ export function ReportPage() {
                       <Button
                         size="lg"
                         onClick={() => {
-                          setEmergencyLanding(false)
-                          setStep(3)
+                          writeParams({ mode: null, step: '3' })
                         }}
                       >
                         {t('report.emergency.addEvidence')} <ArrowRight className="h-4 w-4" />
@@ -664,11 +696,7 @@ export function ReportPage() {
 
   return (
     <>
-      <PageIntro
-        eyebrow={t('report.eyebrow')}
-        title={t('report.title')}
-        description={t('report.description')}
-      />
+      <PageIntro title={t('report.eyebrow')} />
 
       <section className="page-shell pb-4">
         {completedCase ? (
@@ -685,68 +713,65 @@ export function ReportPage() {
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
             <div className="card overflow-hidden">
-              <div className="border-b border-black/[0.07] bg-mist px-5 py-5 sm:px-6">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-sm text-muted">{savedLabel}</p>
-                  <p className="text-sm text-muted">{Math.round(progress)}% complete</p>
-                </div>
-                <div className="mt-4 h-1 overflow-hidden rounded-full bg-black/[0.08]">
-                  <motion.div
-                    className="h-full rounded-full bg-brand"
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.35 }}
-                  />
-                </div>
-                {draft.emergencyCaptured ? (
-                  <div className="mt-4 rounded-xl border border-brand/25 bg-brand/[0.05] px-3 py-2 text-xs font-semibold text-paper">
-                    {t('report.emergency.banner')}
-                  </div>
-                ) : null}
-                <div className="mt-5 grid grid-cols-4 gap-2">
-                  {steps.map((item) => {
-                    const active = item.id === step
-                    const done = item.id < step
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => done && setStep(item.id)}
-                        disabled={!done}
-                        className={cx(
-                          'rounded-xl border px-2 py-3 text-left transition sm:px-3',
-                          active && 'border-brand bg-brand/[0.06]',
-                          done && 'border-black/[0.10] bg-white hover:border-brand/40',
-                          !active && !done && 'border-transparent opacity-50',
-                        )}
-                      >
-                        <span className={cx(
-                          'flex h-6 w-6 items-center justify-center rounded-lg font-mono text-[0.62rem] font-bold',
-                          active ? 'bg-brand text-ink' : done ? 'border border-brand/40 text-brand' : 'bg-black/[0.06] text-muted',
-                        )}>
-                          {done ? <Check className="h-3.5 w-3.5" /> : item.id}
-                        </span>
-                        <span className="mt-2 hidden text-[0.68rem] font-semibold text-paper sm:block">{item.short}</span>
-                      </button>
-                    )
-                  })}
+              <div className="border-b border-black/[0.07] px-4 py-3 sm:px-6">
+                <div className="flex items-center gap-3">
+                  <ol className="flex min-w-0 flex-1 items-start">
+                    {steps.map((item, index) => {
+                      const active = item.id === step
+                      const done = item.id < step
+                      return (
+                        <li key={item.id} className="flex min-w-0 flex-1 items-start">
+                          {index > 0 ? (
+                            <span className={cx('mt-[0.45rem] h-px min-w-2 flex-1', done || active ? 'bg-brand' : 'bg-black/15')} />
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => done && goToStep(item.id)}
+                            disabled={!done}
+                            aria-current={active ? 'step' : undefined}
+                            className="flex w-[3.6rem] shrink-0 flex-col items-center gap-1 sm:w-[4.4rem]"
+                          >
+                            <span
+                              className={cx(
+                                'flex h-4 w-4 items-center justify-center rounded-full transition',
+                                active && 'bg-brand ring-2 ring-brand/25',
+                                done && 'bg-brand',
+                                !active && !done && 'border border-black/20 bg-white',
+                              )}
+                            >
+                              {done ? <Check className="h-2.5 w-2.5 text-ink" /> : null}
+                            </span>
+                            <span className={cx(
+                              'text-center text-[0.62rem] leading-tight',
+                              active ? 'font-semibold text-paper' : 'text-muted',
+                            )}>
+                              {item.short}
+                            </span>
+                          </button>
+                          {index < steps.length - 1 ? (
+                            <span className={cx('mt-[0.45rem] h-px min-w-2 flex-1', item.id < step ? 'bg-brand' : 'bg-black/15')} />
+                          ) : null}
+                        </li>
+                      )
+                    })}
+                  </ol>
+                  <p className="hidden shrink-0 text-[0.65rem] text-muted sm:block">{savedLabel}</p>
                 </div>
               </div>
+              {draft.emergencyCaptured ? (
+                <p className="border-b border-black/[0.07] px-5 py-1.5 text-[0.7rem] font-medium text-brand sm:px-6">
+                  {t('report.emergency.banner')}
+                </p>
+              ) : null}
 
               <div className="p-5 sm:p-6 lg:p-8">
                 <AnimatePresence mode="wait">
                   {step === 1 ? (
                     <motion.div key="step-1" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <p className="eyebrow">{t('report.stepOf', { n: 1 })}</p>
-                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step1Title')}</h2>
-                      <p className="mt-2 text-sm leading-6 text-muted">{t('report.step1Help')}</p>
+                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.step1Title')}</h2>
 
-                      <div className="mt-6 rounded-2xl border border-brand/20 bg-brand/[0.03] p-4 sm:p-5">
-                        <div className="mb-2 flex items-center justify-between gap-4">
-                          <label htmlFor="copilot" className="field-label mb-0">{t('report.copilotLabel')}</label>
-                          <span className="pill-badge">
-                            <Sparkles className="h-3.5 w-3.5" /> {t('report.copilotLabel')}
-                          </span>
-                        </div>
+                      <div className="mt-5">
+                        <label htmlFor="copilot" className="field-label">{t('report.copilotLabel')}</label>
                         <textarea
                           id="copilot"
                           value={draft.copilotText}
@@ -777,7 +802,7 @@ export function ReportPage() {
                                 <p className="mt-2 text-sm text-muted">{copilotResult.signals.join(' · ')}</p>
                               </div>
                               {copilotResult.incidentType === 'financial' ? (
-                                <Button type="button" variant="danger" size="sm" onClick={() => setEmergencyLanding(true)}>
+                                <Button type="button" variant="danger" size="sm" onClick={openEmergency}>
                                   {t('report.openEmergency')}
                                 </Button>
                               ) : null}
@@ -798,22 +823,47 @@ export function ReportPage() {
                                 if (incident.id !== 'women-child') update('anonymous', false)
                               }}
                               className={cx(
-                                'flex w-full items-start justify-between gap-6 rounded-xl border p-4 text-left transition',
-                                active ? 'border-brand bg-brand/[0.05]' : 'border-black/[0.10] hover:border-brand/40',
+                                'flex w-full items-start gap-3 rounded-xl border-2 p-3.5 text-left transition',
+                                active
+                                  ? 'border-brand bg-brand/[0.06] shadow-[inset_0_0_0_1px_rgba(22,104,207,.12)]'
+                                  : 'border-[#c5d0de] bg-[#eef3f9] hover:border-brand/50 hover:bg-white',
                               )}
                             >
-                              <span>
-                                <span className={cx('block text-[0.95rem]', active ? 'font-semibold text-brand' : 'text-paper')}>{t(`incidents.${incident.id}.title`)}</span>
-                                <span className="mt-1 block text-sm leading-6 text-muted">{t(`incidents.${incident.id}.description`)}</span>
+                              <span
+                                className={cx(
+                                  'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
+                                  active ? 'border-brand bg-brand' : 'border-[#9aa8ba] bg-white',
+                                )}
+                                aria-hidden
+                              >
+                                {active ? <Check className="h-3 w-3 text-ink" /> : null}
                               </span>
-                              <span className={cx('mt-0.5 shrink-0 text-sm', active ? 'font-semibold text-brand' : 'text-muted')}>
-                                {active ? t('report.selected') : t('report.choose')}
+                              <span>
+                                <span className={cx('block text-[0.95rem] font-semibold', active ? 'text-brand' : 'text-paper')}>
+                                  {t(`incidents.${incident.id}.title`)}
+                                </span>
+                                <span className="mt-0.5 block text-sm leading-5 text-muted">{t(`incidents.${incident.id}.description`)}</span>
                               </span>
                             </button>
                           )
                         })}
                       </div>
                       <FieldError>{errors.incidentType}</FieldError>
+
+                      {draft.incidentType === 'other' ? (
+                        <div className="mt-5">
+                          <label className="field-label" htmlFor="otherIncident">{t('report.otherLabel')}</label>
+                          <textarea
+                            id="otherIncident"
+                            value={draft.otherIncident}
+                            onChange={(event) => update('otherIncident', event.target.value.slice(0, 240))}
+                            className="text-area min-h-24"
+                            placeholder={t('report.otherPlaceholder')}
+                          />
+                          <p className="field-help">{t('report.otherHelp')}</p>
+                          <FieldError>{errors.otherIncident}</FieldError>
+                        </div>
+                      ) : null}
 
                       {draft.incidentType === 'financial' ? (
                         <div className="mt-5 rounded-xl bg-alert p-4 text-ink sm:flex sm:items-center sm:justify-between sm:gap-5">
@@ -822,7 +872,7 @@ export function ReportPage() {
                             <p className="mt-1 text-sm leading-6 text-white/75">{t('report.moneyMovedHelp')}</p>
                           </div>
                           <div className="mt-3 flex shrink-0 gap-2 sm:mt-0">
-                            <Button type="button" variant="secondary" size="sm" onClick={() => setEmergencyLanding(true)}>
+                            <Button type="button" variant="secondary" size="sm" onClick={openEmergency}>
                               {t('home.lostMoney')}
                             </Button>
                             <a
@@ -836,7 +886,7 @@ export function ReportPage() {
                       ) : null}
 
                       {draft.incidentType === 'women-child' ? (
-                        <div className="mt-5 rounded-2xl border border-brand/30 bg-brand/[0.04] p-4">
+                        <div className="mt-5 rounded-xl border-2 border-[#c5d0de] bg-[#eef3f9] p-4">
                           <label className="flex cursor-pointer items-start gap-3">
                             <input
                               type="checkbox"
@@ -856,13 +906,9 @@ export function ReportPage() {
 
                   {step === 2 ? (
                     <motion.div key="step-2" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <div>
-                        <p className="eyebrow">{t('report.stepOf', { n: 2 })}</p>
-                        <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step2Title')}</h2>
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{t('report.step2Help')}</p>
-                      </div>
+                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.step2Title')}</h2>
 
-                      <div className="mt-7 grid gap-5 sm:grid-cols-2">
+                      <div className="mt-5 grid gap-5 sm:grid-cols-2">
                         <div>
                           <label className="field-label" htmlFor="occurredAt">Approximate date and time</label>
                           <input
@@ -964,24 +1010,32 @@ export function ReportPage() {
 
                   {step === 3 ? (
                     <motion.div key="step-3" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <p className="eyebrow">{t('report.stepOf', { n: 3 })}</p>
-                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step3Title')}</h2>
-                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Add screenshots, transaction receipts, chat exports or a short document.</p>
+                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.step3Title')}</h2>
 
                       <div
-                        className="mt-6 rounded-2xl border border-dashed border-black/[0.18] bg-mist p-7 text-center transition hover:border-brand hover:bg-brand/[0.03] sm:p-10"
+                        className="drop-zone mt-5"
                         onDragOver={(event: DragEvent<HTMLDivElement>) => event.preventDefault()}
                         onDrop={(event: DragEvent<HTMLDivElement>) => {
                           event.preventDefault()
                           addFiles(event.dataTransfer.files)
                         }}
+                        onClick={() => fileInputRef.current?.click()}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault()
+                            fileInputRef.current?.click()
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
                       >
-                        <h3 className="text-lg font-semibold text-paper">Drop evidence here</h3>
-                        <p className="mt-2 text-sm text-muted">PNG, JPG, PDF or text · up to 5 MB each · maximum 6 items</p>
-                        <div className="mt-5 flex justify-center">
-                          <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                        <Plus className="mx-auto h-8 w-8 text-brand" />
+                        <h3 className="mt-3 text-base font-semibold text-paper">Drop evidence here, or click to upload</h3>
+                        <p className="mt-1 text-sm text-muted">PNG, JPG, PDF or text · up to 5 MB each · maximum 6 items</p>
+                        <div className="mt-4 flex justify-center">
+                          <span className={cx(buttonStyles('secondary', 'sm'), 'pointer-events-none')}>
                             <Plus className="h-4 w-4" /> Choose files
-                          </Button>
+                          </span>
                         </div>
                         <input
                           ref={fileInputRef}
@@ -989,6 +1043,7 @@ export function ReportPage() {
                           multiple
                           accept="image/png,image/jpeg,application/pdf,text/plain"
                           className="sr-only"
+                          onClick={(event) => event.stopPropagation()}
                           onChange={(event) => event.target.files && addFiles(event.target.files)}
                         />
                       </div>
@@ -1008,6 +1063,8 @@ export function ReportPage() {
                                 type="button"
                                 onClick={() => {
                                   const names = draft.evidenceNames.filter((_, itemIndex) => itemIndex !== index)
+                                  evidenceFilesRef.current = evidenceFilesRef.current.filter((_, itemIndex) => itemIndex !== index)
+                                  void putFiles('report-evidence', evidenceFilesRef.current)
                                   setDraft((current) => ({
                                     ...current,
                                     evidenceNames: names,
@@ -1024,33 +1081,19 @@ export function ReportPage() {
                         </div>
                       ) : null}
 
-                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                        {[
-                          ['Include', 'Full screen, URL, date and time'],
-                          ['Keep', 'Original files without edits'],
-                          ['Never add', 'Passwords, PINs or OTPs'],
-                        ].map(([label, value], index) => (
-                          <div key={label} className={cx('rounded-xl border p-4', index === 2 ? 'border-alert/30 bg-alert/[0.04]' : 'border-black/[0.10]')}>
-                            <span className={cx('font-mono text-[0.58rem] uppercase tracking-[0.14em]', index === 2 ? 'text-alert' : 'text-brand')}>{label}</span>
-                            <p className="mt-2 text-xs leading-5 text-muted">{value}</p>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="mt-4 text-xs leading-5 text-muted">
+                        Include the full screen, URL, date and time. Keep original files. Never add passwords, PINs or OTPs.
+                      </p>
                     </motion.div>
                   ) : null}
 
                   {step === 4 ? (
                     <motion.div key="step-4" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>
-                      <p className="eyebrow">{t('report.stepOf', { n: 4 })}</p>
-                      <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper sm:text-2xl">{t('report.step4Title')}</h2>
-                      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Check every detail once before you submit.</p>
+                      <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.step4Title')}</h2>
 
                       {!draft.anonymous ? (
-                        <div className="mt-6 rounded-2xl border border-black/[0.08] p-5 sm:p-6">
-                          <div className="mb-5">
-                            <h3 className="text-base font-semibold text-paper">Your contact details</h3>
-                            <p className="mt-0.5 text-xs text-muted">Used to send updates on this complaint.</p>
-                          </div>
+                        <div className="mt-5 rounded-xl border-2 border-[#c5d0de] bg-[#f7fafd] p-4 sm:p-5">
+                          <h3 className="mb-4 text-sm font-semibold text-paper">Your contact details</h3>
                           <div className="grid gap-5 sm:grid-cols-2">
                             <div>
                               <label className="field-label" htmlFor="fullName">Full name</label>
@@ -1079,9 +1122,12 @@ export function ReportPage() {
                       <div className="mt-5 surface-soft p-5 sm:p-6">
                         <div className="mb-3 flex items-center justify-between gap-4">
                           <h3 className="text-base font-semibold text-paper">Report summary</h3>
-                          <button type="button" onClick={() => setStep(1)} className="link-accent text-xs">Edit</button>
+                          <button type="button" onClick={() => goToStep(1)} className="link-accent text-xs">Edit</button>
                         </div>
                         <SummaryRow label="Incident" value={selectedIncident?.title ?? ''} />
+                        {draft.incidentType === 'other' ? (
+                          <SummaryRow label="Type" value={draft.otherIncident} />
+                        ) : null}
                         <SummaryRow label="Occurred" value={formatDateTime(draft.occurredAt)} />
                         <SummaryRow label="Location" value={draft.state} />
                         <SummaryRow label="Channel" value={draft.channel} />
@@ -1097,7 +1143,7 @@ export function ReportPage() {
                         <SummaryRow label="Description" value={draft.description} />
                       </div>
 
-                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/[0.08] p-4">
+                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 border-[#c5d0de] bg-[#eef3f9] p-4 hover:border-brand/50">
                         <input
                           type="checkbox"
                           checked={draft.consent}
@@ -1132,23 +1178,14 @@ export function ReportPage() {
             </div>
 
             <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-              <div className="surface-soft p-5">
-                <p className="eyebrow">{t('report.currentSelection')}</p>
-                {selectedIncident ? (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-paper">{selectedIncident.title}</p>
-                    <p className="mt-3 text-sm leading-6 text-muted">{selectedIncident.hint}</p>
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm leading-6 text-muted">Choose an incident type to see contextual guidance.</p>
-                )}
-              </div>
-
-              <div className="surface-soft p-5">
+              <div className="surface-soft p-4">
                 <p className="text-sm font-medium text-paper">What to include</p>
-                <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
-                  <li>What happened, in the order it happened.</li>
-                  <li>Screenshots, receipts and chat exports.</li>
+                {selectedIncident ? (
+                  <p className="mt-2 text-sm leading-5 text-muted">{selectedIncident.hint}</p>
+                ) : null}
+                <ul className="mt-3 space-y-2 text-sm leading-5 text-muted">
+                  <li>What happened, in order.</li>
+                  <li>Screenshots, receipts and chats.</li>
                   <li>Never add passwords, PINs or OTPs.</li>
                 </ul>
               </div>
@@ -1159,10 +1196,7 @@ export function ReportPage() {
                 <div className="mt-4 grid gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      update('incidentType', 'financial')
-                      setEmergencyLanding(true)
-                    }}
+                    onClick={openEmergency}
                     className="flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"
                   >
                     <Zap className="mr-2 h-4 w-4" /> {t('home.lostMoney')}

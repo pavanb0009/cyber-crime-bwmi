@@ -14,11 +14,14 @@ import {
   Upload,
   Volume2,
 } from 'lucide-react'
-import { Button } from '../components/Button'
+import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { analyseCall, type CallLanguage } from '../lib/callAnalysis'
 import { cx } from '../lib/cx'
+import { clearFiles, getFiles, putFiles } from '../lib/fileStore'
+import { clearSession, patchSearchParams, readSession, writeSession } from '../lib/session'
 import type { CallAnalysisResponse, CallRiskLevel } from '../types'
+import { useSearchParams } from 'react-router-dom'
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024
 const ACCEPTED_EXTENSIONS = /\.(mp3|wav|m4a|webm|ogg|mp4)$/i
@@ -255,14 +258,28 @@ function AnalysisResult({ result, onReset }: { result: CallAnalysisResponse; onR
   )
 }
 
+type CallSession = {
+  language: CallLanguage
+  fileName: string
+  result: CallAnalysisResponse | null
+}
+
 export function CallScannerPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const saved = readSession<CallSession>('call')
   const [file, setFile] = useState<File | null>(null)
-  const [language, setLanguage] = useState<CallLanguage>('auto')
+  const [language, setLanguage] = useState<CallLanguage>(saved?.language ?? 'auto')
   const [audioUrl, setAudioUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [result, setResult] = useState<CallAnalysisResponse | null>(null)
+  const [result, setResult] = useState<CallAnalysisResponse | null>(saved?.result ?? null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const view = searchParams.get('view')
+  const showResult = view === 'result' && result
+
+  function writeQuery(patch: Record<string, string | null>, replace = false) {
+    setSearchParams((current) => patchSearchParams(current, patch), { replace })
+  }
 
   useEffect(() => {
     if (!file) {
@@ -273,6 +290,12 @@ export function CallScannerPage() {
     setAudioUrl(url)
     return () => URL.revokeObjectURL(url)
   }, [file])
+
+  useEffect(() => {
+    void getFiles('call-scan').then((files) => {
+      if (files[0]) setFile(files[0])
+    })
+  }, [])
 
   function chooseFile(nextFile: File) {
     setError('')
@@ -288,6 +311,9 @@ export function CallScannerPage() {
       return
     }
     setFile(nextFile)
+    void putFiles('call-scan', [nextFile])
+    writeSession('call', { language, fileName: nextFile.name, result: null })
+    writeQuery({ view: null, lang: language })
   }
 
   async function runAnalysis() {
@@ -295,7 +321,10 @@ export function CallScannerPage() {
     setLoading(true)
     setError('')
     try {
-      setResult(await analyseCall(file, language))
+      const analysis = await analyseCall(file, language)
+      setResult(analysis)
+      writeSession('call', { language, fileName: file.name, result: analysis })
+      writeQuery({ view: 'result', lang: language, file: file.name })
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : 'The recording could not be analysed.'
       setError(message.includes('fetch') ? 'The local scanner is not running. Start the FastAPI backend on port 8000.' : message)
@@ -308,85 +337,99 @@ export function CallScannerPage() {
     setFile(null)
     setResult(null)
     setError('')
+    clearSession('call')
+    void clearFiles('call-scan')
     if (fileRef.current) fileRef.current.value = ''
+    setSearchParams({}, { replace: true })
   }
 
   return (
     <>
-      <PageIntro
-        eyebrow="Open-source call protection"
-        title="Upload a call. See the scam pattern."
-        description="Transcribe Hindi, English, or Hinglish locally, then detect social-engineering signals with an explainable risk score."
-      />
+      <PageIntro title="Scan a call" />
 
       <section className="page-shell pb-14">
         <div className="mx-auto max-w-5xl">
-          {result ? <AnalysisResult result={result} onReset={reset} /> : (
+          {showResult && result ? <AnalysisResult result={result} onReset={reset} /> : (
             <div className="card overflow-hidden">
               <div className="border-b border-black/[0.07] p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-5">
-                  <div>
-                    <p className="eyebrow">Step 1 · Uploaded-call analysis</p>
-                    <h2 className="section-title mt-2">Choose a recording to scan</h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">For the clearest result, use a 20–90 second recording with audible speech and limited background noise.</p>
-                    <div className="mt-5">
-                      <p className="field-label">Spoken language</p>
-                      <div className="flex flex-wrap gap-2">
-                        {languageOptions.map((option) => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            onClick={() => setLanguage(option.id)}
-                            className={cx(
-                              'rounded-lg border px-3.5 py-2 text-sm font-medium transition',
-                              language === option.id
-                                ? 'border-brand bg-brand/[0.07] text-brand'
-                                : 'border-black/[0.12] bg-white text-muted hover:border-black/25 hover:text-paper',
-                            )}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                      <p className="field-help">Choosing Hindi or English is more reliable than auto detect on short or noisy clips.</p>
-                    </div>
-                  </div>
+                <p className="field-label">Spoken language</p>
+                <div className="flex flex-wrap gap-2">
+                  {languageOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => {
+                        setLanguage(option.id)
+                        writeSession('call', {
+                          language: option.id,
+                          fileName: file?.name ?? readSession<CallSession>('call')?.fileName ?? '',
+                          result,
+                        })
+                        writeQuery({ lang: option.id }, true)
+                      }}
+                      className={cx(
+                        'rounded-lg border-2 px-3.5 py-2 text-sm font-medium transition',
+                        language === option.id
+                          ? 'border-brand bg-brand/[0.08] text-brand'
+                          : 'border-[#c5d0de] bg-[#eef3f9] text-muted hover:border-brand/50 hover:text-paper',
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <div className="p-5 sm:p-6">
                 <div
-                  className={cx('rounded-2xl border border-dashed p-8 text-center transition sm:p-12', file ? 'border-brand/35 bg-brand/[0.035]' : 'border-black/[0.18] bg-mist')}
+                  className={cx('drop-zone', file && 'border-solid border-brand/40 bg-brand/[0.06]')}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {
                     event.preventDefault()
                     const dropped = event.dataTransfer.files[0]
                     if (dropped) chooseFile(dropped)
                   }}
+                  onClick={(event) => {
+                    if ((event.target as HTMLElement).closest('button, audio')) return
+                    fileRef.current?.click()
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      fileRef.current?.click()
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   {file ? <FileAudio className="mx-auto h-9 w-9 text-brand" /> : <Upload className="mx-auto h-8 w-8 text-brand" />}
-                  <h3 className="mt-4 text-lg font-semibold text-paper">{file ? file.name : 'Drop a call recording here'}</h3>
-                  <p className="mt-2 text-sm text-muted">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB · ready to analyse` : 'MP3, WAV, M4A, WebM, OGG, or MP4 · maximum 50 MB'}</p>
+                  <h3 className="mt-3 text-base font-semibold text-paper">{file ? file.name : 'Drop a call recording here, or click to upload'}</h3>
+                  <p className="mt-1 text-sm text-muted">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB · ready to analyse` : 'MP3, WAV, M4A, WebM, OGG, or MP4 · maximum 50 MB'}</p>
 
-                  {audioUrl ? <audio className="mx-auto mt-5 w-full max-w-lg" controls src={audioUrl}>Your browser cannot preview this audio.</audio> : null}
+                  {audioUrl ? <audio className="mx-auto mt-5 w-full max-w-lg" controls src={audioUrl} onClick={(event) => event.stopPropagation()}>Your browser cannot preview this audio.</audio> : null}
 
-                  <div className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row">
-                    <Button variant={file ? 'secondary' : 'primary'} onClick={() => fileRef.current?.click()}>
+                  <div className="mt-5 flex justify-center">
+                    <span className={cx(buttonStyles(file ? 'secondary' : 'primary', 'md'), 'pointer-events-none')}>
                       {file ? 'Choose another' : 'Choose recording'}
-                    </Button>
-                    {file ? <Button onClick={() => void runAnalysis()} loading={loading}><ShieldAlert className="h-4 w-4" /> Analyse call</Button> : null}
+                    </span>
                   </div>
                   <input
                     ref={fileRef}
                     type="file"
                     accept=".mp3,.wav,.m4a,.webm,.ogg,.mp4,audio/*"
                     className="sr-only"
+                    onClick={(event) => event.stopPropagation()}
                     onChange={(event) => {
                       const selected = event.target.files?.[0]
                       if (selected) chooseFile(selected)
                     }}
                   />
                 </div>
+                {file ? (
+                  <div className="mt-4 flex justify-end">
+                    <Button onClick={() => void runAnalysis()} loading={loading}><ShieldAlert className="h-4 w-4" /> Analyse call</Button>
+                  </div>
+                ) : null}
 
                 {loading ? (
                   <div className="mt-6 rounded-xl border border-brand/15 bg-brand/[0.035] p-5">

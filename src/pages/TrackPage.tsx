@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, ChevronRight, CircleDollarSign } from 'lucide-react'
+import { Check, ChevronRight } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
 import { brand } from '../data/brand'
 import { cx } from '../lib/cx'
+import { patchSearchParams, writeSession } from '../lib/session'
 import { defaultCase, findCase, loadCases } from '../lib/storage'
 import type { CaseRecord, MoneyRecovery } from '../types'
 import { useTranslation } from 'react-i18next'
@@ -25,14 +26,8 @@ function MoneyRecoveryTracker({ recovery }: { recovery: MoneyRecovery }) {
   const activeIndex = recovery.stage === 'reported' ? 0 : recovery.stage === 'traced' ? 1 : recovery.stage === 'lien' ? 2 : recovery.stage === 'review' ? 3 : 4
 
   return (
-    <div className="rounded-2xl border border-brand/20 bg-brand/[0.03] p-5 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow text-brand">Money recovery tracker</p>
-          <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">Where is the money now?</h3>
-        </div>
-        <span className="pill-badge"><CircleDollarSign className="h-3.5 w-3.5" /> Financial case</span>
-      </div>
+    <div className="rounded-xl border-2 border-brand/25 bg-[#eef3f9] p-4 sm:p-5">
+      <h3 className="text-sm font-semibold text-paper">Money recovery</h3>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
@@ -103,23 +98,30 @@ function downloadStatus(record: CaseRecord) {
 export function TrackPage() {
   const { t } = useTranslation('pages')
   const [searchParams, setSearchParams] = useSearchParams()
-  const initialReference = searchParams.get('case') ?? ''
-  const [reference, setReference] = useState(initialReference)
+  const caseQuery = searchParams.get('case') ?? ''
+  const [reference, setReference] = useState(caseQuery)
   const [record, setRecord] = useState<CaseRecord | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const recentCases = useMemo(() => loadCases(), [record])
+  const hydratedCase = useRef('')
 
-  async function runSearch(value = reference) {
+  function writeCase(nextCase: string | null, replace = false) {
+    setSearchParams((current) => patchSearchParams(current, { case: nextCase }), { replace })
+  }
+
+  async function runSearch(value = reference, options: { delay?: boolean; syncUrl?: boolean } = {}) {
+    const { delay = true, syncUrl = true } = options
     const clean = value.trim().toUpperCase()
     if (!clean) {
       setError(t('track.enterRef'))
       setRecord(null)
+      if (syncUrl) writeCase(null)
       return
     }
     setLoading(true)
     setError('')
-    await new Promise((resolve) => window.setTimeout(resolve, 540))
+    if (delay) await new Promise((resolve) => window.setTimeout(resolve, 280))
     const found = getCase(clean)
     if (!found) {
       setRecord(null)
@@ -127,16 +129,26 @@ export function TrackPage() {
     } else {
       setRecord(found)
       setReference(found.caseId)
-      setSearchParams({ case: found.caseId })
+      hydratedCase.current = found.caseId
+      writeSession('track', { caseId: found.caseId })
+      if (syncUrl) writeCase(found.caseId)
     }
     setLoading(false)
   }
 
   useEffect(() => {
-    if (initialReference) void runSearch(initialReference)
-    // Deliberately run only for the initial URL value.
+    if (caseQuery) {
+      setReference(caseQuery)
+      if (hydratedCase.current === caseQuery) return
+      hydratedCase.current = caseQuery
+      void runSearch(caseQuery, { delay: false, syncUrl: false })
+      return
+    }
+    hydratedCase.current = ''
+    setRecord(null)
+    // Keep the search box as-is when the case query is cleared with browser back.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [caseQuery])
 
   const incidentTitle = record
     ? t(`incidents.${record.incidentType}.title`, { defaultValue: record.incidentType })
@@ -145,9 +157,7 @@ export function TrackPage() {
   return (
     <>
       <PageIntro
-        eyebrow={t('track.eyebrow')}
-        title={t('track.title')}
-        description={t('track.description')}
+        title={t('track.eyebrow')}
         aside={
           <button
             type="button"
@@ -155,10 +165,10 @@ export function TrackPage() {
               setReference(defaultCase.caseId)
               void runSearch(defaultCase.caseId)
             }}
-            className="w-full text-left"
+            className="rounded-lg border-2 border-[#c5d0de] bg-[#eef3f9] px-3 py-2 text-left hover:border-brand/50"
           >
-            <p className="text-sm font-medium text-paper">{t('track.recentCase')}</p>
-            <p className="link-accent mt-1 font-mono text-sm">{defaultCase.caseId}</p>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('track.recentCase')}</p>
+            <p className="font-mono text-sm font-bold text-brand">{defaultCase.caseId}</p>
           </button>
         }
       />
@@ -195,11 +205,11 @@ export function TrackPage() {
             </form>
           </div>
 
-          <div className="min-h-[24rem] p-5 sm:p-6 lg:p-8">
+          <div className="p-5 sm:p-6 lg:p-8">
             <AnimatePresence mode="wait">
               {loading ? (
-                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[16rem] flex-col justify-center">
-                  <p className="text-base font-medium text-paper">{t('track.loading')}</p>
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-8">
+                  <p className="text-sm font-medium text-paper">{t('track.loading')}</p>
                 </motion.div>
               ) : record ? (
                 <motion.div key={record.caseId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
@@ -234,10 +244,9 @@ export function TrackPage() {
 
                   <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>
-                      <div className="mb-5">
-                        <p className="eyebrow">Case timeline</p>
-                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-paper">Every stage, in human language.</h3>
-                      </div>
+                    <div className="mb-4">
+                      <h3 className="text-sm font-semibold text-paper">Case timeline</h3>
+                    </div>
                       <div className="relative ml-3 border-l border-black/[0.10] pl-7">
                         {record.timeline.map((item, index) => (
                           <div key={`${item.label}-${index}`} className="relative pb-8 last:pb-0">
@@ -261,11 +270,8 @@ export function TrackPage() {
                       </div>
                     </div>
 
-                    <aside className="space-y-4">
-                      <div className="surface-soft p-5">
-                        <p className="text-sm font-medium text-paper">What happens next</p>
-                        <p className="mt-3 text-sm leading-6 text-muted">{t('track.nextUpdate')}</p>
-                      </div>
+                    <aside className="space-y-3">
+                      <p className="text-sm leading-6 text-muted">{t('track.nextUpdate')}</p>
                       <Button variant="secondary" size="lg" className="w-full" onClick={() => downloadStatus(record)}>
                         Download status
                       </Button>
@@ -280,9 +286,8 @@ export function TrackPage() {
                   </div>
                 </motion.div>
               ) : (
-                <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-[16rem] flex-col justify-center">
-                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-paper">{t('track.emptyTitle')}</h3>
-                  <p className="mt-2 max-w-md text-sm leading-6 text-muted">{t('track.emptyBody')}</p>
+                <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-6">
+                  <p className="text-sm leading-6 text-muted">{t('track.emptyBody')}</p>
                   <button
                     type="button"
                     onClick={() => {
