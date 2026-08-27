@@ -3,7 +3,17 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Manrope Variable', Manrope, ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    'Manrope Variable',
+    'Noto Sans Devanagari',
+    'Noto Sans Bengali',
+    'Noto Sans Telugu',
+    'Noto Sans Tamil',
+    'Noto Sans Kannada',
+    'Noto Sans Malayalam',
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
   color: #101012;
   background: #ffffff;
   font-synthesis: none;

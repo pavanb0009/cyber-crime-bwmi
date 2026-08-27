@@ -12,10 +12,18 @@
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "latest",
     "@fontsource-variable/manrope": "latest",
+    "@fontsource/noto-sans-bengali": "^5.3.0",
+    "@fontsource/noto-sans-devanagari": "^5.3.0",
+    "@fontsource/noto-sans-kannada": "^5.3.0",
+    "@fontsource/noto-sans-malayalam": "^5.3.0",
+    "@fontsource/noto-sans-tamil": "^5.3.0",
+    "@fontsource/noto-sans-telugu": "^5.3.0",
     "framer-motion": "latest",
+    "i18next": "^26.4.0",
     "lucide-react": "latest",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^17.0.12",
     "react-router-dom": "latest"
   },
   "devDependencies": {

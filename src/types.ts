@@ -11,6 +11,74 @@ export type IncidentTypeId =
 export type IdentifierType = 'phone' | 'upi' | 'email' | 'url'
 export type RiskLevel = 'high' | 'medium' | 'clear'
 
+export type IndianStateId =
+  | 'andaman-and-nicobar-islands'
+  | 'andhra-pradesh'
+  | 'arunachal-pradesh'
+  | 'assam'
+  | 'bihar'
+  | 'chandigarh'
+  | 'chhattisgarh'
+  | 'dadra-and-nagar-haveli-and-daman-and-diu'
+  | 'delhi'
+  | 'goa'
+  | 'gujarat'
+  | 'haryana'
+  | 'himachal-pradesh'
+  | 'jammu-and-kashmir'
+  | 'jharkhand'
+  | 'karnataka'
+  | 'kerala'
+  | 'ladakh'
+  | 'lakshadweep'
+  | 'madhya-pradesh'
+  | 'maharashtra'
+  | 'manipur'
+  | 'meghalaya'
+  | 'mizoram'
+  | 'nagaland'
+  | 'odisha'
+  | 'puducherry'
+  | 'punjab'
+  | 'rajasthan'
+  | 'sikkim'
+  | 'tamil-nadu'
+  | 'telangana'
+  | 'tripura'
+  | 'uttar-pradesh'
+  | 'uttarakhand'
+  | 'west-bengal'
+
+export type ChannelId =
+  | 'upi'
+  | 'card'
+  | 'net-banking'
+  | 'call-sms'
+  | 'messaging'
+  | 'social'
+  | 'email'
+  | 'website-app'
+  | 'marketplace'
+  | 'gaming'
+  | 'other'
+
+export type SafetyGuideId =
+  | 'money-moved'
+  | 'account-taken'
+  | 'being-harassed'
+  | 'child-safety'
+  | 'before-paying'
+
+export type SafetyGuideCategory = 'Money' | 'Accounts' | 'Harassment' | 'Family' | 'General'
+
+export type DemoSuspectId = 'demo-phone' | 'demo-upi' | 'demo-email' | 'demo-url'
+
+/** A translated label paired with the stable English value stored in a draft or case. */
+export interface LocalizedOption {
+  value: string
+  label: string
+}
+
 export interface IncidentType {
   id: IncidentTypeId
   title: string
@@ -116,8 +184,11 @@ export interface SuspectResult {
 }
 
 export interface SafetyGuide {
-  id: string
-  category: 'Money' | 'Accounts' | 'Harassment' | 'Family' | 'General'
+  id: SafetyGuideId
+  /** Stable English category used for filtering. */
+  category: SafetyGuideCategory
+  /** Translated category name for display. */
+  categoryLabel: string
   title: string
   summary: string
   readingTime: string
