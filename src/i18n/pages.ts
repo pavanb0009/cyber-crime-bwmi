@@ -6,6 +6,16 @@ const en = {
     learning: 'Learning Corner',
     learningTitle: 'Know the scam before it reaches you.',
     learningAll: 'Open the safety library',
+    lostMoney: 'I just lost money',
+    copilot: {
+      eyebrow: 'Cybercrime Copilot',
+      title: 'Not sure what category this is?',
+      help: 'Describe what happened in your own words. We will pick the likely incident type and the right next step.',
+      placeholder: 'Someone called claiming to be CBI and made my father transfer ₹2 lakh…',
+      understand: 'Understand it',
+      openRoute: 'Open recommended route',
+      tooShort: 'Add a little more detail so we can classify it.',
+    },
     cards: {
       women: { label: 'Women & children', action: 'Report anonymously' },
       financial: { label: 'Financial fraud', action: 'Call 1930 first' },
@@ -206,6 +216,16 @@ const hi = merge({
     learning: 'अध्ययन कोना',
     learningTitle: 'घोटाला आपके पास पहुँचने से पहले पहचानें।',
     learningAll: 'सुरक्षा पुस्तकालय खोलें',
+    lostMoney: 'अभी पैसे निकल गए',
+    copilot: {
+      eyebrow: 'साइबर अपराध कोपायलट',
+      title: 'श्रेणी पता नहीं?',
+      help: 'अपने शब्दों में बताएँ क्या हुआ। हम संभावित घटना और अगला कदम चुनेंगे।',
+      placeholder: 'किसी ने सीबीआई होने का दावा किया और पिताजी से ₹2 लाख ट्रांसफर करवाए…',
+      understand: 'समझें',
+      openRoute: 'सुझाया गया मार्ग खोलें',
+      tooShort: 'वर्गीकृत करने के लिए थोड़ा और विवरण लिखें।',
+    },
     cards: {
       women: { label: 'महिला और बच्चे', action: 'गुमनाम रिपोर्ट' },
       financial: { label: 'वित्तीय धोखाधड़ी', action: 'पहले 1930 पर कॉल करें' },

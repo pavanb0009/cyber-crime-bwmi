@@ -149,16 +149,21 @@ export function ReportPage() {
   const requestedType = searchParams.get('type') as IncidentTypeId | null
   const isValidRequestedType = incidentTypes.some((item) => item.id === requestedType)
   const requestedAnonymous = searchParams.get('anonymous') === '1'
+  const requestedStory = searchParams.get('story') ?? ''
 
   const [step, setStep] = useState(1)
   const [draft, setDraft] = useState<ReportDraft>(() => {
     const saved = loadDraft()
-    if (!isValidRequestedType) return saved
-    return {
-      ...saved,
-      incidentType: requestedType!,
-      anonymous: requestedType === 'women-child' ? requestedAnonymous : false,
+    const next = { ...saved }
+    if (isValidRequestedType) {
+      next.incidentType = requestedType!
+      next.anonymous = requestedType === 'women-child' ? requestedAnonymous : false
     }
+    if (requestedStory.trim()) {
+      next.copilotText = next.copilotText || requestedStory
+      next.description = next.description || requestedStory
+    }
+    return next
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [fileError, setFileError] = useState('')
