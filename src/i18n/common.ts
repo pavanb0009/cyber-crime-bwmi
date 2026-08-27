@@ -10,6 +10,7 @@ export const common = {
       report: 'Report',
       track: 'Track',
       check: 'Check',
+      callScan: 'Call scan',
       volunteers: 'Volunteers',
       learn: 'Learn',
       contact: 'Contact',
@@ -52,7 +53,7 @@ export const common = {
       title: 'रक्षक — साइबर अपराध की रिपोर्ट करें',
       description: 'स्पष्ट साइबर अपराध रिपोर्टिंग यात्रा के लिए रक्षक का स्वतंत्र प्रोटोटाइप। यह आधिकारिक सरकारी सेवा नहीं है।',
     },
-    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'जाँचें', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
+    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'जाँचें', callScan: 'कॉल स्कैन', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
     actions: { startReport: 'रिपोर्ट शुरू करें', call1930: '1930 पर कॉल करें', continue: 'आगे बढ़ें', back: 'वापस', clear: 'साफ़ करें', open: 'खोलें', close: 'बंद करें', reset: 'रीसेट', readMore: 'और पढ़ें' },
     language: { label: 'भाषा', select: 'भाषा चुनें' },
     accessibility: { label: 'सुलभता', preferences: 'प्राथमिकताएँ तुरंत लागू होती हैं।', largerText: 'बड़ा टेक्स्ट', largerTextHint: 'इंटरफ़ेस का आकार बढ़ाएँ', reduceMotion: 'गतिशीलता घटाएँ', reduceMotionHint: 'एनिमेशन प्रभाव कम करें', reset: 'प्राथमिकताएँ रीसेट करें', close: 'सुलभता मेनू बंद करें' },
@@ -61,7 +62,7 @@ export const common = {
   },
   te: {
     meta: { title: 'రక్షక్ — సైబర్ నేరాన్ని నివేదించండి', description: 'సైబర్ నేర నివేదికను సులభతరం చేసే స్వతంత్ర నమూనా. ఇది అధికారిక ప్రభుత్వ సేవ కాదు.' },
-    nav: { home: 'హోమ్', report: 'నివేదించు', track: 'ట్రాక్', check: 'తనిఖీ', volunteers: 'వాలంటీర్లు', learn: 'తెలుసుకోండి', contact: 'సంప్రదించండి', openNavigation: 'నావిగేషన్ తెరవండి' },
+    nav: { home: 'హోమ్', report: 'నివేదించు', track: 'ట్రాక్', check: 'తనిఖీ', callScan: 'కాల్ స్కాన్', volunteers: 'వాలంటీర్లు', learn: 'తెలుసుకోండి', contact: 'సంప్రదించండి', openNavigation: 'నావిగేషన్ తెరవండి' },
     actions: { startReport: 'నివేదిక ప్రారంభించండి', call1930: '1930కు కాల్ చేయండి', continue: 'కొనసాగించండి', back: 'వెనుకకు', clear: 'తొలగించు', open: 'తెరవండి', close: 'మూసివేయండి', reset: 'రీసెట్', readMore: 'మరింత చదవండి' },
     language: { label: 'భాష', select: 'భాషను ఎంచుకోండి' },
     accessibility: { label: 'అందుబాటు', preferences: 'ప్రాధాన్యతలు వెంటనే వర్తిస్తాయి.', largerText: 'పెద్ద అక్షరాలు', largerTextHint: 'ఇంటర్‌ఫేస్ పరిమాణం పెంచండి', reduceMotion: 'కదలిక తగ్గించండి', reduceMotionHint: 'యానిమేషన్ ప్రభావాలను తగ్గించండి', reset: 'ప్రాధాన్యతలు రీసెట్ చేయండి', close: 'అందుబాటు మెనూను మూసివేయండి' },
@@ -70,7 +71,7 @@ export const common = {
   },
   ta: {
     meta: { title: 'ரக்ஷக் — இணையக் குற்றத்தைப் புகாரளிக்கவும்', description: 'தெளிவான இணையக் குற்றப் புகார் பயணத்திற்கான சுயாதீன மாதிரி. இது அதிகாரப்பூர்வ அரசு சேவை அல்ல.' },
-    nav: { home: 'முகப்பு', report: 'புகார்', track: 'நிலை', check: 'சரிபார்', volunteers: 'தன்னார்வலர்கள்', learn: 'அறிக', contact: 'தொடர்பு', openNavigation: 'வழிசெலுத்தலைத் திற' },
+    nav: { home: 'முகப்பு', report: 'புகார்', track: 'நிலை', check: 'சரிபார்', callScan: 'அழைப்பு சோதனை', volunteers: 'தன்னார்வலர்கள்', learn: 'அறிக', contact: 'தொடர்பு', openNavigation: 'வழிசெலுத்தலைத் திற' },
     actions: { startReport: 'புகாரைத் தொடங்கு', call1930: '1930-ஐ அழைக்கவும்', continue: 'தொடரவும்', back: 'பின்செல்', clear: 'அழி', open: 'திற', close: 'மூடு', reset: 'மீட்டமை', readMore: 'மேலும் படிக்க' },
     language: { label: 'மொழி', select: 'மொழியைத் தேர்ந்தெடுக்கவும்' },
     accessibility: { label: 'அணுகல்தன்மை', preferences: 'விருப்பங்கள் உடனே செயல்படும்.', largerText: 'பெரிய எழுத்து', largerTextHint: 'இடைமுக அளவை அதிகரிக்கவும்', reduceMotion: 'அசைவைக் குறைக்கவும்', reduceMotionHint: 'அசைவு விளைவுகளைக் குறைக்கவும்', reset: 'விருப்பங்களை மீட்டமை', close: 'அணுகல்தன்மை பட்டியை மூடு' },
@@ -79,7 +80,7 @@ export const common = {
   },
   kn: {
     meta: { title: 'ರಕ್ಷಕ್ — ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಮಾಡಿ', description: 'ಸ್ಪಷ್ಟ ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಪ್ರಯಾಣಕ್ಕಾಗಿ ಸ್ವತಂತ್ರ ಮಾದರಿ. ಇದು ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಸೇವೆಯಲ್ಲ.' },
-    nav: { home: 'ಮುಖಪುಟ', report: 'ವರದಿ', track: 'ಸ್ಥಿತಿ', check: 'ಪರಿಶೀಲಿಸಿ', volunteers: 'ಸ್ವಯಂಸೇವಕರು', learn: 'ತಿಳಿಯಿರಿ', contact: 'ಸಂಪರ್ಕ', openNavigation: 'ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ' },
+    nav: { home: 'ಮುಖಪುಟ', report: 'ವರದಿ', track: 'ಸ್ಥಿತಿ', check: 'ಪರಿಶೀಲಿಸಿ', callScan: 'ಕಾಲ್ ಸ್ಕ್ಯಾನ್', volunteers: 'ಸ್ವಯಂಸೇವಕರು', learn: 'ತಿಳಿಯಿರಿ', contact: 'ಸಂಪರ್ಕ', openNavigation: 'ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ' },
     actions: { startReport: 'ವರದಿ ಪ್ರಾರಂಭಿಸಿ', call1930: '1930ಕ್ಕೆ ಕರೆ ಮಾಡಿ', continue: 'ಮುಂದುವರಿಸಿ', back: 'ಹಿಂದೆ', clear: 'ತೆರವುಗೊಳಿಸಿ', open: 'ತೆರೆಯಿರಿ', close: 'ಮುಚ್ಚಿ', reset: 'ಮರುಹೊಂದಿಸಿ', readMore: 'ಇನ್ನಷ್ಟು ಓದಿ' },
     language: { label: 'ಭಾಷೆ', select: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ' },
     accessibility: { label: 'ಪ್ರವೇಶಸಾಧ್ಯತೆ', preferences: 'ಆದ್ಯತೆಗಳು ತಕ್ಷಣ ಅನ್ವಯಿಸುತ್ತವೆ.', largerText: 'ದೊಡ್ಡ ಅಕ್ಷರ', largerTextHint: 'ಇಂಟರ್ಫೇಸ್ ಗಾತ್ರ ಹೆಚ್ಚಿಸಿ', reduceMotion: 'ಚಲನೆ ಕಡಿಮೆ ಮಾಡಿ', reduceMotionHint: 'ಅನಿಮೇಷನ್ ಪರಿಣಾಮಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ', reset: 'ಆದ್ಯತೆಗಳನ್ನು ಮರುಹೊಂದಿಸಿ', close: 'ಪ್ರವೇಶಸಾಧ್ಯತೆ ಮೆನು ಮುಚ್ಚಿ' },
@@ -88,7 +89,7 @@ export const common = {
   },
   ml: {
     meta: { title: 'രക്ഷക് — സൈബർ കുറ്റകൃത്യം റിപ്പോർട്ട് ചെയ്യുക', description: 'വ്യക്തമായ സൈബർ കുറ്റകൃത്യ റിപ്പോർട്ടിംഗിനുള്ള സ്വതന്ത്ര മാതൃക. ഇത് ഔദ്യോഗിക സർക്കാർ സേവനമല്ല.' },
-    nav: { home: 'ഹോം', report: 'റിപ്പോർട്ട്', track: 'നില', check: 'പരിശോധിക്കുക', volunteers: 'സന്നദ്ധർ', learn: 'പഠിക്കുക', contact: 'ബന്ധപ്പെടുക', openNavigation: 'നാവിഗേഷൻ തുറക്കുക' },
+    nav: { home: 'ഹോം', report: 'റിപ്പോർട്ട്', track: 'നില', check: 'പരിശോധിക്കുക', callScan: 'Call scan', volunteers: 'സന്നദ്ധർ', learn: 'പഠിക്കുക', contact: 'ബന്ധപ്പെടുക', openNavigation: 'നാവിഗേഷൻ തുറക്കുക' },
     actions: { startReport: 'റിപ്പോർട്ട് തുടങ്ങുക', call1930: '1930-ൽ വിളിക്കുക', continue: 'തുടരുക', back: 'പിന്നോട്ട്', clear: 'മായ്ക്കുക', open: 'തുറക്കുക', close: 'അടയ്ക്കുക', reset: 'റീസെറ്റ്', readMore: 'കൂടുതൽ വായിക്കുക' },
     language: { label: 'ഭാഷ', select: 'ഭാഷ തിരഞ്ഞെടുക്കുക' },
     accessibility: { label: 'പ്രവേശനക്ഷമത', preferences: 'മുൻഗണനകൾ ഉടൻ പ്രയോഗിക്കും.', largerText: 'വലിയ അക്ഷരം', largerTextHint: 'ഇന്റർഫേസ് വലുപ്പം കൂട്ടുക', reduceMotion: 'ചലനം കുറയ്ക്കുക', reduceMotionHint: 'ആനിമേഷൻ ഇഫക്റ്റുകൾ കുറയ്ക്കുക', reset: 'മുൻഗണനകൾ റീസെറ്റ് ചെയ്യുക', close: 'പ്രവേശനക്ഷമത മെനു അടയ്ക്കുക' },
@@ -97,7 +98,7 @@ export const common = {
   },
   mr: {
     meta: { title: 'रक्षक — सायबर गुन्ह्याची तक्रार करा', description: 'स्पष्ट सायबर गुन्हे नोंदणीसाठी रक्षकचा स्वतंत्र नमुना. ही अधिकृत सरकारी सेवा नाही.' },
-    nav: { home: 'मुख्यपृष्ठ', report: 'तक्रार', track: 'स्थिती', check: 'तपासा', volunteers: 'स्वयंसेवक', learn: 'जाणून घ्या', contact: 'संपर्क', openNavigation: 'नेव्हिगेशन उघडा' },
+    nav: { home: 'मुख्यपृष्ठ', report: 'तक्रार', track: 'स्थिती', check: 'तपासा', callScan: 'कॉल स्कॅन', volunteers: 'स्वयंसेवक', learn: 'जाणून घ्या', contact: 'संपर्क', openNavigation: 'नेव्हिगेशन उघडा' },
     actions: { startReport: 'तक्रार सुरू करा', call1930: '1930 वर कॉल करा', continue: 'पुढे जा', back: 'मागे', clear: 'साफ करा', open: 'उघडा', close: 'बंद करा', reset: 'रीसेट', readMore: 'अधिक वाचा' },
     language: { label: 'भाषा', select: 'भाषा निवडा' },
     accessibility: { label: 'सुलभता', preferences: 'प्राधान्ये त्वरित लागू होतात.', largerText: 'मोठा मजकूर', largerTextHint: 'इंटरफेसचा आकार वाढवा', reduceMotion: 'हालचाल कमी करा', reduceMotionHint: 'अॅनिमेशन प्रभाव कमी करा', reset: 'प्राधान्ये रीसेट करा', close: 'सुलभता मेनू बंद करा' },
@@ -106,7 +107,7 @@ export const common = {
   },
   bn: {
     meta: { title: 'রক্ষক — সাইবার অপরাধ রিপোর্ট করুন', description: 'সহজ সাইবার অপরাধ রিপোর্টিংয়ের জন্য রক্ষকের স্বাধীন প্রোটোটাইপ। এটি সরকারি পরিষেবা নয়।' },
-    nav: { home: 'হোম', report: 'রিপোর্ট', track: 'ট্র্যাক', check: 'যাচাই', volunteers: 'স্বেচ্ছাসেবক', learn: 'শিখুন', contact: 'যোগাযোগ', openNavigation: 'নেভিগেশন খুলুন' },
+    nav: { home: 'হোম', report: 'রিপোর্ট', track: 'ট্র্যাক', check: 'যাচাই', callScan: 'কল স্ক্যান', volunteers: 'স্বেচ্ছাসেবক', learn: 'শিখুন', contact: 'যোগাযোগ', openNavigation: 'নেভিগেশন খুলুন' },
     actions: { startReport: 'রিপোর্ট শুরু করুন', call1930: '১৯৩০-এ কল করুন', continue: 'এগিয়ে যান', back: 'ফিরুন', clear: 'মুছুন', open: 'খুলুন', close: 'বন্ধ করুন', reset: 'রিসেট', readMore: 'আরও পড়ুন' },
     language: { label: 'ভাষা', select: 'ভাষা বেছে নিন' },
     accessibility: { label: 'অ্যাক্সেসিবিলিটি', preferences: 'পছন্দগুলি সঙ্গে সঙ্গে প্রয়োগ হয়।', largerText: 'বড় লেখা', largerTextHint: 'ইন্টারফেসের আকার বাড়ান', reduceMotion: 'গতি কমান', reduceMotionHint: 'অ্যানিমেশন প্রভাব কমান', reset: 'পছন্দ রিসেট করুন', close: 'অ্যাক্সেসিবিলিটি মেনু বন্ধ করুন' },
@@ -115,7 +116,7 @@ export const common = {
   },
   as: {
     meta: { title: 'ৰক্ষক — চাইবাৰ অপৰাধৰ প্ৰতিবেদন', description: 'চাইবাৰ অপৰাধ প্ৰতিবেদনৰ বাবে স্বাধীন প্ৰটোটাইপ। এইটো চৰকাৰী সেৱা নহয়।' },
-    nav: { home: 'মূল পৃষ্ঠা', report: 'প্ৰতিবেদন', track: 'স্থিতি', check: 'পৰীক্ষা', volunteers: 'স্বেচ্ছাসেৱক', learn: 'সহায়', contact: 'যোগাযোগ', openNavigation: 'নেভিগেচন খোলক' },
+    nav: { home: 'মূল পৃষ্ঠা', report: 'প্ৰতিবেদন', track: 'স্থিতি', check: 'পৰীক্ষা', callScan: 'কল স্কেন', volunteers: 'স্বেচ্ছাসেৱক', learn: 'সহায়', contact: 'যোগাযোগ', openNavigation: 'নেভিগেচন খোলক' },
     actions: { startReport: 'প্ৰতিবেদন আৰম্ভ কৰক', call1930: '1930-লৈ ফোন কৰক', continue: 'আগবাঢ়ক', back: 'পিছলৈ', clear: 'মচক', open: 'খোলক', close: 'বন্ধ কৰক', reset: 'ৰিছেট', readMore: 'অধিক পঢ়ক' },
     language: { label: 'ভাষা', select: 'ভাষা বাছক' },
     accessibility: { label: 'অভিগম্যতা', preferences: 'পছন্দসমূহ তৎক্ষণাত প্ৰয়োগ হয়।', largerText: 'ডাঙৰ আখৰ', largerTextHint: 'ইণ্টাৰফেচৰ আকাৰ বঢ়াওক', reduceMotion: 'গতি কমাওক', reduceMotionHint: 'এনিমেচন কমাওক', reset: 'পছন্দ ৰিছেট কৰক', close: 'অভিগম্যতা মেনু বন্ধ কৰক' },
@@ -124,7 +125,7 @@ export const common = {
   },
   gu: {
     meta: { title: 'રક્ષક — સાયબર ગુનાની જાણ કરો', description: 'સરળ સાયબર ગુના રિપોર્ટિંગ માટેનું સ્વતંત્ર પ્રોટોટાઇપ. આ સત્તાવાર સરકારી સેવા નથી.' },
-    nav: { home: 'હોમ', report: 'રિપોર્ટ', track: 'ટ્રૅક', check: 'ચકાસો', volunteers: 'સ્વયંસેવકો', learn: 'મદદ', contact: 'સંપર્ક', openNavigation: 'નેવિગેશન ખોલો' },
+    nav: { home: 'હોમ', report: 'રિપોર્ટ', track: 'ટ્રૅક', check: 'ચકાસો', callScan: 'કૉલ સ્કેન', volunteers: 'સ્વયંસેવકો', learn: 'મદદ', contact: 'સંપર્ક', openNavigation: 'નેવિગેશન ખોલો' },
     actions: { startReport: 'રિપોર્ટ શરૂ કરો', call1930: '1930 પર કૉલ કરો', continue: 'આગળ વધો', back: 'પાછા', clear: 'સાફ કરો', open: 'ખોલો', close: 'બંધ કરો', reset: 'રીસેટ', readMore: 'વધુ વાંચો' },
     language: { label: 'ભાષા', select: 'ભાષા પસંદ કરો' },
     accessibility: { label: 'ઍક્સેસિબિલિટી', preferences: 'પસંદગીઓ તરત લાગુ થાય છે.', largerText: 'મોટું લખાણ', largerTextHint: 'ઇન્ટરફેસનું કદ વધારો', reduceMotion: 'ગતિ ઘટાડો', reduceMotionHint: 'એનિમેશન અસર ઘટાડો', reset: 'પસંદગીઓ રીસેટ કરો', close: 'ઍક્સેસિબિલિટી મેનુ બંધ કરો' },
@@ -133,7 +134,7 @@ export const common = {
   },
   or: {
     meta: { title: 'ରକ୍ଷକ — ସାଇବର ଅପରାଧ ରିପୋର୍ଟ କରନ୍ତୁ', description: 'ସହଜ ସାଇବର ଅପରାଧ ରିପୋର୍ଟିଂ ପାଇଁ ସ୍ୱାଧୀନ ପ୍ରୋଟୋଟାଇପ୍। ଏହା ସରକାରୀ ସେବା ନୁହେଁ।' },
-    nav: { home: 'ମୂଳପୃଷ୍ଠା', report: 'ରିପୋର୍ଟ', track: 'ସ୍ଥିତି', check: 'ଯାଞ୍ଚ', volunteers: 'ସ୍ୱେଚ୍ଛାସେବୀ', learn: 'ସହାୟତା', contact: 'ଯୋଗାଯୋଗ', openNavigation: 'ନାଭିଗେସନ୍ ଖୋଲନ୍ତୁ' },
+    nav: { home: 'ମୂଳପୃଷ୍ଠା', report: 'ରିପୋର୍ଟ', track: 'ସ୍ଥିତି', check: 'ଯାଞ୍ଚ', callScan: 'Call scan', volunteers: 'ସ୍ୱେଚ୍ଛାସେବୀ', learn: 'ସହାୟତା', contact: 'ଯୋଗାଯୋଗ', openNavigation: 'ନାଭିଗେସନ୍ ଖୋଲନ୍ତୁ' },
     actions: { startReport: 'ରିପୋର୍ଟ ଆରମ୍ଭ କରନ୍ତୁ', call1930: '1930 କୁ କଲ୍ କରନ୍ତୁ', continue: 'ଆଗକୁ', back: 'ପଛକୁ', clear: 'ସଫା କରନ୍ତୁ', open: 'ଖୋଲନ୍ତୁ', close: 'ବନ୍ଦ କରନ୍ତୁ', reset: 'ରିସେଟ୍', readMore: 'ଅଧିକ ପଢ଼ନ୍ତୁ' },
     language: { label: 'ଭାଷା', select: 'ଭାଷା ବାଛନ୍ତୁ' },
     accessibility: { label: 'ସୁଗମ୍ୟତା', preferences: 'ପସନ୍ଦଗୁଡ଼ିକ ତୁରନ୍ତ ଲାଗୁ ହୁଏ।', largerText: 'ବଡ଼ ଅକ୍ଷର', largerTextHint: 'ଇଣ୍ଟରଫେସ୍ ଆକାର ବଢ଼ାନ୍ତୁ', reduceMotion: 'ଗତି କମାନ୍ତୁ', reduceMotionHint: 'ଆନିମେସନ୍ କମାନ୍ତୁ', reset: 'ପସନ୍ଦ ରିସେଟ୍ କରନ୍ତୁ', close: 'ସୁଗମ୍ୟତା ମେନୁ ବନ୍ଦ କରନ୍ତୁ' },
@@ -142,7 +143,7 @@ export const common = {
   },
   pa: {
     meta: { title: 'ਰਕਸ਼ਕ — ਸਾਈਬਰ ਅਪਰਾਧ ਦੀ ਰਿਪੋਰਟ ਕਰੋ', description: 'ਸੌਖੀ ਸਾਈਬਰ ਅਪਰਾਧ ਰਿਪੋਰਟਿੰਗ ਲਈ ਸੁਤੰਤਰ ਪ੍ਰੋਟੋਟਾਈਪ। ਇਹ ਸਰਕਾਰੀ ਸੇਵਾ ਨਹੀਂ ਹੈ।' },
-    nav: { home: 'ਮੁੱਖ ਪੰਨਾ', report: 'ਰਿਪੋਰਟ', track: 'ਸਥਿਤੀ', check: 'ਜਾਂਚ', volunteers: 'ਵਲੰਟੀਅਰ', learn: 'ਮਦਦ', contact: 'ਸੰਪਰਕ', openNavigation: 'ਨੇਵੀਗੇਸ਼ਨ ਖੋਲ੍ਹੋ' },
+    nav: { home: 'ਮੁੱਖ ਪੰਨਾ', report: 'ਰਿਪੋਰਟ', track: 'ਸਥਿਤੀ', check: 'ਜਾਂਚ', callScan: 'ਕਾਲ ਸਕੈਨ', volunteers: 'ਵਲੰਟੀਅਰ', learn: 'ਮਦਦ', contact: 'ਸੰਪਰਕ', openNavigation: 'ਨੇਵੀਗੇਸ਼ਨ ਖੋਲ੍ਹੋ' },
     actions: { startReport: 'ਰਿਪੋਰਟ ਸ਼ੁਰੂ ਕਰੋ', call1930: '1930 ਤੇ ਕਾਲ ਕਰੋ', continue: 'ਅੱਗੇ', back: 'ਪਿੱਛੇ', clear: 'ਸਾਫ਼ ਕਰੋ', open: 'ਖੋਲ੍ਹੋ', close: 'ਬੰਦ ਕਰੋ', reset: 'ਰੀਸੈਟ', readMore: 'ਹੋਰ ਪੜ੍ਹੋ' },
     language: { label: 'ਭਾਸ਼ਾ', select: 'ਭਾਸ਼ਾ ਚੁਣੋ' },
     accessibility: { label: 'ਪਹੁੰਚਯੋਗਤਾ', preferences: 'ਪਸੰਦਾਂ ਤੁਰੰਤ ਲਾਗੂ ਹੁੰਦੀਆਂ ਹਨ।', largerText: 'ਵੱਡਾ ਲਿਖਤ', largerTextHint: 'ਇੰਟਰਫੇਸ ਦਾ ਆਕਾਰ ਵਧਾਓ', reduceMotion: 'ਹਿਲਜੁਲ ਘਟਾਓ', reduceMotionHint: 'ਐਨੀਮੇਸ਼ਨ ਘਟਾਓ', reset: 'ਪਸੰਦਾਂ ਰੀਸੈਟ ਕਰੋ', close: 'ਪਹੁੰਚਯੋਗਤਾ ਮੀਨੂ ਬੰਦ ਕਰੋ' },
@@ -151,7 +152,7 @@ export const common = {
   },
   ur: {
     meta: { title: 'رکشک — سائبر جرم کی رپورٹ کریں', description: 'آسان سائبر جرم رپورٹنگ کے لیے آزاد پروٹوٹائپ۔ یہ سرکاری خدمت نہیں ہے۔' },
-    nav: { home: 'ہوم', report: 'رپورٹ', track: 'حالت', check: 'جانچیں', volunteers: 'رضاکار', learn: 'مدد', contact: 'رابطہ', openNavigation: 'نیویگیشن کھولیں' },
+    nav: { home: 'ہوم', report: 'رپورٹ', track: 'حالت', check: 'جانچیں', callScan: 'کال اسکین', volunteers: 'رضاکار', learn: 'مدد', contact: 'رابطہ', openNavigation: 'نیویگیشن کھولیں' },
     actions: { startReport: 'رپورٹ شروع کریں', call1930: '1930 پر کال کریں', continue: 'جاری رکھیں', back: 'واپس', clear: 'صاف کریں', open: 'کھولیں', close: 'بند کریں', reset: 'ری سیٹ', readMore: 'مزید پڑھیں' },
     language: { label: 'زبان', select: 'زبان منتخب کریں' },
     accessibility: { label: 'رسائی', preferences: 'ترجیحات فوراً لاگو ہوتی ہیں۔', largerText: 'بڑا متن', largerTextHint: 'انٹرفیس کا سائز بڑھائیں', reduceMotion: 'حرکت کم کریں', reduceMotionHint: 'اینیمیشن اثرات کم کریں', reset: 'ترجیحات ری سیٹ کریں', close: 'رسائی مینو بند کریں' },

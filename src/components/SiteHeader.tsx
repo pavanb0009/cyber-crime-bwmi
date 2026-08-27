@@ -13,6 +13,7 @@ const navKeys = [
   { to: '/report', key: 'nav.report' },
   { to: '/track', key: 'nav.track' },
   { to: '/check', key: 'nav.check' },
+  { to: '/call-scanner', key: 'nav.callScan' },
   { to: '/volunteers', key: 'nav.volunteers' },
   { to: '/learn', key: 'nav.learn' },
   { to: '/contact', key: 'nav.contact' },
