@@ -23,7 +23,7 @@ import { clearSession, patchSearchParams, readSession, writeSession } from '../l
 import type { CallAnalysisResponse, CallRiskLevel } from '../types'
 import { useSearchParams } from 'react-router-dom'
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024
+const MAX_FILE_SIZE = 25 * 1024 * 1024
 const ACCEPTED_EXTENSIONS = /\.(mp3|wav|m4a|webm|ogg|mp4)$/i
 
 const languageOptions: Array<{ id: CallLanguage; label: string }> = [
@@ -307,7 +307,7 @@ export function CallScannerPage() {
     }
     if (nextFile.size > MAX_FILE_SIZE) {
       setFile(null)
-      setError('Choose a recording smaller than 50 MB.')
+      setError('Choose a recording smaller than 25 MB.')
       return
     }
     setFile(nextFile)
@@ -327,7 +327,11 @@ export function CallScannerPage() {
       writeQuery({ view: 'result', lang: language, file: file.name })
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : 'The recording could not be analysed.'
-      setError(message.includes('fetch') ? 'The local scanner is not running. Start the FastAPI backend on port 8000.' : message)
+      setError(
+        /fetch|network|failed to fetch/i.test(message)
+          ? 'The call scanner API is unreachable. Set VITE_CALL_SCANNER_API_URL to your Railway URL and redeploy.'
+          : message,
+      )
     } finally {
       setLoading(false)
     }
@@ -404,7 +408,7 @@ export function CallScannerPage() {
                 >
                   {file ? <FileAudio className="mx-auto h-9 w-9 text-brand" /> : <Upload className="mx-auto h-8 w-8 text-brand" />}
                   <h3 className="mt-3 text-base font-semibold text-paper">{file ? file.name : 'Drop a call recording here, or click to upload'}</h3>
-                  <p className="mt-1 text-sm text-muted">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB · ready to analyse` : 'MP3, WAV, M4A, WebM, OGG, or MP4 · maximum 50 MB'}</p>
+                  <p className="mt-1 text-sm text-muted">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB · ready to analyse` : 'MP3, WAV, M4A, WebM, OGG, or MP4 · maximum 25 MB'}</p>
 
                   {audioUrl ? <audio className="mx-auto mt-5 w-full max-w-lg" controls src={audioUrl} onClick={(event) => event.stopPropagation()}>Your browser cannot preview this audio.</audio> : null}
 
@@ -436,7 +440,7 @@ export function CallScannerPage() {
                     <div className="scan-line" />
                     <p className="mt-4 text-sm font-semibold text-paper">Transcribing and checking scam behaviour…</p>
                     <p className="mt-1 text-xs leading-5 text-muted">
-                      On a CPU this takes roughly as long as the recording itself, so a 45-second clip needs about a minute. The first run also downloads the Whisper model.
+                      This usually takes 10–30 seconds for a short clip.
                     </p>
                   </div>
                 ) : null}

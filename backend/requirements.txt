@@ -1,6 +1,5 @@
-fastapi
-faster-whisper
+fastapi>=0.115.0
 python-multipart
 uvicorn[standard]
-ollama
-pydantic
+openai>=1.54.0
+pydantic>=2.0.0

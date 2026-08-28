@@ -37,6 +37,8 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
+from .provider import analysis_model, cloud_configured, openai_client
+
 logger = logging.getLogger("cyber_rakshak.ai_analyser")
 
 # The scam taxonomy the model is allowed to choose from. Kept in sync with the
@@ -188,6 +190,8 @@ Return ONLY the requested JSON. No preamble, no markdown fences, no commentary.
 
 
 def model_name() -> str:
+    if cloud_configured():
+        return analysis_model()
     return os.getenv("OLLAMA_MODEL", "qwen3:4b")
 
 
@@ -254,8 +258,8 @@ def _strip_think(raw: str) -> str:
     return raw.strip()
 
 
-def ai_available() -> bool:
-    """Return True if the Ollama server is reachable and the model is present."""
+def _ollama_available() -> bool:
+    """Return True if a local Ollama server is reachable and the model is present."""
     try:
         import ollama
     except Exception:
@@ -270,7 +274,7 @@ def ai_available() -> bool:
             name = item.get("model", "") if isinstance(item, dict) else getattr(item, "model", "")
             if name:
                 available.add(name)
-        wanted = model_name()
+        wanted = os.getenv("OLLAMA_MODEL", "qwen3:4b")
         ok = wanted in available or any(name.startswith(wanted.split(":")[0] + ":") or name == wanted.split(":")[0] for name in available)
         if not ok:
             logger.warning("Ollama is running but model %s is not pulled. Run: ollama pull %s", wanted, wanted)
@@ -278,6 +282,38 @@ def ai_available() -> bool:
     except Exception as error:  # noqa: BLE001 - any failure means "fall back to rules"
         logger.info("Ollama not reachable (%s); AI layer disabled, using rules only.", error)
         return False
+
+
+def ai_available() -> bool:
+    return cloud_configured() or _ollama_available()
+
+
+def _analyse_with_cloud(transcript: str) -> Optional[ScamAIResult]:
+    schema = ScamAIResult.model_json_schema()
+    response = openai_client().chat.completions.create(
+        model=model_name(),
+        temperature=0,
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": (
+                    "Analyse this call transcript and return ONLY JSON matching this schema:\n"
+                    f"{json.dumps(schema)}\n\n"
+                    f"Transcript:\n{transcript}"
+                ),
+            },
+        ],
+    )
+    content = (response.choices[0].message.content or "").strip()
+    if content.startswith("```"):
+        content = content.split("\n", 1)[-1]
+        content = content.rsplit("```", 1)[0]
+    result = ScamAIResult.model_validate_json(content)
+    if result.scam_type not in SCAM_CATEGORIES:
+        result.scam_type = "LEGITIMATE_OR_UNKNOWN"
+    return result
 
 
 def analyse_with_ai(transcript: str) -> Optional[ScamAIResult]:
@@ -298,6 +334,13 @@ def analyse_with_ai(transcript: str) -> Optional[ScamAIResult]:
             MAX_TRANSCRIPT_CHARS,
         )
         transcript = transcript[:MAX_TRANSCRIPT_CHARS]
+
+    if cloud_configured():
+        try:
+            return _analyse_with_cloud(transcript)
+        except Exception as error:  # noqa: BLE001
+            logger.warning("Cloud analysis failed, falling back to rules: %s", error)
+            return None
 
     try:
         import ollama

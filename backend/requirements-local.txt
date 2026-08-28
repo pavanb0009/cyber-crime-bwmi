@@ -1,0 +1,3 @@
+# Laptop-only extras. Railway does not install these.
+faster-whisper
+ollama
