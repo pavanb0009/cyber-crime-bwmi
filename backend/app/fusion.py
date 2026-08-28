@@ -99,6 +99,11 @@ def _apply_overrides(score: int, scam_type: str, flags: dict[str, bool]) -> tupl
     if flags["credential_request"] and flags["remote_access_request"]:
         return max(score, 90), "REMOTE_ACCESS" if unclassified else scam_type
 
+    # Fake fraud-department / card-verification call: impersonation plus a
+    # request for a card, OTP, PIN, or security code.
+    if flags["credential_request"] and flags["authority_impersonation"]:
+        return max(score, 80), "FAKE_CUSTOMER_CARE" if unclassified else scam_type
+
     return score, scam_type
 
 
@@ -186,7 +191,11 @@ def _signal_to_flag(signal_id: str) -> str:
 
 def _rule_only_type(detected: set[str]) -> str:
     """Best-effort scam category from rule signals alone (LLM-unavailable path)."""
-    if {"authority_impersonation", "fear"}.issubset(detected):
+    if {"credential_request", "authority_impersonation"}.issubset(detected):
+        return "FAKE_CUSTOMER_CARE"
+    if {"authority_impersonation", "fear"}.issubset(detected) and (
+        "isolation" in detected or "payment_request" in detected
+    ):
         return "DIGITAL_ARREST"
     if "remote_access_request" in detected:
         return "REMOTE_ACCESS"
@@ -194,6 +203,8 @@ def _rule_only_type(detected: set[str]) -> str:
         return "BANK_KYC"
     if "payment_request" in detected:
         return "INVESTMENT_SCAM"
+    if {"authority_impersonation", "fear"}.issubset(detected):
+        return "FAKE_CUSTOMER_CARE"
     return "LEGITIMATE_OR_UNKNOWN"
 
 

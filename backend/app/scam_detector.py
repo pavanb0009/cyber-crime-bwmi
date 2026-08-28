@@ -20,6 +20,7 @@ SIGNALS: dict[str, SignalDefinition] = {
             "investigation", "पुलिस", "सीबीआई", "अधिकारी", "जांच", "कस्टम",
             "आरबीआई", "साइबर सेल", "थाना", "इंस्पेक्टर", "विभाग", "कोर्ट",
             "main police", "ham police", "adhikari", "thana", "inspector",
+            "fraud watch", "fraud department", "fraud division", "fraud protection",
         ),
     ),
     "fear": SignalDefinition(
@@ -30,7 +31,8 @@ SIGNALS: dict[str, SignalDefinition] = {
             "criminal case", "warrant", "account freeze", "account blocked",
             "account will be blocked", "गिरफ्तार", "जेल", "मनी लॉन्ड्रिंग",
             "अवैध", "पार्सल", "ड्रग्स", "मुकदमा", "वारंट", "फ्रीज", "ब्लॉक",
-            "कार्रवाई", "girftar", "jail bhej", "case hua", "block ho jayega",
+            "कार्रवाई",             "girftar", "jail bhej", "case hua", "block ho jayega",
+            "held responsible", "computer-related fraud", "computer related fraud",
         ),
     ),
     "urgency": SignalDefinition(
@@ -73,6 +75,9 @@ SIGNALS: dict[str, SignalDefinition] = {
             "share otp", "tell me the otp", "send otp", "share pin", "banking pin",
             "share cvv", "ओटीपी", "पिन बता", "पिन डाल", "सीवीवी",
             "otp batao", "otp share", "pin batao", "cvv batao",
+            "confirm your card", "card number", "account numbers", "security code",
+            "credit card", "authorized card holder", "authorized cardholder",
+            "visa or your mastercard",
         ),
     ),
     "remote_access_request": SignalDefinition(
@@ -92,7 +97,7 @@ SAFETY_PHRASES = (
     "never ask", "will not ask", "won't ask", "do not share", "don't share",
     "never share", "scam awareness", "beware of", "report a scam",
     # Someone discussing or warning about scams is not running one.
-    "warned me", "warned us", "scams", "fraud awareness", "जागरूक",
+    "warned me", "warned us", "fraud awareness", "जागरूक",
     "स्कैम के बारे में", "धोखाधड़ी से बचें",
     "मत बताना चाहिए", "कभी नहीं मांगता", "कभी नहीं मांगेंगे", "नहीं मांगते",
     "शेयर न करें", "साझा न करें", "किसी को न बताएं",
@@ -112,6 +117,11 @@ SCAM_PROFILES: dict[str, dict[str, Any]] = {
         # attempt (credentials / payment / remote access), with urgency as support.
         "required": {"credential_request"},
         "supporting": {"payment_request", "remote_access_request", "urgency"},
+    },
+    "fake_customer_care": {
+        "label": "Fake customer-care scam",
+        "required": {"credential_request", "authority_impersonation"},
+        "supporting": {"urgency", "fear"},
     },
     "remote_access": {
         "label": "Remote-access scam",

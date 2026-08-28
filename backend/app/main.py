@@ -9,6 +9,21 @@ from typing import Annotated, Any
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+
+def _load_local_env() -> None:
+    env_path = Path(__file__).resolve().parent.parent / ".env"
+    if not env_path.is_file():
+        return
+    for raw in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+_load_local_env()
+
 from .ai_scam_analyser import ai_available, analyse_with_ai, model_name
 from .fusion import fuse
 from .scam_detector import detect_signals, detect_signals_for_text
@@ -90,9 +105,13 @@ def transcribe_audio_file(temp_path: str, language: str) -> tuple[list[dict[str,
         raise
     except ImportError as error:
         logger.exception("Speech backend is not installed")
+        missing = "openai" if "openai" in str(error).lower() else "faster-whisper"
         raise HTTPException(
             status_code=503,
-            detail="Set GROQ_API_KEY on the API service. Local Whisper is not installed on this host.",
+            detail=(
+                f"Python package '{missing}' is not installed in this environment. "
+                "From the project root run: source .venv/bin/activate && pip install -r backend/requirements.txt"
+            ),
         ) from error
     except Exception as error:
         logger.exception("Transcription failed")

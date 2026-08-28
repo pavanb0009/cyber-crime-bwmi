@@ -36,7 +36,7 @@ def whisper_model() -> str:
 
 def analysis_model() -> str:
     if groq_configured():
-        return os.getenv("OPENAI_ANALYSIS_MODEL") or os.getenv("GROQ_ANALYSIS_MODEL") or "llama-3.1-8b-instant"
+        return os.getenv("OPENAI_ANALYSIS_MODEL") or os.getenv("GROQ_ANALYSIS_MODEL") or "llama-3.3-70b-versatile"
     return os.getenv("OPENAI_ANALYSIS_MODEL", "gpt-4o-mini")
 
 

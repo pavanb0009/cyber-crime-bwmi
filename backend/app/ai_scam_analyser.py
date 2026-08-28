@@ -107,6 +107,7 @@ class ScamAIResult(BaseModel):
     remote_access_request: bool = Field(description="Caller asks to install an app, share the screen, or open a link.")
 
     threats: list[Threat] = Field(description="One entry per tactic found, each quoting real evidence. Empty list only if the call is genuinely clean.")
+    immediate_action: str = Field(description="One short piece of protective advice addressed TO THE CITIZEN, e.g. 'Hang up and call your bank on its official number.' Never repeat what the caller demanded.")
 
     @model_validator(mode="after")
     def _normalise_threat_severity(self) -> "ScamAIResult":
@@ -122,7 +123,6 @@ class ScamAIResult(BaseModel):
             for threat in self.threats:
                 threat.severity = min(threat.severity * 20, 100)
         return self
-    immediate_action: str = Field(description="One short piece of protective advice addressed TO THE CITIZEN, e.g. 'Hang up and call your bank on its official number.' Never repeat what the caller demanded.")
 
 
 SYSTEM_PROMPT = """You are Cyber Rakshak's cyber-fraud analysis engine.
@@ -288,32 +288,95 @@ def ai_available() -> bool:
     return cloud_configured() or _ollama_available()
 
 
-def _analyse_with_cloud(transcript: str) -> Optional[ScamAIResult]:
-    schema = ScamAIResult.model_json_schema()
-    response = openai_client().chat.completions.create(
-        model=model_name(),
-        temperature=0,
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {
-                "role": "user",
-                "content": (
-                    "Analyse this call transcript and return ONLY JSON matching this schema:\n"
-                    f"{json.dumps(schema)}\n\n"
-                    f"Transcript:\n{transcript}"
-                ),
-            },
-        ],
-    )
-    content = (response.choices[0].message.content or "").strip()
-    if content.startswith("```"):
-        content = content.split("\n", 1)[-1]
-        content = content.rsplit("```", 1)[0]
-    result = ScamAIResult.model_validate_json(content)
+def _extract_json_object(raw: str) -> str:
+    raw = _strip_think(raw or "")
+    if not raw:
+        return ""
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start >= 0 and end > start:
+        return raw[start : end + 1]
+    return raw
+
+
+def _result_from_payload(payload: dict[str, Any]) -> ScamAIResult:
+    """Fill fields Groq often omits so a partial JSON still validates."""
+    defaults = {
+        "english_transcript": "",
+        "scam_type": "LEGITIMATE_OR_UNKNOWN",
+        "scam_likelihood": 0,
+        "confidence": 0,
+        "summary": "",
+        "authority_impersonation": False,
+        "fear_or_threat": False,
+        "urgency": False,
+        "isolation": False,
+        "payment_request": False,
+        "credential_request": False,
+        "remote_access_request": False,
+        "threats": [],
+        "immediate_action": "Verify through an official channel before sharing anything.",
+    }
+    merged = {**defaults, **payload}
+    result = ScamAIResult.model_validate(merged)
     if result.scam_type not in SCAM_CATEGORIES:
         result.scam_type = "LEGITIMATE_OR_UNKNOWN"
     return result
+
+
+def _parse_ai_content(content: str) -> ScamAIResult:
+    blob = _extract_json_object(content)
+    if not blob:
+        raise ValueError("empty model content")
+    return _result_from_payload(json.loads(blob))
+
+
+def _analyse_with_cloud(transcript: str) -> Optional[ScamAIResult]:
+    schema = ScamAIResult.model_json_schema()
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {
+            "role": "user",
+            "content": (
+                "Analyse this call transcript and return ONLY JSON matching this schema. "
+                "Set every boolean. Use FAKE_CUSTOMER_CARE when a caller poses as a bank, "
+                "card company, or 'fraud department' and asks to confirm a card, security "
+                "code, OTP, or account number.\n"
+                f"{json.dumps(schema)}\n\n"
+                f"Transcript:\n{transcript}"
+            ),
+        },
+    ]
+
+    client = openai_client()
+    model = model_name()
+    last_error: Optional[Exception] = None
+
+    # Prefer Groq/OpenAI structured JSON. Fall back to loose json_object if the
+    # hosted model rejects json_schema (common on smaller Groq SKUs).
+    for response_format in (
+        {
+            "type": "json_schema",
+            "json_schema": {"name": "scam_analysis", "schema": schema},
+        },
+        {"type": "json_object"},
+    ):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                temperature=0,
+                response_format=response_format,
+                messages=messages,
+            )
+            content = response.choices[0].message.content or ""
+            return _parse_ai_content(content)
+        except Exception as error:  # noqa: BLE001
+            last_error = error
+            logger.warning("Cloud analysis attempt failed (%s): %s", response_format["type"], error)
+
+    if last_error:
+        raise last_error
+    return None
 
 
 def analyse_with_ai(transcript: str) -> Optional[ScamAIResult]:
