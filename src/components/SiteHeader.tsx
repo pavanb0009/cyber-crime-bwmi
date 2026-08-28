@@ -43,8 +43,10 @@ export function SiteHeader() {
               end={link.to === '/'}
               className={({ isActive }) =>
                 cx(
-                  'text-[0.9rem] text-black transition hover:opacity-70',
-                  isActive ? 'font-semibold' : 'font-medium',
+                  'relative pb-0.5 text-[0.9rem] transition',
+                  isActive
+                    ? 'font-bold text-paper after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-brand'
+                    : 'font-medium text-muted hover:text-paper',
                 )
               }
             >
@@ -84,7 +86,10 @@ export function SiteHeader() {
                   to={link.to}
                   end={link.to === '/'}
                   className={({ isActive }) =>
-                    cx('py-3 text-sm text-black', isActive ? 'font-semibold' : 'font-medium')
+                    cx(
+                      'py-3 text-sm',
+                      isActive ? 'font-bold text-paper' : 'font-medium text-muted',
+                    )
                   }
                 >
                   {t(link.key)}

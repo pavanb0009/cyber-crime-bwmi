@@ -192,7 +192,7 @@ export function TrackPage() {
                     setReference(event.target.value.toUpperCase())
                     setError('')
                   }}
-                  className="text-field h-12 pr-24 font-mono text-sm uppercase tracking-[0.04em]"
+                  className={cx('text-field h-12 pr-24 font-mono text-sm uppercase tracking-[0.04em]', error && 'field-invalid')}
                   placeholder={defaultCase.caseId}
                   autoComplete="off"
                 />

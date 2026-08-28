@@ -183,7 +183,7 @@ export function getActionPlan(type: IncidentTypeId): string[] {
     ],
     'suspicious-content': [
       'Do not click unknown links or make payments.',
-      'Check the phone, UPI ID, email or website in Check Suspect.',
+      'Check the phone, UPI ID, email or website on Check number.',
       'Verify through an independent official channel.',
       'Preserve the message or page as a screenshot if you plan to report it.',
     ],

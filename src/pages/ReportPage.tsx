@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Clock3,
   Download,
+  LoaderCircle,
   Mic,
   MicOff,
   Plus,
@@ -74,10 +75,14 @@ function parseAmount(value: string): number {
 function FieldError({ children }: { children?: string }) {
   if (!children) return null
   return (
-    <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-paper">
+    <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-alert" role="alert">
       <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {children}
     </p>
   )
+}
+
+function withError(base: string, error?: string) {
+  return cx(base, error && 'field-invalid')
 }
 
 function SummaryRow({ label, value, empty }: { label: string; value: string; empty: string }) {
@@ -659,7 +664,7 @@ export function ReportPage() {
                             id="emergencyAmount"
                             value={draft.amount}
                             onChange={(event) => update('amount', event.target.value)}
-                            className="text-field pl-8"
+                            className={withError('text-field pl-8', errors.amount)}
                             placeholder="85,000"
                           />
                         </div>
@@ -672,7 +677,7 @@ export function ReportPage() {
                             id="emergencyMethod"
                             value={draft.paymentMethod}
                             onChange={(event) => update('paymentMethod', event.target.value)}
-                            className="select-field"
+                            className={withError('select-field', errors.paymentMethod)}
                           >
                             <option value="">{t('report.chooseMethod')}</option>
                             {paymentMethods.map((method) => (
@@ -689,8 +694,7 @@ export function ReportPage() {
                           id="emergencyTxn"
                           value={draft.transactionId}
                           onChange={(event) => update('transactionId', event.target.value)}
-                          className="text-field"
-                          placeholder="412345678901"
+                          className={withError('text-field', errors.transactionId)}
                         />
                         <FieldError>{errors.transactionId}</FieldError>
                       </div>
@@ -700,8 +704,7 @@ export function ReportPage() {
                           id="emergencyRecipient"
                           value={draft.recipientIdentifier}
                           onChange={(event) => update('recipientIdentifier', event.target.value)}
-                          className="text-field"
-                          placeholder="merchant@upi"
+                          className={withError('text-field', errors.recipientIdentifier)}
                         />
                         <FieldError>{errors.recipientIdentifier}</FieldError>
                       </div>
@@ -858,32 +861,46 @@ export function ReportPage() {
 
                       <div className="mt-5">
                         <label htmlFor="copilot" className="field-label">{t('report.copilotLabel')}</label>
-                        <textarea
-                          id="copilot"
-                          value={draft.copilotText}
-                          onChange={(event) => update('copilotText', event.target.value.slice(0, 700))}
-                          className="text-area min-h-28"
-                          placeholder={t('home.copilot.placeholder')}
-                        />
-                        <p className="mt-2 text-xs leading-5 text-muted">
-                          {voiceBusy ? t('report.copilotVoiceTranscribing') : listening ? t('report.copilotVoiceHint') : t('report.copilotHelp')}
-                        </p>
-                        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                          <Button type="button" size="sm" onClick={runCopilot} disabled={listening || voiceBusy}>
-                            <Sparkles className="h-4 w-4" /> {t('report.copilotClassify')}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={listening ? 'danger' : 'secondary'}
-                            size="sm"
-                            onClick={toggleVoice}
-                            loading={voiceBusy}
-                            aria-pressed={listening}
-                          >
-                            {listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                            {listening ? t('report.copilotVoiceStop') : t('report.copilotVoice')}
-                          </Button>
+                        <div className={cx('relative', listening && 'rounded-lg ring-2 ring-alert/50')}>
+                          <textarea
+                            id="copilot"
+                            value={draft.copilotText}
+                            onChange={(event) => update('copilotText', event.target.value.slice(0, 700))}
+                            className={withError('text-area min-h-32 pb-16', errors.copilotText)}
+                            placeholder={t('home.copilot.placeholder')}
+                            disabled={listening || voiceBusy}
+                          />
+                          <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex items-center justify-between gap-2">
+                            <p className="min-w-0 flex-1 text-[0.7rem] leading-4 text-muted">
+                              {voiceBusy ? t('report.copilotVoiceTranscribing') : listening ? t('report.copilotVoiceHint') : t('report.copilotHelp')}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={toggleVoice}
+                              disabled={voiceBusy}
+                              aria-pressed={listening}
+                              aria-label={listening ? t('report.copilotVoiceStop') : t('report.copilotVoice')}
+                              className={cx(
+                                'pointer-events-auto inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition',
+                                listening
+                                  ? 'bg-alert text-white'
+                                  : 'border border-black/[0.12] bg-card text-paper hover:border-brand hover:text-brand disabled:opacity-60',
+                              )}
+                            >
+                              {voiceBusy ? (
+                                <LoaderCircle className="h-4 w-4 animate-spin" />
+                              ) : listening ? (
+                                <MicOff className="h-4 w-4" />
+                              ) : (
+                                <Mic className="h-4 w-4" />
+                              )}
+                              {listening ? t('report.copilotVoiceStop') : t('report.copilotVoice')}
+                            </button>
+                          </div>
                         </div>
+                        <Button type="button" className="mt-3" size="sm" onClick={runCopilot} disabled={listening || voiceBusy}>
+                          <Sparkles className="h-4 w-4" /> {t('report.copilotClassify')}
+                        </Button>
                         <FieldError>{errors.copilotText}</FieldError>
 
                         {copilotResult ? (
@@ -906,7 +923,7 @@ export function ReportPage() {
                         ) : null}
                       </div>
 
-                      <div className="mt-6 grid gap-2">
+                      <div className={cx('mt-6 grid gap-2 rounded-xl', errors.incidentType && 'p-1 ring-2 ring-alert/50')}>
                         {incidentTypes.map((incident) => {
                           const active = draft.incidentType === incident.id
                           return (
@@ -952,7 +969,7 @@ export function ReportPage() {
                             id="otherIncident"
                             value={draft.otherIncident}
                             onChange={(event) => update('otherIncident', event.target.value.slice(0, 240))}
-                            className="text-area min-h-24"
+                            className={withError('text-area min-h-24', errors.otherIncident)}
                             placeholder={t('report.otherPlaceholder')}
                           />
                           <p className="field-help">{t('report.otherHelp')}</p>
@@ -1011,14 +1028,14 @@ export function ReportPage() {
                             type="datetime-local"
                             value={draft.occurredAt}
                             onChange={(event) => update('occurredAt', event.target.value)}
-                            className="text-field"
+                            className={withError('text-field', errors.occurredAt)}
                           />
                           <FieldError>{errors.occurredAt}</FieldError>
                         </div>
                         <div>
                           <label className="field-label" htmlFor="state">{t('report.state')}</label>
                           <div className="relative">
-                            <select id="state" value={draft.state} onChange={(event) => update('state', event.target.value)} className="select-field">
+                            <select id="state" value={draft.state} onChange={(event) => update('state', event.target.value)} className={withError('select-field', errors.state)}>
                               <option value="">{t('report.chooseLocation')}</option>
                               {indianStates.map((state) => <option key={state} value={state}>{state}</option>)}
                             </select>
@@ -1029,7 +1046,7 @@ export function ReportPage() {
                         <div className="sm:col-span-2">
                           <label className="field-label" htmlFor="channel">{t('report.channel')}</label>
                           <div className="relative">
-                            <select id="channel" value={draft.channel} onChange={(event) => update('channel', event.target.value)} className="select-field">
+                            <select id="channel" value={draft.channel} onChange={(event) => update('channel', event.target.value)} className={withError('select-field', errors.channel)}>
                               <option value="">{t('report.chooseChannel')}</option>
                               {channels.map((channel) => <option key={channel} value={channel}>{channel}</option>)}
                             </select>
@@ -1044,7 +1061,7 @@ export function ReportPage() {
                               <label className="field-label" htmlFor="amount">{t('report.amount')}</label>
                               <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted">₹</span>
-                                <input id="amount" value={draft.amount} onChange={(event) => update('amount', event.target.value)} className="text-field pl-8" placeholder="24,500" />
+                                <input id="amount" value={draft.amount} onChange={(event) => update('amount', event.target.value)} className={withError('text-field pl-8', errors.amount)} placeholder="24,500" />
                               </div>
                               <FieldError>{errors.amount}</FieldError>
                             </div>
@@ -1055,7 +1072,7 @@ export function ReportPage() {
                                   id="paymentMethod"
                                   value={draft.paymentMethod}
                                   onChange={(event) => update('paymentMethod', event.target.value)}
-                                  className="select-field"
+                                  className={withError('select-field', errors.paymentMethod)}
                                 >
                                   <option value="">{t('report.chooseMethod')}</option>
                                   {paymentMethods.map((method) => (
@@ -1076,7 +1093,7 @@ export function ReportPage() {
                                 id="recipientIdentifier"
                                 value={draft.recipientIdentifier}
                                 onChange={(event) => update('recipientIdentifier', event.target.value)}
-                                className="text-field"
+                                className={withError('text-field', errors.recipientIdentifier)}
                                 placeholder="merchant@upi"
                               />
                               <FieldError>{errors.recipientIdentifier}</FieldError>
@@ -1093,7 +1110,7 @@ export function ReportPage() {
                             id="description"
                             value={draft.description}
                             onChange={(event) => update('description', event.target.value.slice(0, 1000))}
-                            className="text-area min-h-44"
+                            className={withError('text-area min-h-44', errors.description)}
                             placeholder={t('report.descriptionPlaceholder')}
                           />
                           <p className="field-help">{t('report.sensitiveHelp')}</p>
@@ -1192,17 +1209,17 @@ export function ReportPage() {
                           <div className="grid gap-5 sm:grid-cols-2">
                             <div>
                               <label className="field-label" htmlFor="fullName">{t('report.fullName')}</label>
-                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className="text-field" placeholder={t('report.fullNamePlaceholder')} />
+                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className={withError('text-field', errors.fullName)} placeholder={t('report.fullNamePlaceholder')} />
                               <FieldError>{errors.fullName}</FieldError>
                             </div>
                             <div>
                               <label className="field-label" htmlFor="mobile">{t('report.mobile')}</label>
-                              <input id="mobile" inputMode="numeric" value={draft.mobile} onChange={(event) => update('mobile', event.target.value.replace(/\D/g, '').slice(0, 10))} className="text-field" placeholder="9000001930" />
+                              <input id="mobile" inputMode="numeric" value={draft.mobile} onChange={(event) => update('mobile', event.target.value.replace(/\D/g, '').slice(0, 10))} className={withError('text-field', errors.mobile)} placeholder="9000001930" />
                               <FieldError>{errors.mobile}</FieldError>
                             </div>
                             <div className="sm:col-span-2">
                               <label className="field-label" htmlFor="email">{t('report.email')} <span className="font-normal text-muted">{t('report.optional')}</span></label>
-                              <input id="email" type="email" value={draft.email} onChange={(event) => update('email', event.target.value)} className="text-field" placeholder="aarav@example.com" />
+                              <input id="email" type="email" value={draft.email} onChange={(event) => update('email', event.target.value)} className={withError('text-field', errors.email)} placeholder="aarav@example.com" />
                               <FieldError>{errors.email}</FieldError>
                             </div>
                           </div>
@@ -1242,7 +1259,7 @@ export function ReportPage() {
                         <SummaryRow label={t('report.summaryDescription')} value={draft.description} empty={t('report.notAdded')} />
                       </div>
 
-                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 border-fieldBorder bg-field p-4 hover:border-brand/50">
+                      <label className={cx('mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 bg-field p-4', errors.consent ? 'border-alert bg-alert/[0.06]' : 'border-fieldBorder hover:border-brand/50')}>
                         <input
                           type="checkbox"
                           checked={draft.consent}

@@ -3,15 +3,15 @@ export const common = {
     meta: {
       title: 'CyberDesk — Report cybercrime',
       description:
-        'Report cybercrime, check a suspicious number and track your complaint — in plain language, in your language.',
+        'Report cybercrime, check a number or UPI, or track your complaint — in plain language, in your language.',
     },
     nav: {
       home: 'Home',
       report: 'Report',
       track: 'Track',
-      check: 'Check',
+      check: 'Check number',
       callScan: 'Call scan',
-      noticeVerifier: 'Notice check',
+      noticeVerifier: 'Fake notice',
       volunteers: 'Volunteers',
       learn: 'Learn',
       contact: 'Contact',
@@ -55,9 +55,9 @@ export const common = {
   hi: {
     meta: {
       title: 'CyberDesk — साइबर अपराध की रिपोर्ट करें',
-      description: 'साइबर अपराध की रिपोर्ट करें, संदिग्ध नंबर जाँचें और अपनी शिकायत की स्थिति देखें।',
+      description: 'साइबर अपराध की रिपोर्ट करें, नंबर या UPI जाँचें और अपनी शिकायत की स्थिति देखें।',
     },
-    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'नोटिस जाँच', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
+    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'नंबर जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'फर्जी नोटिस', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
     actions: { startReport: 'रिपोर्ट शुरू करें', call1930: '1930 पर कॉल करें', continue: 'आगे बढ़ें', back: 'वापस', clear: 'साफ़ करें', open: 'खोलें', close: 'बंद करें', reset: 'रीसेट', readMore: 'और पढ़ें' },
     language: { label: 'भाषा', select: 'भाषा चुनें' },
     theme: { light: 'हल्की थीम', dark: 'गहरी थीम', system: 'डिवाइस की थीम', toggleToLight: 'हल्की थीम पर जाएँ', toggleToDark: 'गहरी थीम पर जाएँ' },
@@ -66,7 +66,7 @@ export const common = {
   },
   te: {
     meta: { title: 'CyberDesk — సైబర్ నేరాన్ని నివేదించండి', description: 'సైబర్ నేర నివేదికను సులభతరం చేసే స్వతంత్ర నమూనా. ఇది అధికారిక ప్రభుత్వ సేవ కాదు.' },
-    nav: { home: 'హోమ్', report: 'నివేదించు', track: 'ట్రాక్', check: 'తనిఖీ', callScan: 'కాల్ స్కాన్', noticeVerifier: 'నోటీసు తనిఖీ', volunteers: 'వాలంటీర్లు', learn: 'తెలుసుకోండి', contact: 'సంప్రదించండి', openNavigation: 'నావిగేషన్ తెరవండి' },
+    nav: { home: 'హోమ్', report: 'నివేదించు', track: 'ట్రాక్', check: 'నంబర్ తనిఖీ', callScan: 'కాల్ స్కాన్', noticeVerifier: 'నకిలీ నోటీసు', volunteers: 'వాలంటీర్లు', learn: 'తెలుసుకోండి', contact: 'సంప్రదించండి', openNavigation: 'నావిగేషన్ తెరవండి' },
     actions: { startReport: 'నివేదిక ప్రారంభించండి', call1930: '1930కు కాల్ చేయండి', continue: 'కొనసాగించండి', back: 'వెనుకకు', clear: 'తొలగించు', open: 'తెరవండి', close: 'మూసివేయండి', reset: 'రీసెట్', readMore: 'మరింత చదవండి' },
     language: { label: 'భాష', select: 'భాషను ఎంచుకోండి' },
     theme: { light: 'లైట్ మోడ్', dark: 'డార్క్ మోడ్', toggleToLight: 'లైట్ మోడ్‌కు మారండి', toggleToDark: 'డార్క్ మోడ్‌కు మారండి' },
@@ -75,7 +75,7 @@ export const common = {
   },
   ta: {
     meta: { title: 'CyberDesk — இணையக் குற்றத்தைப் புகாரளிக்கவும்', description: 'தெளிவான இணையக் குற்றப் புகார் பயணத்திற்கான சுயாதீன மாதிரி. இது அதிகாரப்பூர்வ அரசு சேவை அல்ல.' },
-    nav: { home: 'முகப்பு', report: 'புகார்', track: 'நிலை', check: 'சரிபார்', callScan: 'அழைப்பு சோதனை', noticeVerifier: 'அறிவிப்பு சரிபார்', volunteers: 'தன்னார்வலர்கள்', learn: 'அறிக', contact: 'தொடர்பு', openNavigation: 'வழிசெலுத்தலைத் திற' },
+    nav: { home: 'முகப்பு', report: 'புகார்', track: 'நிலை', check: 'எண் சரிபார்', callScan: 'அழைப்பு சோதனை', noticeVerifier: 'போலி அறிவிப்பு', volunteers: 'தன்னார்வலர்கள்', learn: 'அறிக', contact: 'தொடர்பு', openNavigation: 'வழிசெலுத்தலைத் திற' },
     actions: { startReport: 'புகாரைத் தொடங்கு', call1930: '1930-ஐ அழைக்கவும்', continue: 'தொடரவும்', back: 'பின்செல்', clear: 'அழி', open: 'திற', close: 'மூடு', reset: 'மீட்டமை', readMore: 'மேலும் படிக்க' },
     language: { label: 'மொழி', select: 'மொழியைத் தேர்ந்தெடுக்கவும்' },
     theme: { light: 'வெளிச்சப் பயன்முறை', dark: 'இருள் பயன்முறை', toggleToLight: 'வெளிச்சப் பயன்முறைக்கு மாறவும்', toggleToDark: 'இருள் பயன்முறைக்கு மாறவும்' },
@@ -84,7 +84,7 @@ export const common = {
   },
   kn: {
     meta: { title: 'CyberDesk — ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಮಾಡಿ', description: 'ಸ್ಪಷ್ಟ ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಪ್ರಯಾಣಕ್ಕಾಗಿ ಸ್ವತಂತ್ರ ಮಾದರಿ. ಇದು ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಸೇವೆಯಲ್ಲ.' },
-    nav: { home: 'ಮುಖಪುಟ', report: 'ವರದಿ', track: 'ಸ್ಥಿತಿ', check: 'ಪರಿಶೀಲಿಸಿ', callScan: 'ಕಾಲ್ ಸ್ಕ್ಯಾನ್', noticeVerifier: 'ನೋಟಿಸ್ ಪರಿಶೀಲನೆ', volunteers: 'ಸ್ವಯಂಸೇವಕರು', learn: 'ತಿಳಿಯಿರಿ', contact: 'ಸಂಪರ್ಕ', openNavigation: 'ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ' },
+    nav: { home: 'ಮುಖಪುಟ', report: 'ವರದಿ', track: 'ಸ್ಥಿತಿ', check: 'ನಂಬರ್ ಪರಿಶೀಲಿಸಿ', callScan: 'ಕಾಲ್ ಸ್ಕ್ಯಾನ್', noticeVerifier: 'ನಕಲಿ ನೋಟಿಸ್', volunteers: 'ಸ್ವಯಂಸೇವಕರು', learn: 'ತಿಳಿಯಿರಿ', contact: 'ಸಂಪರ್ಕ', openNavigation: 'ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ' },
     actions: { startReport: 'ವರದಿ ಪ್ರಾರಂಭಿಸಿ', call1930: '1930ಕ್ಕೆ ಕರೆ ಮಾಡಿ', continue: 'ಮುಂದುವರಿಸಿ', back: 'ಹಿಂದೆ', clear: 'ತೆರವುಗೊಳಿಸಿ', open: 'ತೆರೆಯಿರಿ', close: 'ಮುಚ್ಚಿ', reset: 'ಮರುಹೊಂದಿಸಿ', readMore: 'ಇನ್ನಷ್ಟು ಓದಿ' },
     language: { label: 'ಭಾಷೆ', select: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ' },
     theme: { light: 'ಲೈಟ್ ಮೋಡ್', dark: 'ಡಾರ್ಕ್ ಮೋಡ್', toggleToLight: 'ಲೈಟ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ', toggleToDark: 'ಡಾರ್ಕ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ' },
@@ -93,7 +93,7 @@ export const common = {
   },
   ml: {
     meta: { title: 'CyberDesk — സൈബർ കുറ്റകൃത്യം റിപ്പോർട്ട് ചെയ്യുക', description: 'വ്യക്തമായ സൈബർ കുറ്റകൃത്യ റിപ്പോർട്ടിംഗിനുള്ള സ്വതന്ത്ര മാതൃക. ഇത് ഔദ്യോഗിക സർക്കാർ സേവനമല്ല.' },
-    nav: { home: 'ഹോം', report: 'റിപ്പോർട്ട്', track: 'നില', check: 'പരിശോധിക്കുക', callScan: 'കോൾ സ്കാൻ', noticeVerifier: 'നോട്ടീസ് പരിശോധന', volunteers: 'സന്നദ്ധർ', learn: 'പഠിക്കുക', contact: 'ബന്ധപ്പെടുക', openNavigation: 'നാവിഗേഷൻ തുറക്കുക' },
+    nav: { home: 'ഹോം', report: 'റിപ്പോർട്ട്', track: 'നില', check: 'നമ്പർ പരിശോധിക്കുക', callScan: 'കോൾ സ്കാൻ', noticeVerifier: 'വ്യാജ നോട്ടീസ്', volunteers: 'സന്നദ്ധർ', learn: 'പഠിക്കുക', contact: 'ബന്ധപ്പെടുക', openNavigation: 'നാവിഗേഷൻ തുറക്കുക' },
     actions: { startReport: 'റിപ്പോർട്ട് തുടങ്ങുക', call1930: '1930-ൽ വിളിക്കുക', continue: 'തുടരുക', back: 'പിന്നോട്ട്', clear: 'മായ്ക്കുക', open: 'തുറക്കുക', close: 'അടയ്ക്കുക', reset: 'റീസെറ്റ്', readMore: 'കൂടുതൽ വായിക്കുക' },
     language: { label: 'ഭാഷ', select: 'ഭാഷ തിരഞ്ഞെടുക്കുക' },
     theme: { light: 'ലൈറ്റ് മോഡ്', dark: 'ഡാർക്ക് മോഡ്', toggleToLight: 'ലൈറ്റ് മോഡിലേക്ക് മാറുക', toggleToDark: 'ഡാർക്ക് മോഡിലേക്ക് മാറുക' },
@@ -102,7 +102,7 @@ export const common = {
   },
   mr: {
     meta: { title: 'CyberDesk — सायबर गुन्ह्याची तक्रार करा', description: 'स्पष्ट सायबर गुन्हे नोंदणीसाठी स्वतंत्र नमुना. ही अधिकृत सरकारी सेवा नाही.' },
-    nav: { home: 'मुख्यपृष्ठ', report: 'तक्रार', track: 'स्थिती', check: 'तपासा', callScan: 'कॉल स्कॅन', noticeVerifier: 'नोटीस तपासा', volunteers: 'स्वयंसेवक', learn: 'जाणून घ्या', contact: 'संपर्क', openNavigation: 'नेव्हिगेशन उघडा' },
+    nav: { home: 'मुख्यपृष्ठ', report: 'तक्रार', track: 'स्थिती', check: 'नंबर तपासा', callScan: 'कॉल स्कॅन', noticeVerifier: 'बनावट नोटीस', volunteers: 'स्वयंसेवक', learn: 'जाणून घ्या', contact: 'संपर्क', openNavigation: 'नेव्हिगेशन उघडा' },
     actions: { startReport: 'तक्रार सुरू करा', call1930: '1930 वर कॉल करा', continue: 'पुढे जा', back: 'मागे', clear: 'साफ करा', open: 'उघडा', close: 'बंद करा', reset: 'रीसेट', readMore: 'अधिक वाचा' },
     language: { label: 'भाषा', select: 'भाषा निवडा' },
     theme: { light: 'लाइट मोड', dark: 'डार्क मोड', toggleToLight: 'लाइट मोडवर जा', toggleToDark: 'डार्क मोडवर जा' },
@@ -111,7 +111,7 @@ export const common = {
   },
   bn: {
     meta: { title: 'CyberDesk — সাইবার অপরাধ রিপোর্ট করুন', description: 'সহজ সাইবার অপরাধ রিপোর্টিংয়ের জন্য স্বাধীন প্রোটোটাইপ। এটি সরকারি পরিষেবা নয়।' },
-    nav: { home: 'হোম', report: 'রিপোর্ট', track: 'ট্র্যাক', check: 'যাচাই', callScan: 'কল স্ক্যান', noticeVerifier: 'নোটিশ যাচাই', volunteers: 'স্বেচ্ছাসেবক', learn: 'শিখুন', contact: 'যোগাযোগ', openNavigation: 'নেভিগেশন খুলুন' },
+    nav: { home: 'হোম', report: 'রিপোর্ট', track: 'ট্র্যাক', check: 'নম্বর যাচাই', callScan: 'কল স্ক্যান', noticeVerifier: 'নকল নোটিশ', volunteers: 'স্বেচ্ছাসেবক', learn: 'শিখুন', contact: 'যোগাযোগ', openNavigation: 'নেভিগেশন খুলুন' },
     actions: { startReport: 'রিপোর্ট শুরু করুন', call1930: '১৯৩০-এ কল করুন', continue: 'এগিয়ে যান', back: 'ফিরুন', clear: 'মুছুন', open: 'খুলুন', close: 'বন্ধ করুন', reset: 'রিসেট', readMore: 'আরও পড়ুন' },
     language: { label: 'ভাষা', select: 'ভাষা বেছে নিন' },
     theme: { light: 'লাইট মোড', dark: 'ডার্ক মোড', toggleToLight: 'লাইট মোডে যান', toggleToDark: 'ডার্ক মোডে যান' },
@@ -120,7 +120,7 @@ export const common = {
   },
   as: {
     meta: { title: 'CyberDesk — চাইবাৰ অপৰাধৰ প্ৰতিবেদন', description: 'চাইবাৰ অপৰাধ প্ৰতিবেদনৰ বাবে স্বাধীন প্ৰটোটাইপ। এইটো চৰকাৰী সেৱা নহয়।' },
-    nav: { home: 'মূল পৃষ্ঠা', report: 'প্ৰতিবেদন', track: 'স্থিতি', check: 'পৰীক্ষা', callScan: 'কল স্কেন', noticeVerifier: 'নোটিচ পৰীক্ষা', volunteers: 'স্বেচ্ছাসেৱক', learn: 'সহায়', contact: 'যোগাযোগ', openNavigation: 'নেভিগেচন খোলক' },
+    nav: { home: 'মূল পৃষ্ঠা', report: 'প্ৰতিবেদন', track: 'স্থিতি', check: 'নম্বৰ পৰীক্ষা', callScan: 'কল স্কেন', noticeVerifier: 'নকল নোটিচ', volunteers: 'স্বেচ্ছাসেৱক', learn: 'সহায়', contact: 'যোগাযোগ', openNavigation: 'নেভিগেচন খোলক' },
     actions: { startReport: 'প্ৰতিবেদন আৰম্ভ কৰক', call1930: '1930-লৈ ফোন কৰক', continue: 'আগবাঢ়ক', back: 'পিছলৈ', clear: 'মচক', open: 'খোলক', close: 'বন্ধ কৰক', reset: 'ৰিছেট', readMore: 'অধিক পঢ়ক' },
     language: { label: 'ভাষা', select: 'ভাষা বাছক' },
     theme: { light: 'লাইট মোড', dark: 'ডাৰ্ক মোড', toggleToLight: 'লাইট মোডলৈ যাওক', toggleToDark: 'ডাৰ্ক মোডলৈ যাওক' },
@@ -129,7 +129,7 @@ export const common = {
   },
   gu: {
     meta: { title: 'CyberDesk — સાયબર ગુનાની જાણ કરો', description: 'સરળ સાયબર ગુના રિપોર્ટિંગ માટેનું સ્વતંત્ર પ્રોટોટાઇપ. આ સત્તાવાર સરકારી સેવા નથી.' },
-    nav: { home: 'હોમ', report: 'રિપોર્ટ', track: 'ટ્રૅક', check: 'ચકાસો', callScan: 'કૉલ સ્કેન', noticeVerifier: 'નોટિસ ચકાસો', volunteers: 'સ્વયંસેવકો', learn: 'મદદ', contact: 'સંપર્ક', openNavigation: 'નેવિગેશન ખોલો' },
+    nav: { home: 'હોમ', report: 'રિપોર્ટ', track: 'ટ્રૅક', check: 'નંબર ચકાસો', callScan: 'કૉલ સ્કેન', noticeVerifier: 'નકલી નોટિસ', volunteers: 'સ્વયંસેવકો', learn: 'મદદ', contact: 'સંપર્ક', openNavigation: 'નેવિગેશન ખોલો' },
     actions: { startReport: 'રિપોર્ટ શરૂ કરો', call1930: '1930 પર કૉલ કરો', continue: 'આગળ વધો', back: 'પાછા', clear: 'સાફ કરો', open: 'ખોલો', close: 'બંધ કરો', reset: 'રીસેટ', readMore: 'વધુ વાંચો' },
     language: { label: 'ભાષા', select: 'ભાષા પસંદ કરો' },
     theme: { light: 'લાઇટ મોડ', dark: 'ડાર્ક મોડ', toggleToLight: 'લાઇટ મોડ પર જાઓ', toggleToDark: 'ડાર્ક મોડ પર જાઓ' },
@@ -138,7 +138,7 @@ export const common = {
   },
   or: {
     meta: { title: 'CyberDesk — ସାଇବର ଅପରାଧ ରିପୋର୍ଟ କରନ୍ତୁ', description: 'ସହଜ ସାଇବର ଅପରାଧ ରିପୋର୍ଟିଂ ପାଇଁ ସ୍ୱାଧୀନ ପ୍ରୋଟୋଟାଇପ୍। ଏହା ସରକାରୀ ସେବା ନୁହେଁ।' },
-    nav: { home: 'ମୂଳପୃଷ୍ଠା', report: 'ରିପୋର୍ଟ', track: 'ସ୍ଥିତି', check: 'ଯାଞ୍ଚ', callScan: 'କଲ୍ ସ୍କାନ୍', noticeVerifier: 'ନୋଟିସ୍ ଯାଞ୍ଚ', volunteers: 'ସ୍ୱେଚ୍ଛାସେବୀ', learn: 'ସହାୟତା', contact: 'ଯୋଗାଯୋଗ', openNavigation: 'ନାଭିଗେସନ୍ ଖୋଲନ୍ତୁ' },
+    nav: { home: 'ମୂଳପୃଷ୍ଠା', report: 'ରିପୋର୍ଟ', track: 'ସ୍ଥିତି', check: 'ନମ୍ବର ଯାଞ୍ଚ', callScan: 'କଲ୍ ସ୍କାନ୍', noticeVerifier: 'ନକଲି ନୋଟିସ୍', volunteers: 'ସ୍ୱେଚ୍ଛାସେବୀ', learn: 'ସହାୟତା', contact: 'ଯୋଗାଯୋଗ', openNavigation: 'ନାଭିଗେସନ୍ ଖୋଲନ୍ତୁ' },
     actions: { startReport: 'ରିପୋର୍ଟ ଆରମ୍ଭ କରନ୍ତୁ', call1930: '1930 କୁ କଲ୍ କରନ୍ତୁ', continue: 'ଆଗକୁ', back: 'ପଛକୁ', clear: 'ସଫା କରନ୍ତୁ', open: 'ଖୋଲନ୍ତୁ', close: 'ବନ୍ଦ କରନ୍ତୁ', reset: 'ରିସେଟ୍', readMore: 'ଅଧିକ ପଢ଼ନ୍ତୁ' },
     language: { label: 'ଭାଷା', select: 'ଭାଷା ବାଛନ୍ତୁ' },
     theme: { light: 'ଲାଇଟ୍ ମୋଡ୍', dark: 'ଡାର୍କ ମୋଡ୍', toggleToLight: 'ଲାଇଟ୍ ମୋଡ୍‌କୁ ଯାଆନ୍ତୁ', toggleToDark: 'ଡାର୍କ ମୋଡ୍‌କୁ ଯାଆନ୍ତୁ' },
@@ -147,7 +147,7 @@ export const common = {
   },
   pa: {
     meta: { title: 'CyberDesk — ਸਾਈਬਰ ਅਪਰਾਧ ਦੀ ਰਿਪੋਰਟ ਕਰੋ', description: 'ਸੌਖੀ ਸਾਈਬਰ ਅਪਰਾਧ ਰਿਪੋਰਟਿੰਗ ਲਈ ਸੁਤੰਤਰ ਪ੍ਰੋਟੋਟਾਈਪ। ਇਹ ਸਰਕਾਰੀ ਸੇਵਾ ਨਹੀਂ ਹੈ।' },
-    nav: { home: 'ਮੁੱਖ ਪੰਨਾ', report: 'ਰਿਪੋਰਟ', track: 'ਸਥਿਤੀ', check: 'ਜਾਂਚ', callScan: 'ਕਾਲ ਸਕੈਨ', noticeVerifier: 'ਨੋਟਿਸ ਜਾਂਚ', volunteers: 'ਵਲੰਟੀਅਰ', learn: 'ਮਦਦ', contact: 'ਸੰਪਰਕ', openNavigation: 'ਨੇਵੀਗੇਸ਼ਨ ਖੋਲ੍ਹੋ' },
+    nav: { home: 'ਮੁੱਖ ਪੰਨਾ', report: 'ਰਿਪੋਰਟ', track: 'ਸਥਿਤੀ', check: 'ਨੰਬਰ ਜਾਂਚ', callScan: 'ਕਾਲ ਸਕੈਨ', noticeVerifier: 'ਫਰਜ਼ੀ ਨੋਟਿਸ', volunteers: 'ਵਲੰਟੀਅਰ', learn: 'ਮਦਦ', contact: 'ਸੰਪਰਕ', openNavigation: 'ਨੇਵੀਗੇਸ਼ਨ ਖੋਲ੍ਹੋ' },
     actions: { startReport: 'ਰਿਪੋਰਟ ਸ਼ੁਰੂ ਕਰੋ', call1930: '1930 ਤੇ ਕਾਲ ਕਰੋ', continue: 'ਅੱਗੇ', back: 'ਪਿੱਛੇ', clear: 'ਸਾਫ਼ ਕਰੋ', open: 'ਖੋਲ੍ਹੋ', close: 'ਬੰਦ ਕਰੋ', reset: 'ਰੀਸੈਟ', readMore: 'ਹੋਰ ਪੜ੍ਹੋ' },
     language: { label: 'ਭਾਸ਼ਾ', select: 'ਭਾਸ਼ਾ ਚੁਣੋ' },
     theme: { light: 'ਲਾਈਟ ਮੋਡ', dark: 'ਡਾਰਕ ਮੋਡ', toggleToLight: 'ਲਾਈਟ ਮੋਡ ਤੇ ਜਾਓ', toggleToDark: 'ਡਾਰਕ ਮੋਡ ਤੇ ਜਾਓ' },
@@ -156,7 +156,7 @@ export const common = {
   },
   ur: {
     meta: { title: 'CyberDesk — سائبر جرم کی رپورٹ کریں', description: 'آسان سائبر جرم رپورٹنگ کے لیے آزاد پروٹوٹائپ۔ یہ سرکاری خدمت نہیں ہے۔' },
-    nav: { home: 'ہوم', report: 'رپورٹ', track: 'حالت', check: 'جانچیں', callScan: 'کال اسکین', noticeVerifier: 'نوٹس جانچ', volunteers: 'رضاکار', learn: 'مدد', contact: 'رابطہ', openNavigation: 'نیویگیشن کھولیں' },
+    nav: { home: 'ہوم', report: 'رپورٹ', track: 'حالت', check: 'نمبر چیک', callScan: 'کال اسکین', noticeVerifier: 'جعلی نوٹس', volunteers: 'رضاکار', learn: 'مدد', contact: 'رابطہ', openNavigation: 'نیویگیشن کھولیں' },
     actions: { startReport: 'رپورٹ شروع کریں', call1930: '1930 پر کال کریں', continue: 'جاری رکھیں', back: 'واپس', clear: 'صاف کریں', open: 'کھولیں', close: 'بند کریں', reset: 'ری سیٹ', readMore: 'مزید پڑھیں' },
     language: { label: 'زبان', select: 'زبان منتخب کریں' },
     theme: { light: 'لائٹ موڈ', dark: 'ڈارک موڈ', toggleToLight: 'لائٹ موڈ پر جائیں', toggleToDark: 'ڈارک موڈ پر جائیں' },

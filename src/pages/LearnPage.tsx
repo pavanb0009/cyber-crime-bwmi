@@ -227,7 +227,7 @@ export function LearnPage() {
 
               <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 <Link to="/check" className={buttonStyles('primary', 'md')}>
-                  Check identifier
+                  Check a number or UPI
                 </Link>
                 <Link to="/report" className={buttonStyles('secondary', 'md')}>
                   Start report

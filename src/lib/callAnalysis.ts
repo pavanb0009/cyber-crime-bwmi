@@ -1,6 +1,18 @@
 import type { CallAnalysisResponse } from '../types'
 
-const API_URL = (import.meta.env.VITE_CALL_SCANNER_API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
+function normalizeApiUrl(raw: string | undefined): string {
+  let value = (raw ?? 'http://localhost:8000').trim().replace(/^['"]|['"]$/g, '')
+  const nestedRailway = value.match(/\/((?:[\w-]+\.)*up\.railway\.app)(?:\/|$)/i)
+  if (nestedRailway && !/^https?:\/\/(?:[\w-]+\.)*up\.railway\.app/i.test(value)) {
+    value = `https://${nestedRailway[1]}`
+  }
+  if (!/^https?:\/\//i.test(value)) {
+    value = `https://${value.replace(/^\/+/, '')}`
+  }
+  return value.replace(/\/$/, '')
+}
+
+const API_URL = normalizeApiUrl(import.meta.env.VITE_CALL_SCANNER_API_URL)
 
 export type CallLanguage = 'auto' | 'hi' | 'en'
 

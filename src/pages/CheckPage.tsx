@@ -204,7 +204,7 @@ export function CheckPage() {
                         setValue(event.target.value)
                         setError('')
                       }}
-                      className="text-field h-12 pr-24 text-base"
+                      className={cx('text-field h-12 pr-24 text-base', error && 'field-invalid')}
                       placeholder={t(`check.fields.${type}.placeholder`)}
                       autoComplete="off"
                     />

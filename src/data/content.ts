@@ -50,7 +50,7 @@ export const incidentTypes: IncidentType[] = [
     id: 'suspicious-content',
     title: 'Suspicious website or message',
     description: 'Fake site, phishing link, suspicious phone number or social profile.',
-    hint: 'Use Check Suspect first when no loss has occurred.',
+    hint: 'Check the number or UPI first when no money has been lost.',
     icon: ShieldAlert,
     tone: 'aqua',
   },

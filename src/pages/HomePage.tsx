@@ -263,7 +263,7 @@ export function HomePage() {
                   setCopilotResult(null)
                   setCopilotError('')
                 }}
-                className="text-area min-h-24 flex-1"
+                className={cx('text-area min-h-24 flex-1', copilotError && 'field-invalid')}
                 placeholder={t('home.copilot.placeholder')}
               />
               <button

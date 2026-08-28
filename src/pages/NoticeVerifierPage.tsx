@@ -297,7 +297,7 @@ export function NoticeVerifierPage() {
 
   return (
     <>
-      <PageIntro title="Verify a notice" />
+      <PageIntro title="Is this notice real?" />
 
       <section className="page-shell pb-14">
         <div className="mx-auto max-w-5xl">
@@ -365,7 +365,7 @@ export function NoticeVerifierPage() {
                       persist({ text: event.target.value, result: null })
                     }}
                     rows={7}
-                    className="text-area min-h-[10rem]"
+                    className={cx('text-area min-h-[10rem]', error && 'field-invalid')}
                     placeholder="Upload a file above, or paste the notice text here if you already have it."
                     disabled={extracting}
                   />
@@ -378,7 +378,7 @@ export function NoticeVerifierPage() {
                     ) : null}
                   </div>
                   {error ? (
-                    <div className="mt-4 flex gap-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.05] p-4 text-sm leading-6 text-amber-700">
+                    <div className="mt-4 flex gap-3 rounded-xl border border-alert/25 bg-alert/[0.05] p-4 text-sm leading-6 text-alert">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> {error}
                     </div>
                   ) : null}
