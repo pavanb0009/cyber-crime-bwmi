@@ -14,9 +14,7 @@
       (function () {
         try {
           var t = localStorage.getItem('rakshak-theme-pref')
-          if (t !== 'light' && t !== 'dark') {
-            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-          }
+          if (t !== 'dark') t = 'light'
           if (t === 'dark') document.documentElement.classList.add('dark')
           document.documentElement.style.colorScheme = t
           var meta = document.querySelector('meta[name="theme-color"]')
