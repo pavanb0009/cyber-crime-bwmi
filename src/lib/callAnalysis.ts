@@ -37,3 +37,40 @@ export async function analyseCall(
 
   return response.json() as Promise<CallAnalysisResponse>
 }
+
+export async function transcribeAudio(
+  file: File,
+  language: CallLanguage = 'auto',
+  signal?: AbortSignal,
+): Promise<string> {
+  const body = new FormData()
+  body.append('audio', file)
+  body.append('language', language)
+
+  let response: Response
+  try {
+    response = await fetch(`${API_URL}/transcribe`, {
+      method: 'POST',
+      body,
+      signal,
+    })
+  } catch {
+    throw new Error('Voice transcription needs the call-scanner API. Set VITE_CALL_SCANNER_API_URL and redeploy.')
+  }
+
+  if (!response.ok) {
+    let message = 'The recording could not be turned into text.'
+    try {
+      const error = (await response.json()) as { detail?: string }
+      if (error.detail) message = error.detail
+    } catch {
+      // Keep the user-friendly fallback for non-JSON server errors.
+    }
+    throw new Error(message)
+  }
+
+  const payload = (await response.json()) as { transcript?: string }
+  const transcript = payload.transcript?.trim() ?? ''
+  if (!transcript) throw new Error('No speech was recognised. Try speaking a little longer.')
+  return transcript
+}

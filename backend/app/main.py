@@ -81,6 +81,57 @@ def get_local_model() -> Any:
     return WhisperModel(whisper, device=device, compute_type=compute_type)
 
 
+def transcribe_audio_file(temp_path: str, language: str) -> tuple[list[dict[str, Any]], Any]:
+    try:
+        if cloud_configured():
+            return transcribe_openai(temp_path, language)
+        return transcribe_local(temp_path, language)
+    except HTTPException:
+        raise
+    except ImportError as error:
+        logger.exception("Speech backend is not installed")
+        raise HTTPException(
+            status_code=503,
+            detail="Set GROQ_API_KEY on the API service. Local Whisper is not installed on this host.",
+        ) from error
+    except Exception as error:
+        logger.exception("Transcription failed")
+        message = str(error)
+        if "api key" in message.lower() or "authentication" in message.lower():
+            raise HTTPException(
+                status_code=503,
+                detail="API key is missing or invalid. Set GROQ_API_KEY (free) on the API service.",
+            ) from error
+        raise HTTPException(
+            status_code=422,
+            detail="Could not decode or transcribe this audio file.",
+        ) from error
+
+
+async def save_upload(audio: UploadFile, language: str) -> tuple[bytes, str]:
+    if language not in SUPPORTED_LANGUAGES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Language must be one of: {', '.join(sorted(SUPPORTED_LANGUAGES))}",
+        )
+    suffix = Path(audio.filename or "voice.webm").suffix.lower()
+    if suffix not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=415,
+            detail=f"Unsupported file. Use: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
+        )
+    limit = max_upload_bytes()
+    contents = await audio.read(limit + 1)
+    if not contents:
+        raise HTTPException(status_code=400, detail="The uploaded audio file is empty.")
+    if len(contents) > limit:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Audio must be {limit // (1024 * 1024)} MB or smaller.",
+        )
+    return contents, suffix
+
+
 def transcribe_local(temp_path: str, language: str) -> tuple[list[dict[str, Any]], Any]:
     model = get_local_model()
     segments_iter, info = model.transcribe(
@@ -183,66 +234,43 @@ def health() -> dict[str, Any]:
     }
 
 
+@app.post("/transcribe")
+async def transcribe_only(
+    audio: Annotated[UploadFile, File(description="Hindi, English, or Hinglish speech")],
+    language: Annotated[str, Form()] = "auto",
+) -> dict[str, Any]:
+    contents, suffix = await save_upload(audio, language)
+    temp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            temp_file.write(contents)
+            temp_path = temp_file.name
+        segments, info = transcribe_audio_file(temp_path, language)
+        transcript = " ".join(item["text"] for item in segments).strip()
+        return {
+            "transcript": transcript,
+            "language": getattr(info, "language", language),
+            "duration": round(float(getattr(info, "duration", 0) or 0), 2),
+        }
+    finally:
+        await audio.close()
+        if temp_path:
+            Path(temp_path).unlink(missing_ok=True)
+
+
 @app.post("/analyse")
 async def analyse_call(
     audio: Annotated[UploadFile, File(description="Hindi, English, or Hinglish call audio")],
     language: Annotated[str, Form()] = "auto",
 ) -> dict[str, Any]:
-    if language not in SUPPORTED_LANGUAGES:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Language must be one of: {', '.join(sorted(SUPPORTED_LANGUAGES))}",
-        )
-
-    suffix = Path(audio.filename or "").suffix.lower()
-    if suffix not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=415,
-            detail=f"Unsupported file. Use: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
-        )
-
-    limit = max_upload_bytes()
-    contents = await audio.read(limit + 1)
-    if not contents:
-        raise HTTPException(status_code=400, detail="The uploaded audio file is empty.")
-    if len(contents) > limit:
-        raise HTTPException(
-            status_code=413,
-            detail=f"Audio must be {limit // (1024 * 1024)} MB or smaller.",
-        )
-
+    contents, suffix = await save_upload(audio, language)
     temp_path = ""
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
             temp_file.write(contents)
             temp_path = temp_file.name
 
-        try:
-            if cloud_configured():
-                segments, info = transcribe_openai(temp_path, language)
-            else:
-                segments, info = transcribe_local(temp_path, language)
-        except HTTPException:
-            raise
-        except ImportError as error:
-            logger.exception("Speech backend is not installed")
-            raise HTTPException(
-                status_code=503,
-                detail="Set GROQ_API_KEY on the API service. Local Whisper is not installed on this host.",
-            ) from error
-        except Exception as error:
-            logger.exception("Transcription failed for %s", audio.filename)
-            message = str(error)
-            if "api key" in message.lower() or "authentication" in message.lower():
-                raise HTTPException(
-                    status_code=503,
-                    detail="API key is missing or invalid. Set GROQ_API_KEY (free) on the API service.",
-                ) from error
-            raise HTTPException(
-                status_code=422,
-                detail="Could not decode or transcribe this audio file.",
-            ) from error
-
+        segments, info = transcribe_audio_file(temp_path, language)
         original_transcript = " ".join(item["text"] for item in segments)
         ai_result = analyse_with_ai(original_transcript)
         detected, rule_evidence = detect_signals(segments)

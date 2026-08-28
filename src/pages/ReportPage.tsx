@@ -30,7 +30,9 @@ import {
   classifyIncident,
   evidenceCompleteness,
 } from '../lib/intelligence'
+import { transcribeAudio, type CallLanguage } from '../lib/callAnalysis'
 import { patchSearchParams, writeSession } from '../lib/session'
+import { extensionForMime, pickAudioRecorderMime, stopMediaStream } from '../lib/voiceRecord'
 import {
   clearDraft,
   emptyDraft,
@@ -43,14 +45,11 @@ import type { CaseRecord, CopilotResult, IncidentTypeId, ReportDraft } from '../
 
 const paymentMethods = ['UPI', 'Bank transfer', 'Card', 'Wallet', 'Crypto', 'Other']
 
-interface SpeechRecognitionLike {
-  lang: string
-  interimResults: boolean
-  continuous: boolean
-  onresult: ((event: { results?: Array<Array<{ transcript?: string }>> }) => void) | null
-  onerror: (() => void) | null
-  onend: (() => void) | null
-  start: () => void
+function voiceLanguage(language: string): CallLanguage {
+  const base = language.split('-')[0]
+  if (base === 'hi') return 'hi'
+  if (base === 'en') return 'en'
+  return 'auto'
 }
 
 function makeCaseId(): string {
@@ -197,6 +196,10 @@ export function ReportPage() {
   })
   const [copilotResult, setCopilotResult] = useState<CopilotResult | null>(null)
   const [listening, setListening] = useState(false)
+  const [voiceBusy, setVoiceBusy] = useState(false)
+  const recorderRef = useRef<MediaRecorder | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const chunksRef = useRef<Blob[]>([])
   const emergencyLanding = requestedEmergency && !draft.emergencyCaptured
   const [emergencyActionsReady, setEmergencyActionsReady] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -292,34 +295,115 @@ export function ReportPage() {
     })
   }
 
-  function startVoice() {
-    const browser = window as Window & {
-      SpeechRecognition?: new () => SpeechRecognitionLike
-      webkitSpeechRecognition?: new () => SpeechRecognitionLike
-    }
-    const Recognition = browser.SpeechRecognition ?? browser.webkitSpeechRecognition
-    if (!Recognition) {
+  function releaseMic() {
+    stopMediaStream(streamRef.current)
+    streamRef.current = null
+    recorderRef.current = null
+    chunksRef.current = []
+  }
+
+  async function startVoice() {
+    if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
       setErrors((current) => ({ ...current, copilotText: t('report.copilotVoiceUnsupported') }))
       return
     }
-    const recognition = new Recognition()
-    recognition.lang = i18n.resolvedLanguage || 'en-IN'
-    recognition.interimResults = false
-    recognition.continuous = false
-    recognition.onresult = (event) => {
-      const transcript = event.results?.[0]?.[0]?.transcript ?? ''
-      if (transcript) {
-        setDraft((current) => ({
-          ...current,
-          copilotText: `${current.copilotText}${current.copilotText ? ' ' : ''}${transcript}`,
-        }))
+
+    setErrors((current) => {
+      const next = { ...current }
+      delete next.copilotText
+      return next
+    })
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mime = pickAudioRecorderMime()
+      const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream)
+      chunksRef.current = []
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) chunksRef.current.push(event.data)
       }
+      streamRef.current = stream
+      recorderRef.current = recorder
+      recorder.start(250)
+      setListening(true)
+    } catch (error) {
+      releaseMic()
+      setListening(false)
+      const denied = error instanceof DOMException && (error.name === 'NotAllowedError' || error.name === 'SecurityError')
+      setErrors((current) => ({
+        ...current,
+        copilotText: denied ? t('report.copilotVoiceDenied') : t('report.copilotVoiceMic'),
+      }))
     }
-    recognition.onerror = () => setListening(false)
-    recognition.onend = () => setListening(false)
-    setListening(true)
-    recognition.start()
   }
+
+  function stopVoice() {
+    const recorder = recorderRef.current
+    if (!recorder || recorder.state === 'inactive') {
+      releaseMic()
+      setListening(false)
+      return
+    }
+
+    setListening(false)
+    setVoiceBusy(true)
+    recorder.onstop = () => {
+      const type = recorder.mimeType || 'audio/webm'
+      const blob = new Blob(chunksRef.current, { type })
+      releaseMic()
+      void finishVoice(blob, type)
+    }
+    try {
+      recorder.stop()
+    } catch {
+      releaseMic()
+      setVoiceBusy(false)
+    }
+  }
+
+  async function finishVoice(blob: Blob, type: string) {
+    if (blob.size < 2000) {
+      setVoiceBusy(false)
+      setErrors((current) => ({ ...current, copilotText: t('report.copilotVoiceTooShort') }))
+      return
+    }
+
+    const extension = extensionForMime(type)
+    const file = new File([blob], `voice-complaint.${extension}`, { type })
+    try {
+      const transcript = await transcribeAudio(file, voiceLanguage(i18n.resolvedLanguage || 'en'))
+      setDraft((current) => ({
+        ...current,
+        copilotText: `${current.copilotText}${current.copilotText ? ' ' : ''}${transcript}`.slice(0, 700),
+      }))
+    } catch (error) {
+      setErrors((current) => ({
+        ...current,
+        copilotText: error instanceof Error ? error.message : t('report.copilotVoiceUnsupported'),
+      }))
+    } finally {
+      setVoiceBusy(false)
+    }
+  }
+
+  function toggleVoice() {
+    if (voiceBusy) return
+    if (listening) stopVoice()
+    else void startVoice()
+  }
+
+  useEffect(() => {
+    return () => {
+      if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+        try {
+          recorderRef.current.stop()
+        } catch {
+          // Already closed.
+        }
+      }
+      stopMediaStream(streamRef.current)
+    }
+  }, [])
 
   function validateCurrentStep(): boolean {
     const nextErrors: Record<string, string> = {}
@@ -781,14 +865,23 @@ export function ReportPage() {
                           className="text-area min-h-28"
                           placeholder={t('home.copilot.placeholder')}
                         />
-                        <p className="mt-2 text-xs leading-5 text-muted">{t('report.copilotHelp')}</p>
+                        <p className="mt-2 text-xs leading-5 text-muted">
+                          {voiceBusy ? t('report.copilotVoiceTranscribing') : listening ? t('report.copilotVoiceHint') : t('report.copilotHelp')}
+                        </p>
                         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                          <Button type="button" size="sm" onClick={runCopilot}>
+                          <Button type="button" size="sm" onClick={runCopilot} disabled={listening || voiceBusy}>
                             <Sparkles className="h-4 w-4" /> {t('report.copilotClassify')}
                           </Button>
-                          <Button type="button" variant="secondary" size="sm" onClick={startVoice} disabled={listening}>
+                          <Button
+                            type="button"
+                            variant={listening ? 'danger' : 'secondary'}
+                            size="sm"
+                            onClick={toggleVoice}
+                            loading={voiceBusy}
+                            aria-pressed={listening}
+                          >
                             {listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                            {listening ? t('report.copilotListening') : t('report.copilotVoice')}
+                            {listening ? t('report.copilotVoiceStop') : t('report.copilotVoice')}
                           </Button>
                         </div>
                         <FieldError>{errors.copilotText}</FieldError>
