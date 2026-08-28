@@ -98,12 +98,21 @@ export function persistLocale(locale: AppLocale): void {
   }
 }
 
+const hiPageLocales = new Set<AppLocale>(['mr', 'ne', 'kok', 'mai', 'brx', 'doi', 'sa', 'sat', 'gu', 'pa', 'as', 'or'])
+const urPageLocales = new Set<AppLocale>(['ks', 'sd'])
+const bnPageLocales = new Set<AppLocale>(['mni'])
+
 const resources = Object.fromEntries(
   supportedLocales.map((locale) => [
     locale,
     {
       common: commonCatalog[locale] ?? commonCatalog.hi ?? common.en,
-      pages: pagesCatalog[locale] ?? pages.en,
+      pages:
+        pagesCatalog[locale] ??
+        (hiPageLocales.has(locale) ? pages.hi : undefined) ??
+        (urPageLocales.has(locale) ? pages.ur : undefined) ??
+        (bnPageLocales.has(locale) ? pages.bn : undefined) ??
+        pages.en,
     },
   ]),
 )

@@ -10,6 +10,20 @@
       content="CyberDesk — report cybercrime, check a suspicious number and track your complaint in your own language."
     />
     <title>CyberDesk — Report cybercrime</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('rakshak-theme-pref')
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          if (t === 'dark') document.documentElement.classList.add('dark')
+          document.documentElement.style.colorScheme = t
+          var meta = document.querySelector('meta[name="theme-color"]')
+          if (meta) meta.setAttribute('content', t === 'dark' ? '#000000' : '#ffffff')
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

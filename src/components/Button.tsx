@@ -13,7 +13,7 @@ export function buttonStyles(
     'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition duration-150 disabled:pointer-events-none disabled:opacity-50'
   const variants: Record<ButtonVariant, string> = {
     primary: 'bg-brand text-ink hover:bg-brandDark active:bg-brandDark',
-    secondary: 'border border-black/[0.14] bg-white text-paper hover:border-brand hover:text-brand',
+    secondary: 'border border-black/[0.14] bg-card text-paper hover:border-brand hover:text-brand',
     ghost: 'text-muted hover:text-paper',
     danger: 'bg-alert text-ink hover:bg-alertDark active:bg-alertDark',
   }

@@ -131,7 +131,7 @@ export function LearnPage() {
               {filteredGuides.map((guide) => {
                 const open = openGuide === guide.id
                 return (
-                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-black/[0.08] bg-white">
+                  <div key={guide.id} className="overflow-hidden rounded-2xl border border-black/[0.08] bg-card">
                     <button
                       type="button"
                       onClick={() => setOpenGuide(open ? null : guide.id)}
@@ -194,7 +194,7 @@ export function LearnPage() {
                       'flex w-full items-start gap-3 rounded-xl border-2 p-3.5 text-left transition',
                       answers[index]
                         ? 'border-brand bg-brand/[0.06]'
-                        : 'border-[#c5d0de] bg-[#eef3f9] hover:border-brand/50 hover:bg-white',
+                        : 'border-fieldBorder bg-field hover:border-brand/50 hover:bg-card',
                     )}
                   >
                     <span className={cx(

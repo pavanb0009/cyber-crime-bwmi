@@ -58,11 +58,11 @@ function makeCaseId(): string {
   return `${brand.casePrefix}-${number}`
 }
 
-function formatDateTime(value: string): string {
-  if (!value) return 'Not added'
+function formatDateTime(value: string, locale: string, empty: string): string {
+  if (!value) return empty
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
-  return new Intl.DateTimeFormat('en-IN', {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(date)
@@ -81,16 +81,18 @@ function FieldError({ children }: { children?: string }) {
   )
 }
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
+function SummaryRow({ label, value, empty }: { label: string; value: string; empty: string }) {
   return (
     <div className="grid gap-1 border-b border-black/[0.07] py-3 last:border-b-0 sm:grid-cols-[9rem_1fr] sm:gap-4">
       <span className="text-xs font-semibold uppercase tracking-[0.1em] text-muted">{label}</span>
-      <span className="text-sm leading-6 text-paper">{value || 'Not added'}</span>
+      <span className="text-sm leading-6 text-paper">{value || empty}</span>
     </div>
   )
 }
 
 function SuccessView({ record }: { record: CaseRecord }) {
+  const { t } = useTranslation(['pages', 'common'])
+
   function downloadAcknowledgement() {
     const content = [
       `${brand.name.toUpperCase()} — ACKNOWLEDGEMENT`,
@@ -119,26 +121,26 @@ function SuccessView({ record }: { record: CaseRecord }) {
       className="card overflow-hidden"
     >
       <div className="border-b border-black/[0.07] bg-mist px-5 py-4 sm:px-6">
-        <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">Complaint registered</h2>
+        <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.registered')}</h2>
       </div>
 
       <div className="p-5 sm:p-6">
-        <label className="field-label">Acknowledgement number</label>
+        <label className="field-label">{t('report.ackNumber')}</label>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <p className="flex-1 break-all rounded-lg border-2 border-brand/30 bg-[#eef3f9] px-3.5 py-3 font-mono text-xl font-bold text-brand sm:text-2xl">
+          <p className="flex-1 break-all rounded-lg border-2 border-brand/30 bg-field px-3.5 py-3 font-mono text-xl font-bold text-brand sm:text-2xl">
             {record.caseId}
           </p>
-          <div className="inline-flex items-center gap-2 rounded-lg border border-black/[0.12] bg-white px-3 py-2 text-xs font-semibold text-paper">
-            <Clock3 className="h-3.5 w-3.5" /> Initial triage
+          <div className="inline-flex items-center gap-2 rounded-lg border border-black/[0.12] bg-card px-3 py-2 text-xs font-semibold text-paper">
+            <Clock3 className="h-3.5 w-3.5" /> {t('report.initialTriage')}
           </div>
         </div>
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <Link to={`/track?case=${encodeURIComponent(record.caseId)}`} className={buttonStyles('primary', 'lg')}>
-            Track this complaint <ArrowRight className="h-4 w-4" />
+            {t('report.trackThis')} <ArrowRight className="h-4 w-4" />
           </Link>
           <Button variant="secondary" size="lg" onClick={downloadAcknowledgement}>
-            <Download className="h-4 w-4" /> Download acknowledgement
+            <Download className="h-4 w-4" /> {t('report.downloadAck')}
           </Button>
         </div>
       </div>
@@ -147,7 +149,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
 }
 
 export function ReportPage() {
-  const { t } = useTranslation(['pages', 'common'])
+  const { t, i18n } = useTranslation(['pages', 'common'])
   const steps = [
     { id: 1, label: t('report.steps.incident'), short: t('report.steps.incident') },
     { id: 2, label: t('report.steps.details'), short: t('report.steps.details') },
@@ -187,7 +189,7 @@ export function ReportPage() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [fileError, setFileError] = useState('')
-  const [savedLabel, setSavedLabel] = useState('Draft ready')
+  const [savedLabel, setSavedLabel] = useState(() => t('report.draftReady'))
   const [submitting, setSubmitting] = useState(false)
   const [completedCase, setCompletedCase] = useState<CaseRecord | null>(() => {
     const id = new URLSearchParams(window.location.search).get('done')
@@ -221,11 +223,11 @@ export function ReportPage() {
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       saveDraft(draft)
-      setSavedLabel('Saved locally')
+      setSavedLabel(t('report.savedLocally'))
     }, 280)
-    setSavedLabel('Saving…')
+    setSavedLabel(t('report.saving'))
     return () => window.clearTimeout(timeout)
-  }, [draft])
+  }, [draft, t])
 
   useEffect(() => {
     if (doneId) {
@@ -301,7 +303,7 @@ export function ReportPage() {
       return
     }
     const recognition = new Recognition()
-    recognition.lang = 'en-IN'
+    recognition.lang = i18n.resolvedLanguage || 'en-IN'
     recognition.interimResults = false
     recognition.continuous = false
     recognition.onresult = (event) => {
@@ -322,36 +324,36 @@ export function ReportPage() {
   function validateCurrentStep(): boolean {
     const nextErrors: Record<string, string> = {}
     if (step === 1 && !draft.incidentType) {
-      nextErrors.incidentType = 'Choose the option that best matches what happened.'
+      nextErrors.incidentType = t('report.errIncident')
     }
     if (step === 1 && draft.incidentType === 'other' && draft.otherIncident.trim().length < 8) {
       nextErrors.otherIncident = t('report.otherRequired')
     }
     if (step === 2) {
-      if (!draft.occurredAt) nextErrors.occurredAt = 'Add the approximate date and time.'
-      if (!draft.state) nextErrors.state = 'Choose the state or union territory of the incident.'
-      if (!draft.channel) nextErrors.channel = 'Choose where the incident happened.'
+      if (!draft.occurredAt) nextErrors.occurredAt = t('report.errDate')
+      if (!draft.state) nextErrors.state = t('report.errState')
+      if (!draft.channel) nextErrors.channel = t('report.errChannel')
       if (draft.incidentType === 'financial' && !draft.amount.trim()) {
-        nextErrors.amount = 'Add the amount involved, even if approximate.'
+        nextErrors.amount = t('report.errAmount')
       }
       if (draft.incidentType === 'financial' && !draft.paymentMethod) {
-        nextErrors.paymentMethod = 'Choose how the money was sent.'
+        nextErrors.paymentMethod = t('report.errPayment')
       }
       if (draft.description.trim().length < 30) {
-        nextErrors.description = 'Add at least 30 characters so the sequence is understandable.'
+        nextErrors.description = t('report.errDescription')
       }
     }
     if (step === 4) {
       if (!draft.anonymous) {
-        if (draft.fullName.trim().length < 2) nextErrors.fullName = 'Enter your full name.'
+        if (draft.fullName.trim().length < 2) nextErrors.fullName = t('report.errName')
         if (!/^\d{10}$/.test(draft.mobile.replace(/\s/g, ''))) {
-          nextErrors.mobile = 'Enter a 10-digit mobile number.'
+          nextErrors.mobile = t('report.errMobile')
         }
       }
       if (draft.email && !/^\S+@\S+\.\S+$/.test(draft.email)) {
-        nextErrors.email = 'Enter a valid email address.'
+        nextErrors.email = t('report.errEmail')
       }
-      if (!draft.consent) nextErrors.consent = 'Confirm the declaration to continue.'
+      if (!draft.consent) nextErrors.consent = t('report.errConsent')
     }
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -371,7 +373,7 @@ export function ReportPage() {
     const list = Array.from(files)
     const oversized = list.find((file) => file.size > 5 * 1024 * 1024)
     if (oversized) {
-      setFileError(`${oversized.name} is larger than 5 MB.`)
+      setFileError(t('report.fileTooBig', { name: oversized.name }))
       return
     }
     setFileError('')
@@ -395,10 +397,10 @@ export function ReportPage() {
 
   function validateEmergency(): boolean {
     const next: Record<string, string> = {}
-    if (!draft.amount.trim()) next.amount = 'Add the amount lost.'
-    if (!draft.paymentMethod) next.paymentMethod = 'Choose how you sent the money.'
-    if (!draft.transactionId.trim()) next.transactionId = 'Add the transaction ID.'
-    if (!draft.recipientIdentifier.trim()) next.recipientIdentifier = 'Add the recipient UPI, account or phone.'
+    if (!draft.amount.trim()) next.amount = t('report.errEmergencyAmount')
+    if (!draft.paymentMethod) next.paymentMethod = t('report.errEmergencyPayment')
+    if (!draft.transactionId.trim()) next.transactionId = t('report.errEmergencyTxn')
+    if (!draft.recipientIdentifier.trim()) next.recipientIdentifier = t('report.errEmergencyRecipient')
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -555,7 +557,7 @@ export function ReportPage() {
         <PageIntro title={t('report.emergency.title')} />
         <section className="page-shell pb-4">
           <div className="mx-auto max-w-5xl">
-            <div className="overflow-hidden rounded-2xl border border-alert/20 bg-white shadow-card">
+            <div className="overflow-hidden rounded-2xl border border-alert/20 bg-card shadow-card">
               <div className="flex items-center gap-3 bg-alert px-5 py-3.5 text-ink sm:px-6">
                 <Zap className="h-4 w-4 shrink-0" />
                 <p className="text-sm font-semibold">{t('report.emergency.help')}</p>
@@ -588,7 +590,7 @@ export function ReportPage() {
                             onChange={(event) => update('paymentMethod', event.target.value)}
                             className="select-field"
                           >
-                            <option value="">Choose method</option>
+                            <option value="">{t('report.chooseMethod')}</option>
                             {paymentMethods.map((method) => (
                               <option key={method}>{method}</option>
                             ))}
@@ -661,7 +663,7 @@ export function ReportPage() {
                         ].map((item) => (
                           <div
                             key={item}
-                            className="flex items-center gap-2 rounded-xl border border-black/[0.07] bg-white p-3 text-sm font-medium text-paper"
+                            className="flex items-center gap-2 rounded-xl border border-black/[0.07] bg-card p-3 text-sm font-medium text-paper"
                           >
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand">
                               <Check className="h-3 w-3 text-ink" />
@@ -736,7 +738,7 @@ export function ReportPage() {
                                 'flex h-4 w-4 items-center justify-center rounded-full transition',
                                 active && 'bg-brand ring-2 ring-brand/25',
                                 done && 'bg-brand',
-                                !active && !done && 'border border-black/20 bg-white',
+                                !active && !done && 'border border-black/20 bg-card',
                               )}
                             >
                               {done ? <Check className="h-2.5 w-2.5 text-ink" /> : null}
@@ -792,7 +794,7 @@ export function ReportPage() {
                         <FieldError>{errors.copilotText}</FieldError>
 
                         {copilotResult ? (
-                          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-xl border border-black/[0.08] bg-white p-4">
+                          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-xl border border-black/[0.08] bg-card p-4">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                               <div>
                                 <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-brand">
@@ -826,13 +828,13 @@ export function ReportPage() {
                                 'flex w-full items-start gap-3 rounded-xl border-2 p-3.5 text-left transition',
                                 active
                                   ? 'border-brand bg-brand/[0.06] shadow-[inset_0_0_0_1px_rgba(22,104,207,.12)]'
-                                  : 'border-[#c5d0de] bg-[#eef3f9] hover:border-brand/50 hover:bg-white',
+                                  : 'border-fieldBorder bg-field hover:border-brand/50 hover:bg-card',
                               )}
                             >
                               <span
                                 className={cx(
                                   'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                                  active ? 'border-brand bg-brand' : 'border-[#9aa8ba] bg-white',
+                                  active ? 'border-brand bg-brand' : 'border-fieldBorder bg-card',
                                 )}
                                 aria-hidden
                               >
@@ -886,7 +888,7 @@ export function ReportPage() {
                       ) : null}
 
                       {draft.incidentType === 'women-child' ? (
-                        <div className="mt-5 rounded-xl border-2 border-[#c5d0de] bg-[#eef3f9] p-4">
+                        <div className="mt-5 rounded-xl border-2 border-fieldBorder bg-field p-4">
                           <label className="flex cursor-pointer items-start gap-3">
                             <input
                               type="checkbox"
@@ -910,21 +912,21 @@ export function ReportPage() {
 
                       <div className="mt-5 grid gap-5 sm:grid-cols-2">
                         <div>
-                          <label className="field-label" htmlFor="occurredAt">Approximate date and time</label>
+                          <label className="field-label" htmlFor="occurredAt">{t('report.occurredAt')}</label>
                           <input
                             id="occurredAt"
                             type="datetime-local"
                             value={draft.occurredAt}
                             onChange={(event) => update('occurredAt', event.target.value)}
-                            className="text-field [color-scheme:light]"
+                            className="text-field"
                           />
                           <FieldError>{errors.occurredAt}</FieldError>
                         </div>
                         <div>
-                          <label className="field-label" htmlFor="state">State / union territory</label>
+                          <label className="field-label" htmlFor="state">{t('report.state')}</label>
                           <div className="relative">
                             <select id="state" value={draft.state} onChange={(event) => update('state', event.target.value)} className="select-field">
-                              <option value="">Choose location</option>
+                              <option value="">{t('report.chooseLocation')}</option>
                               {indianStates.map((state) => <option key={state} value={state}>{state}</option>)}
                             </select>
                             <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-muted" />
@@ -932,10 +934,10 @@ export function ReportPage() {
                           <FieldError>{errors.state}</FieldError>
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="field-label" htmlFor="channel">Where did it happen?</label>
+                          <label className="field-label" htmlFor="channel">{t('report.channel')}</label>
                           <div className="relative">
                             <select id="channel" value={draft.channel} onChange={(event) => update('channel', event.target.value)} className="select-field">
-                              <option value="">Choose a channel</option>
+                              <option value="">{t('report.chooseChannel')}</option>
                               {channels.map((channel) => <option key={channel} value={channel}>{channel}</option>)}
                             </select>
                             <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-muted" />
@@ -962,7 +964,7 @@ export function ReportPage() {
                                   onChange={(event) => update('paymentMethod', event.target.value)}
                                   className="select-field"
                                 >
-                                  <option value="">Choose method</option>
+                                  <option value="">{t('report.chooseMethod')}</option>
                                   {paymentMethods.map((method) => (
                                     <option key={method}>{method}</option>
                                   ))}
@@ -999,9 +1001,9 @@ export function ReportPage() {
                             value={draft.description}
                             onChange={(event) => update('description', event.target.value.slice(0, 1000))}
                             className="text-area min-h-44"
-                            placeholder="Example: I received a call claiming to be from… Then I was asked to… After that…"
+                            placeholder={t('report.descriptionPlaceholder')}
                           />
-                          <p className="field-help">Do not paste real passwords, PINs, OTPs, Aadhaar, PAN or bank credentials.</p>
+                          <p className="field-help">{t('report.sensitiveHelp')}</p>
                           <FieldError>{errors.description}</FieldError>
                         </div>
                       </div>
@@ -1030,11 +1032,11 @@ export function ReportPage() {
                         tabIndex={0}
                       >
                         <Plus className="mx-auto h-8 w-8 text-brand" />
-                        <h3 className="mt-3 text-base font-semibold text-paper">Drop evidence here, or click to upload</h3>
-                        <p className="mt-1 text-sm text-muted">PNG, JPG, PDF or text · up to 5 MB each · maximum 6 items</p>
+                        <h3 className="mt-3 text-base font-semibold text-paper">{t('report.evidenceDrop')}</h3>
+                        <p className="mt-1 text-sm text-muted">{t('report.evidenceTypes')}</p>
                         <div className="mt-4 flex justify-center">
                           <span className={cx(buttonStyles('secondary', 'sm'), 'pointer-events-none')}>
-                            <Plus className="h-4 w-4" /> Choose files
+                            <Plus className="h-4 w-4" /> {t('report.chooseFiles')}
                           </span>
                         </div>
                         <input
@@ -1056,7 +1058,7 @@ export function ReportPage() {
                               <div className="flex min-w-0 items-center gap-3">
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-paper">{name}</p>
-                                  <p className="mt-0.5 font-mono text-[0.57rem] uppercase tracking-[0.12em] text-muted">Attached</p>
+                                  <p className="mt-0.5 font-mono text-[0.57rem] uppercase tracking-[0.12em] text-muted">{t('report.attached')}</p>
                                 </div>
                               </div>
                               <button
@@ -1072,7 +1074,7 @@ export function ReportPage() {
                                   }))
                                 }}
                                 className="rounded-lg p-2 text-muted hover:bg-alert/[0.08] hover:text-alert"
-                                aria-label={`Remove ${name}`}
+                                aria-label={t('report.removeFile', { name })}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -1082,7 +1084,7 @@ export function ReportPage() {
                       ) : null}
 
                       <p className="mt-4 text-xs leading-5 text-muted">
-                        Include the full screen, URL, date and time. Keep original files. Never add passwords, PINs or OTPs.
+                        {t('report.evidenceKeep')}
                       </p>
                     </motion.div>
                   ) : null}
@@ -1092,21 +1094,21 @@ export function ReportPage() {
                       <h2 className="text-lg font-semibold tracking-[-0.02em] text-paper">{t('report.step4Title')}</h2>
 
                       {!draft.anonymous ? (
-                        <div className="mt-5 rounded-xl border-2 border-[#c5d0de] bg-[#f7fafd] p-4 sm:p-5">
-                          <h3 className="mb-4 text-sm font-semibold text-paper">Your contact details</h3>
+                        <div className="mt-5 rounded-xl border-2 border-fieldBorder bg-field p-4 sm:p-5">
+                          <h3 className="mb-4 text-sm font-semibold text-paper">{t('report.contactDetails')}</h3>
                           <div className="grid gap-5 sm:grid-cols-2">
                             <div>
-                              <label className="field-label" htmlFor="fullName">Full name</label>
-                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className="text-field" placeholder="Your full name" />
+                              <label className="field-label" htmlFor="fullName">{t('report.fullName')}</label>
+                              <input id="fullName" value={draft.fullName} onChange={(event) => update('fullName', event.target.value)} className="text-field" placeholder={t('report.fullNamePlaceholder')} />
                               <FieldError>{errors.fullName}</FieldError>
                             </div>
                             <div>
-                              <label className="field-label" htmlFor="mobile">Mobile number</label>
+                              <label className="field-label" htmlFor="mobile">{t('report.mobile')}</label>
                               <input id="mobile" inputMode="numeric" value={draft.mobile} onChange={(event) => update('mobile', event.target.value.replace(/\D/g, '').slice(0, 10))} className="text-field" placeholder="9000001930" />
                               <FieldError>{errors.mobile}</FieldError>
                             </div>
                             <div className="sm:col-span-2">
-                              <label className="field-label" htmlFor="email">Email <span className="font-normal text-muted">(optional)</span></label>
+                              <label className="field-label" htmlFor="email">{t('report.email')} <span className="font-normal text-muted">{t('report.optional')}</span></label>
                               <input id="email" type="email" value={draft.email} onChange={(event) => update('email', event.target.value)} className="text-field" placeholder="aarav@example.com" />
                               <FieldError>{errors.email}</FieldError>
                             </div>
@@ -1114,36 +1116,40 @@ export function ReportPage() {
                         </div>
                       ) : (
                         <div className="mt-6 rounded-xl border border-black/[0.08] p-5">
-                          <p className="text-sm font-medium text-paper">Anonymous reporting selected</p>
-                          <p className="mt-1 text-sm leading-6 text-muted">No name, mobile number or email will be included with this complaint.</p>
+                          <p className="text-sm font-medium text-paper">{t('report.anonymousSelected')}</p>
+                          <p className="mt-1 text-sm leading-6 text-muted">{t('report.anonymousSelectedHelp')}</p>
                         </div>
                       )}
 
                       <div className="mt-5 surface-soft p-5 sm:p-6">
                         <div className="mb-3 flex items-center justify-between gap-4">
-                          <h3 className="text-base font-semibold text-paper">Report summary</h3>
-                          <button type="button" onClick={() => goToStep(1)} className="link-accent text-xs">Edit</button>
+                          <h3 className="text-base font-semibold text-paper">{t('report.summary')}</h3>
+                          <button type="button" onClick={() => goToStep(1)} className="link-accent text-xs">{t('report.edit')}</button>
                         </div>
-                        <SummaryRow label="Incident" value={selectedIncident?.title ?? ''} />
+                        <SummaryRow label={t('report.summaryIncident')} value={selectedIncident ? t(`incidents.${selectedIncident.id}.title`) : ''} empty={t('report.notAdded')} />
                         {draft.incidentType === 'other' ? (
-                          <SummaryRow label="Type" value={draft.otherIncident} />
+                          <SummaryRow label={t('report.summaryType')} value={draft.otherIncident} empty={t('report.notAdded')} />
                         ) : null}
-                        <SummaryRow label="Occurred" value={formatDateTime(draft.occurredAt)} />
-                        <SummaryRow label="Location" value={draft.state} />
-                        <SummaryRow label="Channel" value={draft.channel} />
+                        <SummaryRow label={t('report.summaryOccurred')} value={formatDateTime(draft.occurredAt, i18n.language, t('report.notAdded'))} empty={t('report.notAdded')} />
+                        <SummaryRow label={t('report.summaryLocation')} value={draft.state} empty={t('report.notAdded')} />
+                        <SummaryRow label={t('report.summaryChannel')} value={draft.channel} empty={t('report.notAdded')} />
                         {draft.incidentType === 'financial' ? (
                           <>
-                            <SummaryRow label="Amount" value={draft.amount ? `₹${draft.amount}` : ''} />
-                            <SummaryRow label="Payment" value={draft.paymentMethod} />
-                            <SummaryRow label="Transaction" value={draft.transactionId} />
-                            <SummaryRow label="Recipient" value={draft.recipientIdentifier} />
+                            <SummaryRow label={t('report.summaryAmount')} value={draft.amount ? `₹${draft.amount}` : ''} empty={t('report.notAdded')} />
+                            <SummaryRow label={t('report.summaryPayment')} value={draft.paymentMethod} empty={t('report.notAdded')} />
+                            <SummaryRow label={t('report.summaryTransaction')} value={draft.transactionId} empty={t('report.notAdded')} />
+                            <SummaryRow label={t('report.summaryRecipient')} value={draft.recipientIdentifier} empty={t('report.notAdded')} />
                           </>
                         ) : null}
-                        <SummaryRow label="Evidence" value={draft.evidenceNames.length ? `${draft.evidenceNames.length} item${draft.evidenceNames.length === 1 ? '' : 's'}` : 'No files added'} />
-                        <SummaryRow label="Description" value={draft.description} />
+                        <SummaryRow
+                          label={t('report.summaryEvidence')}
+                          value={draft.evidenceNames.length ? t('report.evidenceFiles', { count: draft.evidenceNames.length }) : t('report.noFiles')}
+                          empty={t('report.notAdded')}
+                        />
+                        <SummaryRow label={t('report.summaryDescription')} value={draft.description} empty={t('report.notAdded')} />
                       </div>
 
-                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 border-[#c5d0de] bg-[#eef3f9] p-4 hover:border-brand/50">
+                      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border-2 border-fieldBorder bg-field p-4 hover:border-brand/50">
                         <input
                           type="checkbox"
                           checked={draft.consent}
@@ -1151,8 +1157,8 @@ export function ReportPage() {
                           className="mt-1 h-4 w-4 accent-brand"
                         />
                         <span>
-                          <span className="block text-sm font-semibold text-paper">I confirm the details in this complaint are true to the best of my knowledge.</span>
-                          <span className="mt-1 block text-xs leading-5 text-muted">False information may delay the investigation of this complaint.</span>
+                          <span className="block text-sm font-semibold text-paper">{t('report.consent')}</span>
+                          <span className="mt-1 block text-xs leading-5 text-muted">{t('report.consentHelp')}</span>
                         </span>
                       </label>
                       <FieldError>{errors.consent}</FieldError>
@@ -1162,15 +1168,15 @@ export function ReportPage() {
 
                 <div className="mt-7 flex flex-col-reverse gap-3 border-t border-black/[0.07] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="ghost" size="lg" onClick={previousStep} disabled={step === 1}>
-                    <ArrowLeft className="h-4 w-4" /> Back
+                    <ArrowLeft className="h-4 w-4" /> {t('actions.back', { ns: 'common' })}
                   </Button>
                   {step < 4 ? (
                     <Button size="lg" onClick={nextStep}>
-                      Continue <ArrowRight className="h-4 w-4" />
+                      {t('actions.continue', { ns: 'common' })} <ArrowRight className="h-4 w-4" />
                     </Button>
                   ) : (
                     <Button size="lg" onClick={submitReport} loading={submitting}>
-                      <ShieldCheck className="h-4 w-4" /> Submit complaint
+                      <ShieldCheck className="h-4 w-4" /> {t('report.submit')}
                     </Button>
                   )}
                 </div>
@@ -1179,14 +1185,14 @@ export function ReportPage() {
 
             <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
               <div className="surface-soft p-4">
-                <p className="text-sm font-medium text-paper">What to include</p>
+                <p className="text-sm font-medium text-paper">{t('report.includeTitle')}</p>
                 {selectedIncident ? (
-                  <p className="mt-2 text-sm leading-5 text-muted">{selectedIncident.hint}</p>
+                  <p className="mt-2 text-sm leading-5 text-muted">{t(`incidents.${selectedIncident.id}.hint`)}</p>
                 ) : null}
                 <ul className="mt-3 space-y-2 text-sm leading-5 text-muted">
-                  <li>What happened, in order.</li>
-                  <li>Screenshots, receipts and chats.</li>
-                  <li>Never add passwords, PINs or OTPs.</li>
+                  <li>{t('report.include1')}</li>
+                  <li>{t('report.include2')}</li>
+                  <li>{t('report.include3')}</li>
                 </ul>
               </div>
 

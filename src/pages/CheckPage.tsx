@@ -9,6 +9,7 @@ import { cx } from '../lib/cx'
 import { patchSearchParams, writeSession } from '../lib/session'
 import type { IdentifierType, SuspectResult } from '../types'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 
 function normalise(type: IdentifierType, value: string): string {
   const trimmed = value.trim().toLowerCase()
@@ -17,18 +18,19 @@ function normalise(type: IdentifierType, value: string): string {
   return trimmed
 }
 
-function validate(type: IdentifierType, value: string): string {
+function validate(type: IdentifierType, value: string, t: TFunction): string {
   const clean = value.trim()
-  if (!clean) return `Enter a ${identifierConfig[type].label.toLowerCase()}.`
-  if (type === 'phone' && !/^\d{10}$/.test(clean.replace(/\D/g, ''))) return 'Use a 10-digit mobile number without +91.'
-  if (type === 'upi' && !/^[\w.-]{2,}@[\w.-]{2,}$/.test(clean)) return 'Enter a UPI ID in the format name@bank.'
-  if (type === 'email' && !/^\S+@\S+\.\S+$/.test(clean)) return 'Enter a valid email address.'
+  const field = t(`check.fields.${type}.label`)
+  if (!clean) return t('check.enterValue', { field })
+  if (type === 'phone' && !/^\d{10}$/.test(clean.replace(/\D/g, ''))) return t('check.phoneFormat')
+  if (type === 'upi' && !/^[\w.-]{2,}@[\w.-]{2,}$/.test(clean)) return t('check.upiFormat')
+  if (type === 'email' && !/^\S+@\S+\.\S+$/.test(clean)) return t('check.emailFormat')
   if (type === 'url') {
     try {
       const url = new URL(clean.startsWith('http') ? clean : `https://${clean}`)
-      if (!url.hostname.includes('.')) return 'Enter a complete website address.'
+      if (!url.hostname.includes('.')) return t('check.websiteIncomplete')
     } catch {
-      return 'Enter a valid website address.'
+      return t('check.websiteInvalid')
     }
   }
   return ''
@@ -71,7 +73,7 @@ const riskStyles = {
 }
 
 export function CheckPage() {
-  const { t } = useTranslation('pages')
+  const { t } = useTranslation(['pages', 'common'])
   const [searchParams, setSearchParams] = useSearchParams()
   const identifierTypes: Array<{ id: IdentifierType; label: string }> = [
     { id: 'phone', label: t('check.phone') },
@@ -90,7 +92,6 @@ export function CheckPage() {
   const [result, setResult] = useState<SuspectResult | null>(null)
   const [checkedValue, setCheckedValue] = useState('')
   const hydratedQuery = useRef('')
-  const config = identifierConfig[type]
 
   function writeQuery(nextType: IdentifierType, nextValue: string | null, replace = false) {
     setSearchParams(
@@ -101,7 +102,7 @@ export function CheckPage() {
 
   async function runCheck(inputValue = value, options: { delay?: boolean; syncUrl?: boolean; nextType?: IdentifierType } = {}) {
     const { delay = true, syncUrl = true, nextType = type } = options
-    const validationError = validate(nextType, inputValue)
+    const validationError = validate(nextType, inputValue, t)
     if (validationError) {
       setError(validationError)
       setResult(null)
@@ -177,7 +178,7 @@ export function CheckPage() {
                           'rounded-lg border-2 px-3.5 py-2 text-sm font-medium transition',
                           active
                             ? 'border-brand bg-brand/[0.08] text-brand'
-                            : 'border-[#c5d0de] bg-[#eef3f9] text-muted hover:border-brand/50 hover:text-paper',
+                            : 'border-fieldBorder bg-field text-muted hover:border-brand/50 hover:text-paper',
                         )}
                       >
                         {item.label}
@@ -193,7 +194,7 @@ export function CheckPage() {
                     void runCheck()
                   }}
                 >
-                  <label htmlFor="identifier" className="field-label">{config.label}</label>
+                  <label htmlFor="identifier" className="field-label">{t(`check.fields.${type}.label`)}</label>
                   <div className="relative">
                     <input
                       id="identifier"
@@ -204,7 +205,7 @@ export function CheckPage() {
                         setError('')
                       }}
                       className="text-field h-12 pr-24 text-base"
-                      placeholder={config.placeholder}
+                      placeholder={t(`check.fields.${type}.placeholder`)}
                       autoComplete="off"
                     />
                     {value ? (
@@ -215,17 +216,17 @@ export function CheckPage() {
                           setResult(null)
                         }}
                         className="absolute right-[5.6rem] top-1/2 -translate-y-1/2 text-sm text-muted hover:text-paper"
-                        aria-label="Clear input"
+                        aria-label={t('check.clearInput')}
                       >
-                        Clear
+                        {t('actions.clear', { ns: 'common' })}
                       </button>
                     ) : null}
                     <Button type="submit" size="md" loading={loading} className="absolute right-1 top-1 h-10">
-                      Check
+                      {t('check.checkAction')}
                     </Button>
                   </div>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm text-muted">{config.helper}</p>
+                    <p className="text-sm text-muted">{t(`check.fields.${type}.helper`)}</p>
                     <button type="button" onClick={useExample} className="link-accent text-left text-sm">
                       {t('check.tryReported')}
                     </button>
@@ -252,16 +253,16 @@ export function CheckPage() {
                         <h3 className={cx('mt-3 text-xl font-semibold tracking-[-0.02em] sm:text-2xl', riskStyles[result.risk].title)}>{result.title}</h3>
                         <p className={cx('mt-2 max-w-2xl text-sm leading-6', riskStyles[result.risk].body)}>{result.summary}</p>
                         <p className={cx('mt-4 text-sm', riskStyles[result.risk].body)}>
-                          Checked: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
+                          {t('check.checked')}: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
                           {result.reports !== null
-                            ? ` · ${t('check.reports', { count: result.reports })} · first seen ${result.firstSeen ?? '—'}`
+                            ? ` · ${t('check.reports', { count: result.reports })} · ${t('check.firstSeen')} ${result.firstSeen ?? '—'}`
                             : null}
                         </p>
                       </div>
 
                       <div className="mt-6 grid gap-6 md:grid-cols-2">
                         <div>
-                          <p className="eyebrow">Why this result</p>
+                          <p className="eyebrow">{t('check.whyResult')}</p>
                           <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
                             {result.signals.map((signal) => (
                               <li key={signal} className="text-sm leading-6 text-paper">{signal}</li>
@@ -269,7 +270,7 @@ export function CheckPage() {
                           </ul>
                         </div>
                         <div>
-                          <p className="eyebrow">What to do next</p>
+                          <p className="eyebrow">{t('check.whatNext')}</p>
                           <ul className="mt-3 space-y-2 border-t border-black/[0.07] pt-3">
                             {result.nextSteps.map((step) => (
                               <li key={step} className="text-sm leading-6 text-paper">{step}</li>
@@ -292,18 +293,18 @@ export function CheckPage() {
                               {t('check.alreadyPaid')} <ArrowRight className="h-4 w-4" />
                             </>
                           ) : (
-                            'Report this identifier'
+                            t('check.reportIdentifier')
                           )}
                         </Link>
                         {result.risk === 'high' ? (
                           <Link to={`/report?type=suspicious-content&suspect=${encodeURIComponent(checkedValue)}`} className={buttonStyles('secondary', 'lg')}>
-                            Report this identifier
+                            {t('check.reportIdentifier')}
                           </Link>
                         ) : null}
                         <Button variant="secondary" size="lg" onClick={() => {
                           navigator.clipboard?.writeText(checkedValue).catch(() => undefined)
                         }}>
-                          Copy identifier
+                          {t('check.copyIdentifier')}
                         </Button>
                       </div>
                     </motion.div>
@@ -319,17 +320,17 @@ export function CheckPage() {
 
           <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
             <div className="surface-soft p-4">
-              <p className="text-sm font-medium text-paper">Before you trust it</p>
+              <p className="text-sm font-medium text-paper">{t('check.beforeTrust')}</p>
               <ul className="mt-3 space-y-2 text-sm leading-5 text-muted">
-                <li>Verify through a number or site you already know.</li>
-                <li>Pressure to act now is a warning sign.</li>
-                <li>Never share OTPs, PINs or screen access.</li>
+                <li>{t('check.before1')}</li>
+                <li>{t('check.before2')}</li>
+                <li>{t('check.before3')}</li>
               </ul>
             </div>
 
             <div className="rounded-2xl bg-alert p-5 text-ink">
               <p className="text-sm font-semibold">{t('home.lostMoney')}</p>
-              <p className="mt-2 text-xs leading-5 text-white/75">Do not stop at a suspect check. Call 1930 and file a financial-fraud complaint.</p>
+              <p className="mt-2 text-xs leading-5 text-white/75">{t('check.lostMoneyHelp')}</p>
               <Link
                 to="/report?type=financial&mode=emergency"
                 className="mt-4 flex h-9 w-full items-center justify-center rounded-lg bg-white text-sm font-semibold text-alert hover:bg-white/90"

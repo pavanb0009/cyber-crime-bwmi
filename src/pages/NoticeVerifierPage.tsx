@@ -21,7 +21,6 @@ import { cx } from '../lib/cx'
 import { clearFiles, getFiles, putFiles } from '../lib/fileStore'
 import {
   analyseNoticeText,
-  demoNotices,
   type NoticeAnalysis,
   type NoticeSignal,
   type NoticeVerdict,
@@ -106,7 +105,7 @@ function VerifierResult({ analysis, onReset }: { analysis: NoticeAnalysis; onRes
                 <VerdictIcon className="h-3.5 w-3.5" /> {style.label.toUpperCase()}
               </span>
               {fields.authority ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.1] bg-white px-2.5 py-1 text-[0.62rem] font-semibold text-muted">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.1] bg-card px-2.5 py-1 text-[0.62rem] font-semibold text-muted">
                   <Building2 className="h-3 w-3" /> Claims: {fields.authority}
                 </span>
               ) : null}
@@ -114,7 +113,7 @@ function VerifierResult({ analysis, onReset }: { analysis: NoticeAnalysis; onRes
             <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-paper">{analysis.headline}</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-muted">{analysis.summary}</p>
           </div>
-          <div className="shrink-0 rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm">
+          <div className="shrink-0 rounded-xl border border-black/[0.08] bg-card px-4 py-3 text-center shadow-sm">
             <p className="font-mono text-[0.55rem] font-bold uppercase leading-tight tracking-[0.1em] text-muted">Suspicion<br />score</p>
             <p className="mt-1 text-3xl font-bold tracking-[-0.05em] text-paper">
               {analysis.score}<span className="text-xs font-medium text-muted">/100</span>
@@ -213,7 +212,6 @@ export function NoticeVerifierPage() {
   const [result, setResult] = useState<NoticeAnalysis | null>(saved?.result ?? null)
   const fileRef = useRef<HTMLInputElement>(null)
   const view = searchParams.get('view')
-  const demoId = searchParams.get('demo')
   const showResult = view === 'result' && result
 
   function persist(next: Partial<NoticeSession>) {
@@ -262,10 +260,10 @@ export function NoticeVerifierPage() {
     }
   }
 
-  async function runVerify(inputText = text, inputName = fileName, options: { delay?: boolean; demo?: string | null } = {}) {
-    const { delay = true, demo = demoId } = options
+  async function runVerify(inputText = text, inputName = fileName, options: { delay?: boolean } = {}) {
+    const { delay = true } = options
     if (!inputText.trim()) {
-      setError('Paste the notice text or load a demo document to analyse.')
+      setError('Paste the notice text or upload a file to analyse.')
       return
     }
     setError('')
@@ -274,17 +272,8 @@ export function NoticeVerifierPage() {
     const analysis = analyseNoticeText(inputText, inputName)
     setResult(analysis)
     persist({ text: inputText, fileName: inputName, result: analysis })
-    writeQuery({ view: 'result', demo: demo ?? null })
+    writeQuery({ view: 'result', demo: null })
     setLoading(false)
-  }
-
-  function loadDemo(id: string) {
-    const demo = demoNotices.find((d) => d.id === id)
-    if (!demo) return
-    setText(demo.text)
-    setFileName(demo.fileName)
-    setError('')
-    void runVerify(demo.text, demo.fileName, { demo: id })
   }
 
   function reset() {
@@ -306,22 +295,6 @@ export function NoticeVerifierPage() {
     })
   }, [fileName])
 
-  useEffect(() => {
-    if (demoId && view === 'result' && !result) {
-      const demo = demoNotices.find((d) => d.id === demoId)
-      if (demo) {
-        setText(demo.text)
-        setFileName(demo.fileName)
-        void runVerify(demo.text, demo.fileName, { delay: false, demo: demoId })
-      }
-    }
-    if (view !== 'result') {
-      setResult((current) => current)
-    }
-    // Restore the notice identified by the query.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demoId, view])
-
   return (
     <>
       <PageIntro title="Verify a notice" />
@@ -332,7 +305,7 @@ export function NoticeVerifierPage() {
             <VerifierResult analysis={result} onReset={reset} />
           ) : (
             <div className="card overflow-hidden">
-              <div className="border-b border-black/[0.07] p-5 sm:p-6">
+              <div className="p-5 sm:p-6">
                 <div
                   className={cx('drop-zone', fileName && 'border-solid border-brand/40 bg-brand/[0.06]')}
                   onDragOver={(event) => event.preventDefault()}
@@ -409,34 +382,6 @@ export function NoticeVerifierPage() {
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> {error}
                     </div>
                   ) : null}
-                </div>
-              </div>
-
-              <div className="p-5 sm:p-6">
-                <p className="text-sm font-semibold text-paper">Try a sample notice</p>
-                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                  {demoNotices.map((demo) => {
-                    const fake = demo.expected === 'high-risk'
-                    return (
-                      <button
-                        key={demo.id}
-                        type="button"
-                        onClick={() => loadDemo(demo.id)}
-                        className={cx(
-                          'flex items-center justify-between gap-3 rounded-xl border p-3.5 text-left transition hover:border-brand/40',
-                          fake ? 'border-alert/20 bg-alert/[0.02]' : 'border-brand/20 bg-brand/[0.02]',
-                        )}
-                      >
-                        <span>
-                          <span className="block text-sm font-medium text-paper">{demo.label}</span>
-                          <span className="mt-0.5 block font-mono text-[0.68rem] text-muted">{demo.fileName}</span>
-                        </span>
-                        <span className={cx('shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.08em]', fake ? 'bg-alert/10 text-alert' : 'bg-brand/10 text-brand')}>
-                          {fake ? 'Fake' : 'Safe'}
-                        </span>
-                      </button>
-                    )
-                  })}
                 </div>
               </div>
             </div>

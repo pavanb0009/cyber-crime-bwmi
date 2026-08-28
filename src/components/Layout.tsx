@@ -26,7 +26,7 @@ export function Layout() {
   }, [location.pathname, location.hash])
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-canvas">
       <SiteHeader />
       <div className="top-glow" aria-hidden />
       <main>

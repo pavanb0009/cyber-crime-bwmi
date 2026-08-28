@@ -59,26 +59,26 @@ export function AccessibilityMenu() {
             <button
               type="button"
               onClick={() => setLargeText((value) => !value)}
-              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
+              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-canvas"
             >
               <span>
                 <span className="block text-sm font-semibold text-paper">{t('accessibility.largerText')}</span>
                 <span className="mt-0.5 block text-xs text-muted">{t('accessibility.largerTextHint')}</span>
               </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card text-paper">
                 {largeText ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               </span>
             </button>
             <button
               type="button"
               onClick={() => setReduceMotion((value) => !value)}
-              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-[#efeff1]"
+              className="flex w-full items-center justify-between rounded-xl border border-black/[0.08] bg-mist px-3 py-3 text-left hover:bg-canvas"
             >
               <span>
                 <span className="block text-sm font-semibold text-paper">{t('accessibility.reduceMotion')}</span>
                 <span className="mt-0.5 block text-xs text-muted">{t('accessibility.reduceMotionHint')}</span>
               </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-paper">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card text-paper">
                 {reduceMotion ? <Check className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
               </span>
             </button>

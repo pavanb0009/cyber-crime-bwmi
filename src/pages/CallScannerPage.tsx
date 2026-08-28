@@ -84,7 +84,7 @@ function AnalysisResult({ result, onReset }: { result: CallAnalysisResponse; onR
               <span className={cx('inline-flex rounded-full px-3 py-1 text-[0.68rem] font-bold tracking-[0.12em]', style.badge)}>
                 {analysis.risk_level} RISK
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.1] bg-white px-2.5 py-1 text-[0.62rem] font-semibold text-muted">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.1] bg-card px-2.5 py-1 text-[0.62rem] font-semibold text-muted">
                 {usedAI ? <Sparkles className="h-3 w-3 text-brand" /> : <Cpu className="h-3 w-3" />}
                 {usedAI ? 'AI semantic analysis' : 'Rule engine only'}
               </span>
@@ -101,13 +101,13 @@ function AnalysisResult({ result, onReset }: { result: CallAnalysisResponse; onR
 
           {/* Two scores, two questions. */}
           <div className="grid shrink-0 grid-cols-2 gap-3">
-            <div className="rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm">
+            <div className="rounded-xl border border-black/[0.08] bg-card px-4 py-3 text-center shadow-sm">
               <p className="font-mono text-[0.55rem] font-bold uppercase leading-tight tracking-[0.1em] text-muted">AI scam<br />likelihood</p>
               <p className="mt-1 text-3xl font-bold tracking-[-0.05em] text-paper">
                 {likelihood}<span className="text-xs font-medium text-muted">/100</span>
               </p>
             </div>
-            <div className="rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm">
+            <div className="rounded-xl border border-black/[0.08] bg-card px-4 py-3 text-center shadow-sm">
               <p className="font-mono text-[0.55rem] font-bold uppercase leading-tight tracking-[0.1em] text-muted">Behavioural<br />risk</p>
               <p className="mt-1 text-3xl font-bold tracking-[-0.05em] text-paper">
                 {analysis.risk_score}<span className="text-xs font-medium text-muted">/100</span>
@@ -163,14 +163,14 @@ function AnalysisResult({ result, onReset }: { result: CallAnalysisResponse; onR
                 <button
                   type="button"
                   onClick={() => setShowEnglish(true)}
-                  className={cx('flex items-center gap-1 px-2.5 py-1.5 transition', showEnglish ? 'bg-brand text-white' : 'bg-white text-muted hover:text-paper')}
+                  className={cx('flex items-center gap-1 px-2.5 py-1.5 transition', showEnglish ? 'bg-brand text-white' : 'bg-card text-muted hover:text-paper')}
                 >
                   <Languages className="h-3 w-3" /> English
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowEnglish(false)}
-                  className={cx('px-2.5 py-1.5 transition', !showEnglish ? 'bg-brand text-white' : 'bg-white text-muted hover:text-paper')}
+                  className={cx('px-2.5 py-1.5 transition', !showEnglish ? 'bg-brand text-white' : 'bg-card text-muted hover:text-paper')}
                 >
                   Original
                 </button>
@@ -371,7 +371,7 @@ export function CallScannerPage() {
                         'rounded-lg border-2 px-3.5 py-2 text-sm font-medium transition',
                         language === option.id
                           ? 'border-brand bg-brand/[0.08] text-brand'
-                          : 'border-[#c5d0de] bg-[#eef3f9] text-muted hover:border-brand/50 hover:text-paper',
+                          : 'border-fieldBorder bg-field text-muted hover:border-brand/50 hover:text-paper',
                       )}
                     >
                       {option.label}

@@ -7,6 +7,7 @@ import { cx } from '../lib/cx'
 import { AccessibilityMenu } from './AccessibilityMenu'
 import { BrandMark } from './BrandMark'
 import { LanguageMenu } from './LanguageMenu'
+import { ThemeToggle } from './ThemeToggle'
 
 const navKeys = [
   { to: '/', key: 'nav.home' },
@@ -30,7 +31,7 @@ export function SiteHeader() {
   }, [location.pathname])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/50 bg-white/45 backdrop-blur-2xl backdrop-saturate-150">
+    <header className="sticky top-0 z-40 border-b border-black/[0.08] bg-card/70 backdrop-blur-2xl backdrop-saturate-150 dark:bg-canvas/90 dark:backdrop-saturate-100">
       <div className="page-shell grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-4">
         <BrandMark />
 
@@ -54,6 +55,7 @@ export function SiteHeader() {
 
         <div className="flex items-center justify-end gap-1 sm:gap-2">
           <LanguageMenu />
+          <ThemeToggle />
           <AccessibilityMenu />
           <button
             type="button"
@@ -73,7 +75,7 @@ export function SiteHeader() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-black/[0.06] bg-white lg:hidden"
+            className="overflow-hidden border-t border-black/[0.06] bg-card lg:hidden"
           >
             <nav className="page-shell grid py-2" aria-label="Mobile navigation">
               {navKeys.map((link) => (

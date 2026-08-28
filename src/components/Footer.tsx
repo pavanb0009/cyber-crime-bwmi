@@ -20,7 +20,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="mt-16 border-t border-black/[0.07] bg-white/80 pb-24 pt-12 backdrop-blur-sm sm:pb-12">
+    <footer className="mt-16 border-t border-black/[0.07] bg-card/80 pb-24 pt-12 backdrop-blur-sm dark:bg-canvas dark:backdrop-blur-none sm:pb-12">
       <div className="page-shell">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="max-w-sm">

@@ -19,21 +19,62 @@ import { Link, useNavigate } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
 import { cx } from '../lib/cx'
 import { classifyIncident } from '../lib/intelligence'
+import { useResolvedTheme } from '../lib/theme'
 import type { CopilotResult } from '../types'
 
 const heroCardMeta = [
-  { src: '/cards/women_children.png', icon: ShieldCheck, key: 'women', to: '/report?type=women-child&anonymous=1', offset: 'md:mt-8', visibility: '' },
-  { src: '/cards/financial_fraud.png', icon: BadgeIndianRupee, key: 'financial', to: 'tel:1930', offset: 'md:mt-4', visibility: '' },
-  { src: '/cards/hacked_account.png', icon: UserRoundX, key: 'account', to: '/report?type=account', offset: '', visibility: '' },
-  { src: '/cards/suspicious_number.png', icon: Search, key: 'check', to: '/check', offset: 'md:mt-4', visibility: '' },
-  { src: '/cards/your_complaint.png', icon: FileSearch, key: 'track', to: '/track', offset: 'md:mt-8', visibility: 'hidden md:block' },
+  {
+    src: '/cards/women_children.png',
+    srcDark: '/cyber_rakshak_card_art_transparent_white-dark/women_children-dark.png',
+    icon: ShieldCheck,
+    key: 'women',
+    to: '/report?type=women-child&anonymous=1',
+    offset: 'md:mt-8',
+    visibility: '',
+  },
+  {
+    src: '/cards/financial_fraud.png',
+    srcDark: '/cyber_rakshak_card_art_transparent_white-dark/financial_fraud-dark.png',
+    icon: BadgeIndianRupee,
+    key: 'financial',
+    to: 'tel:1930',
+    offset: 'md:mt-4',
+    visibility: '',
+  },
+  {
+    src: '/cards/hacked_account.png',
+    srcDark: '/cyber_rakshak_card_art_transparent_white-dark/hacked_account-dark.png',
+    icon: UserRoundX,
+    key: 'account',
+    to: '/report?type=account',
+    offset: '',
+    visibility: '',
+  },
+  {
+    src: '/cards/suspicious_number.png',
+    srcDark: '/cyber_rakshak_card_art_transparent_white-dark/suspicious_number-dark.png',
+    icon: Search,
+    key: 'check',
+    to: '/check',
+    offset: 'md:mt-4',
+    visibility: '',
+  },
+  {
+    src: '/cards/your_complaint.png',
+    srcDark: '/cyber_rakshak_card_art_transparent_white-dark/your_complaint-dark.png',
+    icon: FileSearch,
+    key: 'track',
+    to: '/track',
+    offset: 'md:mt-8',
+    visibility: 'hidden md:block',
+  },
 ] as const
 
 const learningMeta = [
-  { href: '/learn', icon: BookOpen, key: 'manual', iconClass: 'bg-[#eaf2fd] text-brand' },
-  { href: '/learn#safety', icon: ShieldCheck, key: 'safety', iconClass: 'bg-[#e8f7ee] text-[#1f8a4c]' },
-  { href: '/learn#awareness', icon: Monitor, key: 'awareness', iconClass: 'bg-[#eef1f7] text-[#2b4c7e]' },
-  { href: '/learn#digest', icon: FileText, key: 'digest', iconClass: 'bg-[#fdf3e4] text-[#b45309]' },
+  { href: '/learn', icon: BookOpen, key: 'manual', iconClass: 'bg-[#eaf2fd] text-brand dark:bg-white/[0.06] dark:text-paper' },
+  { href: '/learn#safety', icon: ShieldCheck, key: 'safety', iconClass: 'bg-[#e8f7ee] text-[#1f8a4c] dark:bg-white/[0.06] dark:text-paper' },
+  { href: '/learn#awareness', icon: Monitor, key: 'awareness', iconClass: 'bg-[#eef1f7] text-[#2b4c7e] dark:bg-white/[0.06] dark:text-paper' },
+  { href: '/learn#digest', icon: FileText, key: 'digest', iconClass: 'bg-[#fdf3e4] text-[#b45309] dark:bg-white/[0.06] dark:text-paper' },
 ] as const
 
 function HeroCard({
@@ -74,15 +115,16 @@ function HeroCard({
   )
 
   const cardClass = cx(
-    'group block w-full min-w-0 overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_14px_34px_rgba(16,16,18,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(16,16,18,0.14)]',
+    'group block w-full min-w-0 overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-card shadow-card transition hover:-translate-y-0.5 hover:shadow-soft dark:hover:translate-y-0 dark:hover:shadow-none',
     offset,
     visibility,
   )
 
   const body = (
     <>
-      <span className="relative block aspect-[6/7] w-full bg-white">
+      <span className="relative block aspect-[6/7] w-full bg-card">
         <img
+          key={src}
           src={src}
           alt=""
           onLoad={() => setLoaded(true)}
@@ -118,6 +160,7 @@ function HeroCard({
 export function HomePage() {
   const { t } = useTranslation(['pages', 'common'])
   const navigate = useNavigate()
+  const theme = useResolvedTheme()
   const [copilotText, setCopilotText] = useState('')
   const [copilotResult, setCopilotResult] = useState<CopilotResult | null>(null)
   const [copilotError, setCopilotError] = useState('')
@@ -146,7 +189,7 @@ export function HomePage() {
     <>
       <section className="relative isolate flex min-h-[calc(100dvh-4rem)] flex-col justify-center py-8">
          <img
-          src="/hero3.png"
+          src={theme === 'dark' ? '/hero3-dark.png' : '/hero3.png'}
           alt=""
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-center"
@@ -188,7 +231,7 @@ export function HomePage() {
             {heroCardMeta.map((card) => (
               <HeroCard
                 key={card.src}
-                src={card.src}
+                src={theme === 'dark' ? card.srcDark : card.src}
                 icon={card.icon}
                 label={t(`home.cards.${card.key}.label`)}
                 action={t(`home.cards.${card.key}.action`)}
@@ -199,7 +242,7 @@ export function HomePage() {
             ))}
           </div>
 
-          <div className="mx-auto mt-8 max-w-4xl rounded-[1.5rem] border border-black/[0.06] bg-white/90 p-5 text-left shadow-[0_14px_34px_rgba(16,16,18,0.08)] backdrop-blur sm:p-6">
+          <div className="mx-auto mt-8 max-w-4xl rounded-[1.5rem] border border-black/[0.06] bg-card p-5 text-left sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="inline-flex items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-brand">
@@ -235,7 +278,7 @@ export function HomePage() {
               <p className="mt-3 text-sm font-semibold text-alert">{copilotError}</p>
             ) : null}
             {copilotResult ? (
-              <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-black/[0.06] bg-[#f6f8fc] p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-black/[0.06] bg-mist p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-brand">
                     {copilotResult.severity} · {copilotResult.route}
@@ -257,7 +300,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative isolate overflow-hidden border-t border-black/[0.05] bg-gradient-to-b from-white via-[#f6f8fc] to-white py-14 sm:py-16">
+      <section className="relative isolate overflow-hidden border-t border-black/[0.05] bg-canvas py-14 sm:py-16">
         <div className="page-shell">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -284,7 +327,7 @@ export function HomePage() {
                 <Link
                   key={item.key}
                   to={item.href}
-                  className="group flex flex-col rounded-[1.5rem] border border-black/[0.06] bg-white p-5 shadow-[0_14px_34px_rgba(16,16,18,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(16,16,18,0.12)] sm:p-6"
+                  className="group flex flex-col rounded-[1.5rem] border border-black/[0.06] bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft dark:hover:translate-y-0 dark:hover:shadow-none sm:p-6"
                 >
                   <span
                     className={cx(

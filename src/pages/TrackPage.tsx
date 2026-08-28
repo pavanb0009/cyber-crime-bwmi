@@ -16,27 +16,28 @@ function formatMoney(value: number): string {
 }
 
 function MoneyRecoveryTracker({ recovery }: { recovery: MoneyRecovery }) {
+  const { t } = useTranslation('pages')
   const steps = [
-    { label: 'Reported', amount: recovery.reported, done: true },
-    { label: 'Traced', amount: recovery.traced, done: recovery.traced > 0 },
-    { label: 'Lien marked', amount: recovery.lien, done: recovery.lien > 0 },
-    { label: 'Restoration review', amount: recovery.restorationEligible, done: recovery.stage === 'review' || recovery.stage === 'refunded' },
-    { label: 'Refund', amount: recovery.stage === 'refunded' ? recovery.restorationEligible : 0, done: recovery.stage === 'refunded' },
+    { label: t('track.stepReported'), amount: recovery.reported, done: true },
+    { label: t('track.stepTraced'), amount: recovery.traced, done: recovery.traced > 0 },
+    { label: t('track.stepLien'), amount: recovery.lien, done: recovery.lien > 0 },
+    { label: t('track.stepReview'), amount: recovery.restorationEligible, done: recovery.stage === 'review' || recovery.stage === 'refunded' },
+    { label: t('track.stepRefund'), amount: recovery.stage === 'refunded' ? recovery.restorationEligible : 0, done: recovery.stage === 'refunded' },
   ]
   const activeIndex = recovery.stage === 'reported' ? 0 : recovery.stage === 'traced' ? 1 : recovery.stage === 'lien' ? 2 : recovery.stage === 'review' ? 3 : 4
 
   return (
-    <div className="rounded-xl border-2 border-brand/25 bg-[#eef3f9] p-4 sm:p-5">
-      <h3 className="text-sm font-semibold text-paper">Money recovery</h3>
+    <div className="rounded-xl border-2 border-brand/25 bg-field p-4 sm:p-5">
+      <h3 className="text-sm font-semibold text-paper">{t('track.moneyRecovery')}</h3>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          ['Reported loss', recovery.reported],
-          ['Amount traced', recovery.traced],
-          ['Lien marked', recovery.lien],
-          ['Eligible for restoration', recovery.restorationEligible],
+          [t('track.reportedLoss'), recovery.reported],
+          [t('track.amountTraced'), recovery.traced],
+          [t('track.lienMarked'), recovery.lien],
+          [t('track.eligibleRestoration'), recovery.restorationEligible],
         ].map(([label, value]) => (
-          <div key={String(label)} className="rounded-xl border border-black/[0.07] bg-white p-4">
+          <div key={String(label)} className="rounded-xl border border-black/[0.07] bg-card p-4">
             <p className="font-mono text-[0.57rem] font-bold uppercase tracking-[0.12em] text-muted">{label}</p>
             <p className="mt-2 text-xl font-bold tracking-[-0.03em] text-paper">{formatMoney(Number(value))}</p>
           </div>
@@ -50,11 +51,11 @@ function MoneyRecoveryTracker({ recovery }: { recovery: MoneyRecovery }) {
             <div className="absolute left-[10%] top-3 h-px bg-brand" style={{ width: `${(activeIndex / 4) * 80}%` }} />
             {steps.map((item, index) => (
               <div key={item.label} className="relative z-10 text-center">
-                <span className={cx('mx-auto flex h-6 w-6 items-center justify-center rounded-full border-4 border-white', index < activeIndex ? 'bg-brand' : index === activeIndex ? 'bg-white ring-[3px] ring-inset ring-brand' : 'bg-black/15')}>
+                <span className={cx('mx-auto flex h-6 w-6 items-center justify-center rounded-full border-4 border-field', index < activeIndex ? 'bg-brand' : index === activeIndex ? 'bg-card ring-[3px] ring-inset ring-brand' : 'bg-black/15')}>
                   {index < activeIndex ? <Check className="h-3 w-3 text-ink" /> : null}
                 </span>
                 <p className={cx('mt-2 text-xs font-semibold', index <= activeIndex ? 'text-paper' : 'text-muted')}>{item.label}</p>
-                <p className="mt-1 font-mono text-[0.58rem] text-muted">{item.amount ? formatMoney(item.amount) : 'Pending'}</p>
+                <p className="mt-1 font-mono text-[0.58rem] text-muted">{item.amount ? formatMoney(item.amount) : t('track.pending')}</p>
               </div>
             ))}
           </div>
@@ -165,7 +166,7 @@ export function TrackPage() {
               setReference(defaultCase.caseId)
               void runSearch(defaultCase.caseId)
             }}
-            className="rounded-lg border-2 border-[#c5d0de] bg-[#eef3f9] px-3 py-2 text-left hover:border-brand/50"
+            className="rounded-lg border-2 border-fieldBorder bg-field px-3 py-2 text-left hover:border-brand/50"
           >
             <p className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('track.recentCase')}</p>
             <p className="font-mono text-sm font-bold text-brand">{defaultCase.caseId}</p>
@@ -223,16 +224,16 @@ export function TrackPage() {
 
                   <div className="mt-6 grid gap-6 border-y border-black/[0.07] py-5 sm:grid-cols-3">
                     <div>
-                      <p className="eyebrow">Assigned unit</p>
+                      <p className="eyebrow">{t('track.assignedUnit')}</p>
                       <p className="mt-2 text-sm font-medium leading-6 text-paper">{record.assignedUnit}</p>
                     </div>
                     <div>
-                      <p className="eyebrow">Incident</p>
+                      <p className="eyebrow">{t('report.summaryIncident')}</p>
                       <p className="mt-2 text-sm font-medium leading-6 text-paper">{incidentTitle}</p>
                     </div>
                     <div>
-                      <p className="eyebrow">Next action</p>
-                      <p className="mt-2 text-sm font-medium leading-6 text-paper">Wait for the next timeline update</p>
+                      <p className="eyebrow">{t('track.nextAction')}</p>
+                      <p className="mt-2 text-sm font-medium leading-6 text-paper">{t('track.waitTimeline')}</p>
                     </div>
                   </div>
 
@@ -245,15 +246,15 @@ export function TrackPage() {
                   <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>
                     <div className="mb-4">
-                      <h3 className="text-sm font-semibold text-paper">Case timeline</h3>
+                      <h3 className="text-sm font-semibold text-paper">{t('track.caseTimeline')}</h3>
                     </div>
                       <div className="relative ml-3 border-l border-black/[0.10] pl-7">
                         {record.timeline.map((item, index) => (
                           <div key={`${item.label}-${index}`} className="relative pb-8 last:pb-0">
                             <span className={cx(
-                              'absolute -left-[2.23rem] top-0 flex h-5 w-5 items-center justify-center rounded-full border-4 border-white',
+                              'absolute -left-[2.23rem] top-0 flex h-5 w-5 items-center justify-center rounded-full border-4 border-card',
                               item.status === 'done' && 'bg-brand',
-                              item.status === 'active' && 'bg-white ring-[3px] ring-inset ring-brand',
+                              item.status === 'active' && 'bg-card ring-[3px] ring-inset ring-brand',
                               item.status === 'pending' && 'bg-black/15',
                             )}>
                               {item.status === 'done' ? <Check className="h-2.5 w-2.5 text-ink" /> : null}
