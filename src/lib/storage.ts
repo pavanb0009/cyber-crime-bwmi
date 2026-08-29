@@ -98,6 +98,13 @@ export const defaultCase: CaseRecord = {
   transactionId: '412345678901',
   recipientIdentifier: 'refunddesk@upi',
   nextAction: 'Beneficiary tracing and lien review',
+  evidenceCount: 3,
+  evidenceCompleteness: 72,
+  evidenceFiles: [
+    { name: 'upi-collect-screenshot.png', type: 'image/png', size: 248_320 },
+    { name: 'bank-sms.pdf', type: 'application/pdf', size: 92_112 },
+    { name: 'call-log.txt', type: 'text/plain', size: 4_180 },
+  ],
   recovery: {
     reported: 85000,
     traced: 65000,

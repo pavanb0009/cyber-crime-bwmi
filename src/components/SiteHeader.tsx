@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { LogOut, Menu, UserRound, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { cx } from '../lib/cx'
 import { AccessibilityMenu } from './AccessibilityMenu'
 import { BrandMark } from './BrandMark'
@@ -23,6 +24,7 @@ const navKeys = [
 
 export function SiteHeader() {
   const { t } = useTranslation('common')
+  const { loading: authLoading, signOut, user } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
 
@@ -59,6 +61,33 @@ export function SiteHeader() {
           <LanguageMenu />
           <ThemeToggle />
           <AccessibilityMenu />
+          {!authLoading ? (
+            user ? (
+              <div className="hidden items-center gap-2 lg:flex">
+                <span className="hidden max-w-28 truncate text-xs font-medium text-muted xl:block" title={user.email}>
+                  {user.email}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void signOut().catch(() => undefined)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-mist hover:text-paper"
+                  aria-label={t('account.signOut')}
+                  title={t('account.signOut')}
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="hidden h-9 w-9 items-center justify-center rounded-lg border border-black/[0.12] text-xs font-semibold text-paper transition hover:border-brand hover:text-brand lg:inline-flex xl:w-auto xl:gap-1.5 xl:px-3"
+                aria-label={t('account.signIn')}
+              >
+                <UserRound className="h-4 w-4" />
+                <span className="hidden xl:inline">{t('account.signIn')}</span>
+              </Link>
+            )
+          ) : null}
           <button
             type="button"
             className="inline-flex h-9 w-9 items-center justify-center text-black lg:hidden"
@@ -95,6 +124,26 @@ export function SiteHeader() {
                   {t(link.key)}
                 </NavLink>
               ))}
+              <div className="mt-1 border-t border-black/[0.07] py-2">
+                {authLoading ? null : user ? (
+                  <div className="flex items-center justify-between gap-3 py-2">
+                    <span className="min-w-0 truncate text-sm font-medium text-paper">{user.email}</span>
+                    <button
+                      type="button"
+                      onClick={() => void signOut().catch(() => undefined)}
+                      className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-muted hover:text-paper"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      {t('account.signOut')}
+                    </button>
+                  </div>
+                ) : (
+                  <Link to="/login" className="flex items-center gap-2 py-2 text-sm font-semibold text-brand">
+                    <UserRound className="h-4 w-4" />
+                    {t('account.signIn')}
+                  </Link>
+                )}
+              </div>
             </nav>
           </motion.div>
         ) : null}

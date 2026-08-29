@@ -147,6 +147,16 @@ export interface MoneyRecovery {
   stage: 'reported' | 'traced' | 'lien' | 'review' | 'refunded'
 }
 
+export interface CaseEvidenceFile {
+  name: string
+  type: string
+  size: number
+  /** Private Storage object path when synced to Supabase. */
+  path?: string
+  /** Optional temporary signed URL; prefer regenerating from path. */
+  url?: string
+}
+
 export interface CaseRecord {
   caseId: string
   createdAt: string
@@ -164,6 +174,7 @@ export interface CaseRecord {
   recipientIdentifier?: string
   evidenceCount?: number
   evidenceCompleteness?: number
+  evidenceFiles?: CaseEvidenceFile[]
   recovery?: MoneyRecovery
   timeline: CaseTimelineItem[]
 }

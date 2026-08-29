@@ -203,7 +203,8 @@ type NoticeSession = {
 export function NoticeVerifierPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const saved = readSession<NoticeSession>('notice')
-  const [text, setText] = useState(saved?.text ?? '')
+  const copilotText = searchParams.get('text') ?? ''
+  const [text, setText] = useState(copilotText || saved?.text || '')
   const [fileName, setFileName] = useState(saved?.fileName ?? '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -306,6 +307,13 @@ export function NoticeVerifierPage() {
           ) : (
             <div className="card overflow-hidden">
               <div className="p-5 sm:p-6">
+                {copilotText ? (
+                  <div className="mb-5 rounded-xl border border-brand/25 bg-brand/[0.06] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand">Autopilot recommendation</p>
+                    <p className="mt-2 text-sm leading-6 text-paper">{copilotText}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted">Upload the notice for the strongest check, or paste its complete text below.</p>
+                  </div>
+                ) : null}
                 <div
                   className={cx('drop-zone', fileName && 'border-solid border-brand/40 bg-brand/[0.06]')}
                   onDragOver={(event) => event.preventDefault()}

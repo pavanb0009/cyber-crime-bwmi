@@ -3,9 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronRight } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
+import { EvidenceList } from '../components/EvidenceList'
 import { PageIntro } from '../components/PageIntro'
+import { useAuth } from '../context/AuthContext'
 import { brand } from '../data/brand'
 import { cx } from '../lib/cx'
+import { findCloudReport, loadCloudReports } from '../lib/reportsApi'
 import { patchSearchParams, writeSession } from '../lib/session'
 import { defaultCase, findCase, loadCases } from '../lib/storage'
 import type { CaseRecord, MoneyRecovery } from '../types'
@@ -98,13 +101,21 @@ function downloadStatus(record: CaseRecord) {
 
 export function TrackPage() {
   const { t } = useTranslation('pages')
+  const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const caseQuery = searchParams.get('case') ?? ''
   const [reference, setReference] = useState(caseQuery)
   const [record, setRecord] = useState<CaseRecord | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const recentCases = useMemo(() => loadCases(), [record])
+  const [cloudCases, setCloudCases] = useState<CaseRecord[]>([])
+  const recentCases = useMemo(() => {
+    const byCaseId = new Map<string, CaseRecord>()
+    for (const item of [...cloudCases, ...loadCases()]) {
+      if (!byCaseId.has(item.caseId)) byCaseId.set(item.caseId, item)
+    }
+    return [...byCaseId.values()]
+  }, [cloudCases, record])
   const hydratedCase = useRef('')
 
   function writeCase(nextCase: string | null, replace = false) {
@@ -123,7 +134,20 @@ export function TrackPage() {
     setLoading(true)
     setError('')
     if (delay) await new Promise((resolve) => window.setTimeout(resolve, 280))
-    const found = getCase(clean)
+    let found = getCase(clean) ?? cloudCases.find((item) => item.caseId.toUpperCase() === clean)
+    if (!found && user) {
+      try {
+        found = await findCloudReport(clean)
+        if (found) {
+          setCloudCases((current) => [
+            found!,
+            ...current.filter((item) => item.caseId !== found!.caseId),
+          ])
+        }
+      } catch {
+        // Local and demo tracking remain available when cloud sync is offline.
+      }
+    }
     if (!found) {
       setRecord(null)
       setError(t('track.noMatch'))
@@ -138,10 +162,29 @@ export function TrackPage() {
   }
 
   useEffect(() => {
+    if (!user) {
+      setCloudCases([])
+      return
+    }
+    let active = true
+    void loadCloudReports()
+      .then((items) => {
+        if (active) setCloudCases(items)
+      })
+      .catch(() => {
+        if (active) setCloudCases([])
+      })
+    return () => {
+      active = false
+    }
+  }, [user])
+
+  useEffect(() => {
     if (caseQuery) {
       setReference(caseQuery)
-      if (hydratedCase.current === caseQuery) return
-      hydratedCase.current = caseQuery
+      const hydrationKey = `${user?.id ?? 'guest'}:${caseQuery}`
+      if (hydratedCase.current === hydrationKey) return
+      hydratedCase.current = hydrationKey
       void runSearch(caseQuery, { delay: false, syncUrl: false })
       return
     }
@@ -149,7 +192,7 @@ export function TrackPage() {
     setRecord(null)
     // Keep the search box as-is when the case query is cleared with browser back.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [caseQuery])
+  }, [caseQuery, user?.id])
 
   const incidentTitle = record
     ? t(`incidents.${record.incidentType}.title`, { defaultValue: record.incidentType })
@@ -242,6 +285,8 @@ export function TrackPage() {
                       <MoneyRecoveryTracker recovery={record.recovery} />
                     </div>
                   ) : null}
+
+                  <EvidenceList files={record.evidenceFiles} className="mt-7" />
 
                   <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>

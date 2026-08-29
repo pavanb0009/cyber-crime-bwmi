@@ -275,6 +275,7 @@ export function CallScannerPage() {
   const [result, setResult] = useState<CallAnalysisResponse | null>(saved?.result ?? null)
   const fileRef = useRef<HTMLInputElement>(null)
   const view = searchParams.get('view')
+  const copilotHint = searchParams.get('hint') ?? ''
   const showResult = view === 'result' && result
 
   function writeQuery(patch: Record<string, string | null>, replace = false) {
@@ -355,6 +356,13 @@ export function CallScannerPage() {
         <div className="mx-auto max-w-5xl">
           {showResult && result ? <AnalysisResult result={result} onReset={reset} /> : (
             <div className="card overflow-hidden">
+              {copilotHint ? (
+                <div className="border-b border-brand/20 bg-brand/[0.06] p-5 sm:p-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand">Autopilot recommendation</p>
+                  <p className="mt-2 text-sm leading-6 text-paper">{copilotHint}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted">Upload the recording below. We will transcribe it and explain scam signals such as urgency, OTP requests and impersonation.</p>
+                </div>
+              ) : null}
               <div className="border-b border-black/[0.07] p-5 sm:p-6">
                 <p className="field-label">Spoken language</p>
                 <div className="flex flex-wrap gap-2">

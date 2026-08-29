@@ -7,6 +7,9 @@ import {
   FileSearch,
   FileText,
   ImagePlus,
+  LoaderCircle,
+  Mic,
+  MicOff,
   Monitor,
   Search,
   ShieldCheck,
@@ -18,9 +21,9 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { buttonStyles } from '../components/Button'
 import { cx } from '../lib/cx'
-import { classifyIncident } from '../lib/intelligence'
+import { resolveCitizenIntent, type CitizenIntent } from '../lib/routeIntent'
 import { useResolvedTheme } from '../lib/theme'
-import type { CopilotResult } from '../types'
+import { useVoiceTranscription } from '../lib/useVoiceTranscription'
 
 const heroCardMeta = [
   {
@@ -158,31 +161,34 @@ function HeroCard({
 }
 
 export function HomePage() {
-  const { t } = useTranslation(['pages', 'common'])
+  const { t, i18n } = useTranslation(['pages', 'common'])
   const navigate = useNavigate()
   const theme = useResolvedTheme()
   const [copilotText, setCopilotText] = useState('')
-  const [copilotResult, setCopilotResult] = useState<CopilotResult | null>(null)
+  const [copilotResult, setCopilotResult] = useState<CitizenIntent | null>(null)
   const [copilotError, setCopilotError] = useState('')
+  const voice = useVoiceTranscription({
+    language: i18n.resolvedLanguage || 'en',
+    onTranscript(transcript) {
+      setCopilotText(transcript.slice(0, 700))
+      setCopilotError('')
+      setCopilotResult(resolveCitizenIntent(transcript))
+    },
+  })
 
-  function runCopilot() {
-    if (copilotText.trim().length < 12) {
+  function runCopilot(nextText = copilotText) {
+    if (nextText.trim().length < 12) {
       setCopilotResult(null)
       setCopilotError(t('home.copilot.tooShort'))
       return
     }
     setCopilotError('')
-    setCopilotResult(classifyIncident(copilotText))
+    setCopilotResult(resolveCitizenIntent(nextText))
   }
 
   function openCopilotRoute() {
     if (!copilotResult) return
-    const encoded = encodeURIComponent(copilotText)
-    if (copilotResult.incidentType === 'financial') {
-      navigate(`/report?type=financial&mode=emergency&story=${encoded}`)
-    } else {
-      navigate(`/report?type=${copilotResult.incidentType}&story=${encoded}`)
-    }
+    navigate(copilotResult.url)
   }
 
   return (
@@ -200,29 +206,162 @@ export function HomePage() {
             {t('home.badge')}
           </p>
 
-          <h1 className="mt-3.5 max-w-[22ch] text-[clamp(1.9rem,4.2vw,3rem)] font-bold leading-[1.06] tracking-[-0.04em] text-paper">
+          <h1 className="mt-3.5 max-w-[20ch] text-[clamp(1.9rem,4.2vw,3rem)] font-bold leading-[1.06] tracking-[-0.04em] text-paper">
             {t('home.title')}
           </h1>
 
-          <p className="mt-2.5 max-w-lg text-[0.95rem] leading-6 text-muted">
-            {t('home.subtitle')}
-          </p>
+          <div className="mt-4 w-full max-w-2xl text-left">
+            <p className="mb-1.5 flex items-center justify-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-brand">
+              <Sparkles className="h-3 w-3" aria-hidden />
+              {t('home.copilot.eyebrow')}
+              {voice.listening ? (
+                <span className="ml-1 flex items-end gap-[2px]" aria-hidden>
+                  {[0, 150, 300, 75].map((delay) => (
+                    <span
+                      key={delay}
+                      className="h-2.5 w-[2px] animate-pulse rounded-full bg-alert"
+                      style={{ animationDelay: `${delay}ms` }}
+                    />
+                  ))}
+                </span>
+              ) : null}
+            </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-            <Link to="/report" className={cx(buttonStyles('primary', 'md'), 'rounded-full px-6')}>
-              {t('actions.startReport', { ns: 'common' })}
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            <div
+              className={cx(
+                'relative flex items-center gap-1 rounded-full border bg-card/95 p-1 shadow-card backdrop-blur-xl dark:shadow-none',
+                voice.listening ? 'border-alert/45' : 'border-black/[0.08]',
+              )}
+            >
+              <button
+                type="button"
+                onClick={voice.toggle}
+                disabled={voice.processing}
+                aria-label={t('home.copilot.speak')}
+                className={cx(
+                  'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-[0.75rem] font-semibold transition disabled:opacity-60 sm:px-3',
+                  voice.listening
+                    ? 'bg-alert text-ink hover:bg-alertDark'
+                    : 'bg-brand/[0.10] text-brand hover:bg-brand/[0.16]',
+                )}
+              >
+                {voice.processing ? (
+                  <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                ) : voice.listening ? (
+                  <MicOff className="h-3.5 w-3.5" />
+                ) : (
+                  <Mic className="h-3.5 w-3.5" />
+                )}
+                <span className="hidden sm:inline">
+                  {voice.processing
+                    ? t('home.copilot.processing')
+                    : voice.listening
+                      ? t('home.copilot.stopListening')
+                      : t('home.copilot.speak')}
+                </span>
+              </button>
+
+              <input
+                type="text"
+                value={copilotText}
+                onChange={(event) => {
+                  setCopilotText(event.target.value.slice(0, 700))
+                  setCopilotResult(null)
+                  setCopilotError('')
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    runCopilot()
+                  }
+                }}
+                className="hero-copilot-input h-8 min-w-0 flex-1 bg-transparent px-2 text-[0.8rem] leading-5 text-paper outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none"
+                placeholder={t('home.copilot.placeholder')}
+              />
+
+              <button
+                type="button"
+                onClick={() => runCopilot()}
+                className="inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-full bg-brand px-3 text-[0.75rem] font-semibold text-ink transition hover:bg-brandDark"
+              >
+                {t('home.copilot.understand')}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              </button>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+              {[
+                t('home.copilot.sampleMoney'),
+                t('home.copilot.sampleCall'),
+                t('home.copilot.sampleNotice'),
+                t('home.copilot.sampleNumber'),
+              ].map((sample, index) => (
+                <button
+                  key={sample}
+                  type="button"
+                  onClick={() => {
+                    setCopilotText(sample)
+                    runCopilot(sample)
+                  }}
+                  className={cx(
+                    'rounded-full border border-black/[0.09] bg-card/70 px-2.5 py-1 text-[0.7rem] text-muted backdrop-blur transition hover:border-brand/50 hover:text-paper',
+                    index > 1 && 'hidden sm:inline-flex',
+                  )}
+                >
+                  {sample}
+                </button>
+              ))}
+            </div>
+
+            {copilotError || voice.error ? (
+              <p className="mt-3 text-sm font-semibold text-alert">{copilotError || voice.error}</p>
+            ) : null}
+
+            {copilotResult ? (
+              <div className="mt-2 flex flex-col gap-2 rounded-xl border border-brand/20 bg-card/95 px-3 py-2.5 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.12em] text-brand">
+                    {copilotResult.result.severity} · {copilotResult.destinationLabel}
+                  </p>
+                  <p className="mt-0.5 truncate text-[0.8rem] font-semibold text-paper">{copilotResult.result.label}</p>
+                  {copilotResult.extracted ? (
+                    <p className="mt-0.5 truncate font-mono text-[0.68rem] text-brand">
+                      {t('home.copilot.found')}: {copilotResult.extracted.value}
+                    </p>
+                  ) : null}
+                </div>
+                <button
+                  type="button"
+                  onClick={openCopilotRoute}
+                  className={cx(
+                    copilotResult.destination === 'emergency'
+                      ? buttonStyles('danger', 'sm')
+                      : buttonStyles('primary', 'sm'),
+                    'h-8 shrink-0 rounded-full px-3.5',
+                  )}
+                >
+                  {copilotResult.actionLabel}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <Link
               to="/report?type=financial&mode=emergency"
-              className={cx(buttonStyles('danger', 'md'), 'rounded-full px-6')}
+              className={cx(buttonStyles('danger', 'sm'), 'rounded-full px-4')}
             >
-              <Zap className="h-4 w-4" aria-hidden />
+              <Zap className="h-3.5 w-3.5" aria-hidden />
               {t('home.lostMoney')}
             </Link>
-            <a href="tel:1930" className={cx(buttonStyles('secondary', 'md'), 'rounded-full px-6')}>
+            <a href="tel:1930" className={cx(buttonStyles('secondary', 'sm'), 'rounded-full px-4')}>
               {t('actions.call1930', { ns: 'common' })}
             </a>
+            <Link to="/report" className={cx(buttonStyles('primary', 'sm'), 'rounded-full px-4')}>
+              {t('actions.startReport', { ns: 'common' })}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            </Link>
           </div>
         </div>
 
@@ -240,62 +379,6 @@ export function HomePage() {
                 visibility={card.visibility}
               />
             ))}
-          </div>
-
-          <div className="mx-auto mt-8 max-w-4xl rounded-[1.5rem] border border-black/[0.06] bg-card p-5 text-left sm:p-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="inline-flex items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-brand">
-                  <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                  {t('home.copilot.eyebrow')}
-                </p>
-                <h2 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-paper">
-                  {t('home.copilot.title')}
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-muted">{t('home.copilot.help')}</p>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <textarea
-                value={copilotText}
-                onChange={(event) => {
-                  setCopilotText(event.target.value.slice(0, 500))
-                  setCopilotResult(null)
-                  setCopilotError('')
-                }}
-                className={cx('text-area min-h-24 flex-1', copilotError && 'field-invalid')}
-                placeholder={t('home.copilot.placeholder')}
-              />
-              <button
-                type="button"
-                onClick={runCopilot}
-                className={cx(buttonStyles('primary', 'md'), 'shrink-0 sm:h-auto sm:w-40')}
-              >
-                {t('home.copilot.understand')}
-              </button>
-            </div>
-            {copilotError ? (
-              <p className="mt-3 text-sm font-semibold text-alert">{copilotError}</p>
-            ) : null}
-            {copilotResult ? (
-              <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-black/[0.06] bg-mist p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-brand">
-                    {copilotResult.severity} · {copilotResult.route}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-paper">{copilotResult.label}</p>
-                  <p className="mt-1 text-xs leading-5 text-muted">{copilotResult.signals.join(' · ')}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={openCopilotRoute}
-                  className={copilotResult.incidentType === 'financial' ? buttonStyles('danger', 'md') : buttonStyles('primary', 'md')}
-                >
-                  {t('home.copilot.openRoute')}
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </button>
-              </div>
-            ) : null}
           </div>
         </div>
       </section>

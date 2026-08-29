@@ -142,6 +142,18 @@ textarea:focus-visible {
   outline-offset: 3px;
 }
 
+.hero-copilot-input:focus,
+.hero-copilot-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.hero-copilot-input::placeholder {
+  color: rgb(var(--c-muted) / 0.78);
+  -webkit-text-fill-color: rgb(var(--c-muted) / 0.78);
+  opacity: 1;
+}
+
 ::selection {
   color: #ffffff;
   background: #1668cf;

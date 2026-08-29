@@ -28,6 +28,10 @@ export const common = {
       reset: 'Reset',
       readMore: 'Read more',
     },
+    account: {
+      signIn: 'Sign in',
+      signOut: 'Sign out',
+    },
     language: { label: 'Language', select: 'Choose language' },
     theme: {
       light: 'Light mode',
@@ -59,6 +63,7 @@ export const common = {
     },
     nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'नंबर जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'फर्जी नोटिस', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
     actions: { startReport: 'रिपोर्ट शुरू करें', call1930: '1930 पर कॉल करें', continue: 'आगे बढ़ें', back: 'वापस', clear: 'साफ़ करें', open: 'खोलें', close: 'बंद करें', reset: 'रीसेट', readMore: 'और पढ़ें' },
+    account: { signIn: 'साइन इन', signOut: 'साइन आउट' },
     language: { label: 'भाषा', select: 'भाषा चुनें' },
     theme: { light: 'हल्की थीम', dark: 'गहरी थीम', system: 'डिवाइस की थीम', toggleToLight: 'हल्की थीम पर जाएँ', toggleToDark: 'गहरी थीम पर जाएँ' },
     accessibility: { label: 'सुलभता', preferences: 'प्राथमिकताएँ तुरंत लागू होती हैं।', largerText: 'बड़ा टेक्स्ट', largerTextHint: 'इंटरफ़ेस का आकार बढ़ाएँ', reduceMotion: 'गतिशीलता घटाएँ', reduceMotionHint: 'एनिमेशन प्रभाव कम करें', reset: 'प्राथमिकताएँ रीसेट करें', close: 'सुलभता मेनू बंद करें' },

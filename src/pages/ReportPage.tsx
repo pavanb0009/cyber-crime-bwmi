@@ -20,7 +20,9 @@ import {
 } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
+import { EvidenceList } from '../components/EvidenceList'
 import { PageIntro } from '../components/PageIntro'
+import { useAuth } from '../context/AuthContext'
 import { brand } from '../data/brand'
 import { channels, incidentTypes, indianStates } from '../data/content'
 import { cx } from '../lib/cx'
@@ -33,6 +35,8 @@ import {
 } from '../lib/intelligence'
 import { transcribeAudio, type CallLanguage } from '../lib/callAnalysis'
 import { patchSearchParams, writeSession } from '../lib/session'
+import { saveCloudReport, uploadEvidenceFiles } from '../lib/reportsApi'
+import { extractStoryDetails } from '../lib/routeIntent'
 import { extensionForMime, pickAudioRecorderMime, stopMediaStream } from '../lib/voiceRecord'
 import {
   clearDraft,
@@ -42,7 +46,7 @@ import {
   saveCase,
   saveDraft,
 } from '../lib/storage'
-import type { CaseRecord, CopilotResult, IncidentTypeId, ReportDraft } from '../types'
+import type { CaseEvidenceFile, CaseRecord, CopilotResult, IncidentTypeId, ReportDraft } from '../types'
 
 const paymentMethods = ['UPI', 'Bank transfer', 'Card', 'Wallet', 'Crypto', 'Other']
 
@@ -94,7 +98,13 @@ function SummaryRow({ label, value, empty }: { label: string; value: string; emp
   )
 }
 
-function SuccessView({ record }: { record: CaseRecord }) {
+function SuccessView({
+  record,
+  syncStatus,
+}: {
+  record: CaseRecord
+  syncStatus: 'synced' | 'local' | 'failed' | null
+}) {
   const { t } = useTranslation(['pages', 'common'])
 
   function downloadAcknowledgement() {
@@ -147,6 +157,33 @@ function SuccessView({ record }: { record: CaseRecord }) {
             <Download className="h-4 w-4" /> {t('report.downloadAck')}
           </Button>
         </div>
+
+        <EvidenceList files={record.evidenceFiles} className="mt-5" />
+
+        {syncStatus ? (
+          <p className={cx(
+            'mt-4 rounded-xl border p-3 text-sm leading-6',
+            syncStatus === 'synced'
+              ? 'border-brand/25 bg-brand/[0.06] text-paper'
+              : 'border-black/[0.10] bg-mist text-muted',
+          )}>
+            {t(
+              syncStatus === 'synced'
+                ? 'report.syncedToAccount'
+                : syncStatus === 'failed'
+                  ? 'report.syncFailed'
+                  : 'report.savedOnDevice',
+            )}
+            {syncStatus === 'local' ? (
+              <>
+                {' '}
+                <Link to="/login" state={{ returnTo: `/track?case=${record.caseId}` }} className="link-accent">
+                  {t('report.signInToSync')}
+                </Link>
+              </>
+            ) : null}
+          </p>
+        ) : null}
       </div>
     </motion.div>
   )
@@ -154,6 +191,7 @@ function SuccessView({ record }: { record: CaseRecord }) {
 
 export function ReportPage() {
   const { t, i18n } = useTranslation(['pages', 'common'])
+  const { user } = useAuth()
   const steps = [
     { id: 1, label: t('report.steps.incident'), short: t('report.steps.incident') },
     { id: 2, label: t('report.steps.details'), short: t('report.steps.details') },
@@ -181,6 +219,29 @@ export function ReportPage() {
     if (requestedStory.trim()) {
       next.copilotText = next.copilotText || requestedStory
       next.description = next.description || requestedStory
+      const details = extractStoryDetails(requestedStory)
+      next.amount = next.amount || details.amount || ''
+      next.transactionId = next.transactionId || details.transactionId || ''
+      next.channel = next.channel || details.channel || ''
+      if (requestedType === 'financial') {
+        next.recipientIdentifier = next.recipientIdentifier || details.identifier || ''
+        if (!next.paymentMethod) {
+          const story = requestedStory.toLowerCase()
+          next.paymentMethod = details.identifierType === 'upi' || story.includes('upi')
+            ? 'UPI'
+            : /bank transfer|neft|imps|rtgs/.test(story)
+              ? 'Bank transfer'
+              : /credit card|debit card|\bcard\b/.test(story)
+                ? 'Card'
+                : /wallet/.test(story)
+                  ? 'Wallet'
+                  : /crypto|bitcoin/.test(story)
+                    ? 'Crypto'
+                    : ''
+        }
+      } else {
+        next.suspiciousIdentifier = next.suspiciousIdentifier || details.identifier || ''
+      }
     }
     if (requestedSuspect) {
       if (requestedType === 'financial') {
@@ -195,6 +256,7 @@ export function ReportPage() {
   const [fileError, setFileError] = useState('')
   const [savedLabel, setSavedLabel] = useState(() => t('report.draftReady'))
   const [submitting, setSubmitting] = useState(false)
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'local' | 'failed' | null>(null)
   const [completedCase, setCompletedCase] = useState<CaseRecord | null>(() => {
     const id = new URLSearchParams(window.location.search).get('done')
     return id ? findCase(id) ?? null : null
@@ -484,6 +546,28 @@ export function ReportPage() {
     }))
   }
 
+  function addSampleEvidence() {
+    const stamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
+    const samples = [
+      new File(
+        [`CyberDesk sample UPI collect screenshot\nCaptured: ${stamp}\nHandle: refunddesk@upi\nAmount: ₹8,500`],
+        'upi-collect-screenshot.txt',
+        { type: 'text/plain' },
+      ),
+      new File(
+        [`CyberDesk sample bank SMS export\nCaptured: ${stamp}\nDebit alert for UPI transfer`],
+        'bank-sms.txt',
+        { type: 'text/plain' },
+      ),
+      new File(
+        [`CyberDesk sample chat log\nCaller claimed to be customer care and asked for remote access.`],
+        'chat-threat-log.txt',
+        { type: 'text/plain' },
+      ),
+    ]
+    addFiles(samples)
+  }
+
   function validateEmergency(): boolean {
     const next: Record<string, string> = {}
     if (!draft.amount.trim()) next.amount = t('report.errEmergencyAmount')
@@ -588,6 +672,12 @@ export function ReportPage() {
           },
         ]
 
+    const localEvidence: CaseEvidenceFile[] = evidenceFilesRef.current.map((file) => ({
+      name: file.name,
+      type: file.type || 'application/octet-stream',
+      size: file.size,
+    }))
+
     const record: CaseRecord = {
       caseId,
       createdAt,
@@ -609,6 +699,7 @@ export function ReportPage() {
       recipientIdentifier: draft.recipientIdentifier,
       evidenceCount,
       evidenceCompleteness: evidenceCompleteness(draft).score,
+      evidenceFiles: localEvidence,
       recovery: isFinancial
         ? {
             reported: amountNumber,
@@ -621,6 +712,29 @@ export function ReportPage() {
       timeline,
     }
     saveCase(record)
+    setSyncStatus('local')
+    if (user) {
+      try {
+        const cloudEvidence = await uploadEvidenceFiles(caseId, evidenceFilesRef.current)
+        const synced: CaseRecord = {
+          ...record,
+          evidenceFiles: cloudEvidence.length ? cloudEvidence : localEvidence,
+          evidenceCount: cloudEvidence.length || evidenceCount,
+        }
+        await saveCloudReport(synced)
+        saveCase(synced)
+        setCompletedCase(synced)
+        setSyncStatus('synced')
+        writeSession('track', { caseId: synced.caseId })
+        setSubmitting(false)
+        writeParams({ done: synced.caseId, step: null, mode: null })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      } catch {
+        // The local record remains available if the network or cloud sync fails.
+        setSyncStatus('failed')
+      }
+    }
     writeSession('track', { caseId: record.caseId })
     setCompletedCase(record)
     setSubmitting(false)
@@ -634,6 +748,7 @@ export function ReportPage() {
     evidenceFilesRef.current = []
     setDraft({ ...emptyDraft })
     setCompletedCase(null)
+    setSyncStatus(null)
     setErrors({})
     setCopilotResult(null)
     setEmergencyActionsReady(false)
@@ -653,8 +768,45 @@ export function ReportPage() {
               </div>
 
               <div className="p-5 sm:p-7">
+                <div className="rounded-2xl border-2 border-alert/25 bg-alert/[0.04] p-4 sm:p-5">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.14em] text-alert">
+                        {t('report.emergency.firstMinutes')}
+                      </p>
+                      <h2 className="mt-1 text-xl font-bold tracking-[-0.03em] text-paper">
+                        {t('report.emergency.doNow')}
+                      </h2>
+                    </div>
+                    <a href="tel:1930" className={buttonStyles('danger', 'lg')}>
+                      <Zap className="h-4 w-4" /> {t('report.emergency.call1930Now')}
+                    </a>
+                  </div>
+                  <div className="mt-5 grid gap-3 md:grid-cols-3">
+                    {[
+                      ['01', t('report.emergency.action1930'), t('report.emergency.action1930Help')],
+                      ['02', t('report.emergency.actionBank'), t('report.emergency.actionBankHelp')],
+                      ['03', t('report.emergency.actionSecure'), t('report.emergency.actionSecureHelp')],
+                    ].map(([number, title, detail]) => (
+                      <div key={number} className="rounded-xl border border-black/[0.08] bg-card p-4">
+                        <span className="font-mono text-[0.65rem] font-bold text-alert">{number}</span>
+                        <p className="mt-2 text-sm font-semibold text-paper">{title}</p>
+                        <p className="mt-1 text-xs leading-5 text-muted">{detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {requestedStory ? (
+                  <div className="mt-4 rounded-xl border border-brand/20 bg-brand/[0.05] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand">{t('report.emergency.autopilotHeard')}</p>
+                    <p className="mt-2 text-sm leading-6 text-paper">{requestedStory}</p>
+                    <p className="mt-1 text-xs text-muted">{t('report.emergency.prefilled')}</p>
+                  </div>
+                ) : null}
+
                 {!draft.emergencyCaptured || !emergencyActionsReady ? (
-                  <>
+                  <div className="mt-6">
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div>
                         <label className="field-label" htmlFor="emergencyAmount">{t('report.emergency.amount')}</label>
@@ -735,9 +887,9 @@ export function ReportPage() {
                         {t('report.emergency.useNormal')}
                       </Button>
                     </div>
-                  </>
+                  </div>
                 ) : (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                  <motion.div className="mt-6" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="rounded-2xl border border-brand/25 bg-brand/[0.04] p-5">
                       <p className="eyebrow text-brand">{t('report.emergency.package')}</p>
                       <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -790,7 +942,7 @@ export function ReportPage() {
       <section className="page-shell pb-4">
         {completedCase ? (
           <div className="mx-auto max-w-5xl">
-            <SuccessView record={completedCase} />
+            <SuccessView record={completedCase} syncStatus={syncStatus} />
             <button
               type="button"
               onClick={startOver}
@@ -1160,6 +1312,12 @@ export function ReportPage() {
                         />
                       </div>
                       {fileError ? <FieldError>{fileError}</FieldError> : null}
+
+                      <div className="mt-4">
+                        <button type="button" onClick={addSampleEvidence} className="link-accent text-sm font-semibold">
+                          {t('report.addSampleEvidence')}
+                        </button>
+                      </div>
 
                       {draft.evidenceNames.length ? (
                         <div className="mt-5 grid gap-2">
