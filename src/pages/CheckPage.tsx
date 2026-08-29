@@ -255,7 +255,7 @@ export function CheckPage() {
                         <p className={cx('mt-4 text-sm', riskStyles[result.risk].body)}>
                           {t('check.checked')}: <span className={cx('font-medium', riskStyles[result.risk].title)}>{checkedValue}</span>
                           {result.reports !== null
-                            ? ` · ${t('check.reports', { count: result.reports })} · ${t('check.firstSeen')} ${result.firstSeen ?? '—'}`
+                            ? ` · ${t('check.reports', { count: result.reports })} · ${t('check.firstSeen')} ${result.firstSeen ?? '-'}`
                             : null}
                         </p>
                       </div>

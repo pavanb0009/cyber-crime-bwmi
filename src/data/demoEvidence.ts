@@ -1,4 +1,4 @@
-/** Bundled demo evidence for reviewers — works in production without uploading real files. */
+/** Bundled demo evidence for reviewers - works in production without uploading real files. */
 
 export type DemoEvidenceSample = {
   id: string
@@ -17,7 +17,7 @@ export const demoEvidenceSamples: DemoEvidenceSample[] = [
     kindHint: 'Transaction proof',
     mime: 'image/png',
     body: [
-      'DEMO EVIDENCE — UPI payment receipt',
+      'DEMO EVIDENCE - UPI payment receipt',
       'Amount: ₹85,000',
       'To: refunddesk@upi',
       'Txn ID: 412345678901',
@@ -32,7 +32,7 @@ export const demoEvidenceSamples: DemoEvidenceSample[] = [
     kindHint: 'Chat screenshot',
     mime: 'image/png',
     body: [
-      'DEMO EVIDENCE — WhatsApp chat export',
+      'DEMO EVIDENCE - WhatsApp chat export',
       'Unknown: Your KYC will expire in 30 minutes.',
       'Unknown: Pay verification fee on refunddesk@upi.',
       'Unknown: Share the OTP sent to your phone.',
@@ -46,7 +46,7 @@ export const demoEvidenceSamples: DemoEvidenceSample[] = [
     kindHint: 'Document / statement',
     mime: 'application/pdf',
     body: [
-      'DEMO EVIDENCE — Bank statement excerpt',
+      'DEMO EVIDENCE - Bank statement excerpt',
       'Debit 24/08/2026  UPI/refunddesk@upi  -85000.00',
       'Balance after: insufficient for further debit.',
       'Keep original bank PDF in a real complaint.',
@@ -59,7 +59,7 @@ export const demoEvidenceSamples: DemoEvidenceSample[] = [
     kindHint: 'Suspect profile',
     mime: 'image/png',
     body: [
-      'DEMO EVIDENCE — Suspect profile capture',
+      'DEMO EVIDENCE - Suspect profile capture',
       'Handle: @supportdesk11',
       'Bio: Official bank help · refunds in 10 min',
       'Created recently · few followers · pressure to share screen.',
@@ -72,7 +72,7 @@ export const demoEvidenceSamples: DemoEvidenceSample[] = [
     kindHint: 'Text export',
     mime: 'text/plain',
     body: [
-      'DEMO EVIDENCE — SMS alert',
+      'DEMO EVIDENCE - SMS alert',
       'Your Amazon refund of Rs.85000 failed. Confirm within 15 min:',
       'https://secure-update.example/refund',
       'Do not use links from unknown SMS in a real case.',

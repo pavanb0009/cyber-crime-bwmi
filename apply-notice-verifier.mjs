@@ -19,7 +19,7 @@
  *   Or copy all three into the project root and run:
  *       node apply-notice-verifier.mjs
  *
- * Safe to run more than once — every edit checks before it writes.
+ * Safe to run more than once - every edit checks before it writes.
  */
 
 import { readFileSync, writeFileSync, existsSync, copyFileSync } from 'node:fs'

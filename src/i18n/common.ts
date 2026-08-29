@@ -1,9 +1,9 @@
 export const common = {
   en: {
     meta: {
-      title: 'CyberDesk — Report cybercrime',
+      title: 'CyberDesk - Report cybercrime',
       description:
-        'Report cybercrime, check a number or UPI, or track your complaint — in plain language, in your language.',
+        'Report cybercrime, check a number or UPI, or track your complaint - in plain language, in your language.',
     },
     nav: {
       home: 'Home',
@@ -58,7 +58,7 @@ export const common = {
   },
   hi: {
     meta: {
-      title: 'CyberDesk — साइबर अपराध की रिपोर्ट करें',
+      title: 'CyberDesk - साइबर अपराध की रिपोर्ट करें',
       description: 'साइबर अपराध की रिपोर्ट करें, नंबर या UPI जाँचें और अपनी शिकायत की स्थिति देखें।',
     },
     nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'नंबर जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'फर्जी नोटिस', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
@@ -70,7 +70,7 @@ export const common = {
     helpline: { financial: 'वित्तीय धोखाधड़ी? {{number}} पर कॉल करें', childSafety: 'बाल सुरक्षा के लिए {{number}} पर कॉल करें', emergency: 'तत्काल शारीरिक खतरे में स्थानीय आपातकालीन सेवाओं से संपर्क करें।' },
   },
   te: {
-    meta: { title: 'CyberDesk — సైబర్ నేరాన్ని నివేదించండి', description: 'సైబర్ నేర నివేదికను సులభతరం చేసే స్వతంత్ర నమూనా. ఇది అధికారిక ప్రభుత్వ సేవ కాదు.' },
+    meta: { title: 'CyberDesk - సైబర్ నేరాన్ని నివేదించండి', description: 'సైబర్ నేర నివేదికను సులభతరం చేసే స్వతంత్ర నమూనా. ఇది అధికారిక ప్రభుత్వ సేవ కాదు.' },
     nav: { home: 'హోమ్', report: 'నివేదించు', track: 'ట్రాక్', check: 'నంబర్ తనిఖీ', callScan: 'కాల్ స్కాన్', noticeVerifier: 'నకిలీ నోటీసు', volunteers: 'వాలంటీర్లు', learn: 'తెలుసుకోండి', contact: 'సంప్రదించండి', openNavigation: 'నావిగేషన్ తెరవండి' },
     actions: { startReport: 'నివేదిక ప్రారంభించండి', call1930: '1930కు కాల్ చేయండి', continue: 'కొనసాగించండి', back: 'వెనుకకు', clear: 'తొలగించు', open: 'తెరవండి', close: 'మూసివేయండి', reset: 'రీసెట్', readMore: 'మరింత చదవండి' },
     language: { label: 'భాష', select: 'భాషను ఎంచుకోండి' },
@@ -79,7 +79,7 @@ export const common = {
     helpline: { financial: 'ఆర్థిక మోసమా? {{number}}కు కాల్ చేయండి', childSafety: 'పిల్లల భద్రత కోసం {{number}}కు కాల్ చేయండి', emergency: 'తక్షణ శారీరక ప్రమాదంలో స్థానిక అత్యవసర సేవలను సంప్రదించండి.' },
   },
   ta: {
-    meta: { title: 'CyberDesk — இணையக் குற்றத்தைப் புகாரளிக்கவும்', description: 'தெளிவான இணையக் குற்றப் புகார் பயணத்திற்கான சுயாதீன மாதிரி. இது அதிகாரப்பூர்வ அரசு சேவை அல்ல.' },
+    meta: { title: 'CyberDesk - இணையக் குற்றத்தைப் புகாரளிக்கவும்', description: 'தெளிவான இணையக் குற்றப் புகார் பயணத்திற்கான சுயாதீன மாதிரி. இது அதிகாரப்பூர்வ அரசு சேவை அல்ல.' },
     nav: { home: 'முகப்பு', report: 'புகார்', track: 'நிலை', check: 'எண் சரிபார்', callScan: 'அழைப்பு சோதனை', noticeVerifier: 'போலி அறிவிப்பு', volunteers: 'தன்னார்வலர்கள்', learn: 'அறிக', contact: 'தொடர்பு', openNavigation: 'வழிசெலுத்தலைத் திற' },
     actions: { startReport: 'புகாரைத் தொடங்கு', call1930: '1930-ஐ அழைக்கவும்', continue: 'தொடரவும்', back: 'பின்செல்', clear: 'அழி', open: 'திற', close: 'மூடு', reset: 'மீட்டமை', readMore: 'மேலும் படிக்க' },
     language: { label: 'மொழி', select: 'மொழியைத் தேர்ந்தெடுக்கவும்' },
@@ -88,7 +88,7 @@ export const common = {
     helpline: { financial: 'நிதி மோசடியா? {{number}}-ஐ அழைக்கவும்', childSafety: 'குழந்தை பாதுகாப்புக்கு {{number}}-ஐ அழைக்கவும்', emergency: 'உடனடி உடல் ஆபத்து இருந்தால் உள்ளூர் அவசர சேவைகளைத் தொடர்புகொள்ளவும்.' },
   },
   kn: {
-    meta: { title: 'CyberDesk — ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಮಾಡಿ', description: 'ಸ್ಪಷ್ಟ ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಪ್ರಯಾಣಕ್ಕಾಗಿ ಸ್ವತಂತ್ರ ಮಾದರಿ. ಇದು ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಸೇವೆಯಲ್ಲ.' },
+    meta: { title: 'CyberDesk - ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಮಾಡಿ', description: 'ಸ್ಪಷ್ಟ ಸೈಬರ್ ಅಪರಾಧ ವರದಿ ಪ್ರಯಾಣಕ್ಕಾಗಿ ಸ್ವತಂತ್ರ ಮಾದರಿ. ಇದು ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಸೇವೆಯಲ್ಲ.' },
     nav: { home: 'ಮುಖಪುಟ', report: 'ವರದಿ', track: 'ಸ್ಥಿತಿ', check: 'ನಂಬರ್ ಪರಿಶೀಲಿಸಿ', callScan: 'ಕಾಲ್ ಸ್ಕ್ಯಾನ್', noticeVerifier: 'ನಕಲಿ ನೋಟಿಸ್', volunteers: 'ಸ್ವಯಂಸೇವಕರು', learn: 'ತಿಳಿಯಿರಿ', contact: 'ಸಂಪರ್ಕ', openNavigation: 'ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ' },
     actions: { startReport: 'ವರದಿ ಪ್ರಾರಂಭಿಸಿ', call1930: '1930ಕ್ಕೆ ಕರೆ ಮಾಡಿ', continue: 'ಮುಂದುವರಿಸಿ', back: 'ಹಿಂದೆ', clear: 'ತೆರವುಗೊಳಿಸಿ', open: 'ತೆರೆಯಿರಿ', close: 'ಮುಚ್ಚಿ', reset: 'ಮರುಹೊಂದಿಸಿ', readMore: 'ಇನ್ನಷ್ಟು ಓದಿ' },
     language: { label: 'ಭಾಷೆ', select: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ' },
@@ -97,7 +97,7 @@ export const common = {
     helpline: { financial: 'ಹಣಕಾಸು ವಂಚನೆ? {{number}}ಕ್ಕೆ ಕರೆ ಮಾಡಿ', childSafety: 'ಮಕ್ಕಳ ಸುರಕ್ಷತೆಗೆ {{number}}ಕ್ಕೆ ಕರೆ ಮಾಡಿ', emergency: 'ತಕ್ಷಣದ ದೈಹಿಕ ಅಪಾಯದಲ್ಲಿ ಸ್ಥಳೀಯ ತುರ್ತು ಸೇವೆಗಳನ್ನು ಸಂಪರ್ಕಿಸಿ.' },
   },
   ml: {
-    meta: { title: 'CyberDesk — സൈബർ കുറ്റകൃത്യം റിപ്പോർട്ട് ചെയ്യുക', description: 'വ്യക്തമായ സൈബർ കുറ്റകൃത്യ റിപ്പോർട്ടിംഗിനുള്ള സ്വതന്ത്ര മാതൃക. ഇത് ഔദ്യോഗിക സർക്കാർ സേവനമല്ല.' },
+    meta: { title: 'CyberDesk - സൈബർ കുറ്റകൃത്യം റിപ്പോർട്ട് ചെയ്യുക', description: 'വ്യക്തമായ സൈബർ കുറ്റകൃത്യ റിപ്പോർട്ടിംഗിനുള്ള സ്വതന്ത്ര മാതൃക. ഇത് ഔദ്യോഗിക സർക്കാർ സേവനമല്ല.' },
     nav: { home: 'ഹോം', report: 'റിപ്പോർട്ട്', track: 'നില', check: 'നമ്പർ പരിശോധിക്കുക', callScan: 'കോൾ സ്കാൻ', noticeVerifier: 'വ്യാജ നോട്ടീസ്', volunteers: 'സന്നദ്ധർ', learn: 'പഠിക്കുക', contact: 'ബന്ധപ്പെടുക', openNavigation: 'നാവിഗേഷൻ തുറക്കുക' },
     actions: { startReport: 'റിപ്പോർട്ട് തുടങ്ങുക', call1930: '1930-ൽ വിളിക്കുക', continue: 'തുടരുക', back: 'പിന്നോട്ട്', clear: 'മായ്ക്കുക', open: 'തുറക്കുക', close: 'അടയ്ക്കുക', reset: 'റീസെറ്റ്', readMore: 'കൂടുതൽ വായിക്കുക' },
     language: { label: 'ഭാഷ', select: 'ഭാഷ തിരഞ്ഞെടുക്കുക' },
@@ -106,7 +106,7 @@ export const common = {
     helpline: { financial: 'സാമ്പത്തിക തട്ടിപ്പാണോ? {{number}}-ൽ വിളിക്കുക', childSafety: 'കുട്ടികളുടെ സുരക്ഷയ്ക്ക് {{number}}-ൽ വിളിക്കുക', emergency: 'ഉടൻ ശാരീരിക അപകടമുണ്ടെങ്കിൽ പ്രാദേശിക അടിയന്തര സേവനങ്ങളെ ബന്ധപ്പെടുക.' },
   },
   mr: {
-    meta: { title: 'CyberDesk — सायबर गुन्ह्याची तक्रार करा', description: 'स्पष्ट सायबर गुन्हे नोंदणीसाठी स्वतंत्र नमुना. ही अधिकृत सरकारी सेवा नाही.' },
+    meta: { title: 'CyberDesk - सायबर गुन्ह्याची तक्रार करा', description: 'स्पष्ट सायबर गुन्हे नोंदणीसाठी स्वतंत्र नमुना. ही अधिकृत सरकारी सेवा नाही.' },
     nav: { home: 'मुख्यपृष्ठ', report: 'तक्रार', track: 'स्थिती', check: 'नंबर तपासा', callScan: 'कॉल स्कॅन', noticeVerifier: 'बनावट नोटीस', volunteers: 'स्वयंसेवक', learn: 'जाणून घ्या', contact: 'संपर्क', openNavigation: 'नेव्हिगेशन उघडा' },
     actions: { startReport: 'तक्रार सुरू करा', call1930: '1930 वर कॉल करा', continue: 'पुढे जा', back: 'मागे', clear: 'साफ करा', open: 'उघडा', close: 'बंद करा', reset: 'रीसेट', readMore: 'अधिक वाचा' },
     language: { label: 'भाषा', select: 'भाषा निवडा' },
@@ -115,7 +115,7 @@ export const common = {
     helpline: { financial: 'आर्थिक फसवणूक? {{number}} वर कॉल करा', childSafety: 'बाल सुरक्षेसाठी {{number}} वर कॉल करा', emergency: 'तात्काळ शारीरिक धोका असल्यास स्थानिक आपत्कालीन सेवांशी संपर्क साधा.' },
   },
   bn: {
-    meta: { title: 'CyberDesk — সাইবার অপরাধ রিপোর্ট করুন', description: 'সহজ সাইবার অপরাধ রিপোর্টিংয়ের জন্য স্বাধীন প্রোটোটাইপ। এটি সরকারি পরিষেবা নয়।' },
+    meta: { title: 'CyberDesk - সাইবার অপরাধ রিপোর্ট করুন', description: 'সহজ সাইবার অপরাধ রিপোর্টিংয়ের জন্য স্বাধীন প্রোটোটাইপ। এটি সরকারি পরিষেবা নয়।' },
     nav: { home: 'হোম', report: 'রিপোর্ট', track: 'ট্র্যাক', check: 'নম্বর যাচাই', callScan: 'কল স্ক্যান', noticeVerifier: 'নকল নোটিশ', volunteers: 'স্বেচ্ছাসেবক', learn: 'শিখুন', contact: 'যোগাযোগ', openNavigation: 'নেভিগেশন খুলুন' },
     actions: { startReport: 'রিপোর্ট শুরু করুন', call1930: '১৯৩০-এ কল করুন', continue: 'এগিয়ে যান', back: 'ফিরুন', clear: 'মুছুন', open: 'খুলুন', close: 'বন্ধ করুন', reset: 'রিসেট', readMore: 'আরও পড়ুন' },
     language: { label: 'ভাষা', select: 'ভাষা বেছে নিন' },
@@ -124,7 +124,7 @@ export const common = {
     helpline: { financial: 'আর্থিক প্রতারণা? {{number}}-এ কল করুন', childSafety: 'শিশু সুরক্ষার জন্য {{number}}-এ কল করুন', emergency: 'তাৎক্ষণিক শারীরিক বিপদে স্থানীয় জরুরি পরিষেবার সঙ্গে যোগাযোগ করুন।' },
   },
   as: {
-    meta: { title: 'CyberDesk — চাইবাৰ অপৰাধৰ প্ৰতিবেদন', description: 'চাইবাৰ অপৰাধ প্ৰতিবেদনৰ বাবে স্বাধীন প্ৰটোটাইপ। এইটো চৰকাৰী সেৱা নহয়।' },
+    meta: { title: 'CyberDesk - চাইবাৰ অপৰাধৰ প্ৰতিবেদন', description: 'চাইবাৰ অপৰাধ প্ৰতিবেদনৰ বাবে স্বাধীন প্ৰটোটাইপ। এইটো চৰকাৰী সেৱা নহয়।' },
     nav: { home: 'মূল পৃষ্ঠা', report: 'প্ৰতিবেদন', track: 'স্থিতি', check: 'নম্বৰ পৰীক্ষা', callScan: 'কল স্কেন', noticeVerifier: 'নকল নোটিচ', volunteers: 'স্বেচ্ছাসেৱক', learn: 'সহায়', contact: 'যোগাযোগ', openNavigation: 'নেভিগেচন খোলক' },
     actions: { startReport: 'প্ৰতিবেদন আৰম্ভ কৰক', call1930: '1930-লৈ ফোন কৰক', continue: 'আগবাঢ়ক', back: 'পিছলৈ', clear: 'মচক', open: 'খোলক', close: 'বন্ধ কৰক', reset: 'ৰিছেট', readMore: 'অধিক পঢ়ক' },
     language: { label: 'ভাষা', select: 'ভাষা বাছক' },
@@ -133,7 +133,7 @@ export const common = {
     helpline: { financial: 'আৰ্থিক প্ৰৱঞ্চনা? {{number}}-লৈ ফোন কৰক', childSafety: 'শিশু সুৰক্ষাৰ বাবে {{number}}-লৈ ফোন কৰক', emergency: 'তাৎক্ষণিক শাৰীৰিক বিপদত স্থানীয় জৰুৰী সেৱাৰ সৈতে যোগাযোগ কৰক।' },
   },
   gu: {
-    meta: { title: 'CyberDesk — સાયબર ગુનાની જાણ કરો', description: 'સરળ સાયબર ગુના રિપોર્ટિંગ માટેનું સ્વતંત્ર પ્રોટોટાઇપ. આ સત્તાવાર સરકારી સેવા નથી.' },
+    meta: { title: 'CyberDesk - સાયબર ગુનાની જાણ કરો', description: 'સરળ સાયબર ગુના રિપોર્ટિંગ માટેનું સ્વતંત્ર પ્રોટોટાઇપ. આ સત્તાવાર સરકારી સેવા નથી.' },
     nav: { home: 'હોમ', report: 'રિપોર્ટ', track: 'ટ્રૅક', check: 'નંબર ચકાસો', callScan: 'કૉલ સ્કેન', noticeVerifier: 'નકલી નોટિસ', volunteers: 'સ્વયંસેવકો', learn: 'મદદ', contact: 'સંપર્ક', openNavigation: 'નેવિગેશન ખોલો' },
     actions: { startReport: 'રિપોર્ટ શરૂ કરો', call1930: '1930 પર કૉલ કરો', continue: 'આગળ વધો', back: 'પાછા', clear: 'સાફ કરો', open: 'ખોલો', close: 'બંધ કરો', reset: 'રીસેટ', readMore: 'વધુ વાંચો' },
     language: { label: 'ભાષા', select: 'ભાષા પસંદ કરો' },
@@ -142,7 +142,7 @@ export const common = {
     helpline: { financial: 'નાણાકીય છેતરપિંડી? {{number}} પર કૉલ કરો', childSafety: 'બાળ સુરક્ષા માટે {{number}} પર કૉલ કરો', emergency: 'તાત્કાલિક શારીરિક જોખમમાં સ્થાનિક ઇમરજન્સી સેવાઓનો સંપર્ક કરો.' },
   },
   or: {
-    meta: { title: 'CyberDesk — ସାଇବର ଅପରାଧ ରିପୋର୍ଟ କରନ୍ତୁ', description: 'ସହଜ ସାଇବର ଅପରାଧ ରିପୋର୍ଟିଂ ପାଇଁ ସ୍ୱାଧୀନ ପ୍ରୋଟୋଟାଇପ୍। ଏହା ସରକାରୀ ସେବା ନୁହେଁ।' },
+    meta: { title: 'CyberDesk - ସାଇବର ଅପରାଧ ରିପୋର୍ଟ କରନ୍ତୁ', description: 'ସହଜ ସାଇବର ଅପରାଧ ରିପୋର୍ଟିଂ ପାଇଁ ସ୍ୱାଧୀନ ପ୍ରୋଟୋଟାଇପ୍। ଏହା ସରକାରୀ ସେବା ନୁହେଁ।' },
     nav: { home: 'ମୂଳପୃଷ୍ଠା', report: 'ରିପୋର୍ଟ', track: 'ସ୍ଥିତି', check: 'ନମ୍ବର ଯାଞ୍ଚ', callScan: 'କଲ୍ ସ୍କାନ୍', noticeVerifier: 'ନକଲି ନୋଟିସ୍', volunteers: 'ସ୍ୱେଚ୍ଛାସେବୀ', learn: 'ସହାୟତା', contact: 'ଯୋଗାଯୋଗ', openNavigation: 'ନାଭିଗେସନ୍ ଖୋଲନ୍ତୁ' },
     actions: { startReport: 'ରିପୋର୍ଟ ଆରମ୍ଭ କରନ୍ତୁ', call1930: '1930 କୁ କଲ୍ କରନ୍ତୁ', continue: 'ଆଗକୁ', back: 'ପଛକୁ', clear: 'ସଫା କରନ୍ତୁ', open: 'ଖୋଲନ୍ତୁ', close: 'ବନ୍ଦ କରନ୍ତୁ', reset: 'ରିସେଟ୍', readMore: 'ଅଧିକ ପଢ଼ନ୍ତୁ' },
     language: { label: 'ଭାଷା', select: 'ଭାଷା ବାଛନ୍ତୁ' },
@@ -151,7 +151,7 @@ export const common = {
     helpline: { financial: 'ଆର୍ଥିକ ଠକେଇ? {{number}} କୁ କଲ୍ କରନ୍ତୁ', childSafety: 'ଶିଶୁ ସୁରକ୍ଷା ପାଇଁ {{number}} କୁ କଲ୍ କରନ୍ତୁ', emergency: 'ତୁରନ୍ତ ଶାରୀରିକ ବିପଦରେ ସ୍ଥାନୀୟ ଜରୁରୀ ସେବାକୁ ଯୋଗାଯୋଗ କରନ୍ତୁ।' },
   },
   pa: {
-    meta: { title: 'CyberDesk — ਸਾਈਬਰ ਅਪਰਾਧ ਦੀ ਰਿਪੋਰਟ ਕਰੋ', description: 'ਸੌਖੀ ਸਾਈਬਰ ਅਪਰਾਧ ਰਿਪੋਰਟਿੰਗ ਲਈ ਸੁਤੰਤਰ ਪ੍ਰੋਟੋਟਾਈਪ। ਇਹ ਸਰਕਾਰੀ ਸੇਵਾ ਨਹੀਂ ਹੈ।' },
+    meta: { title: 'CyberDesk - ਸਾਈਬਰ ਅਪਰਾਧ ਦੀ ਰਿਪੋਰਟ ਕਰੋ', description: 'ਸੌਖੀ ਸਾਈਬਰ ਅਪਰਾਧ ਰਿਪੋਰਟਿੰਗ ਲਈ ਸੁਤੰਤਰ ਪ੍ਰੋਟੋਟਾਈਪ। ਇਹ ਸਰਕਾਰੀ ਸੇਵਾ ਨਹੀਂ ਹੈ।' },
     nav: { home: 'ਮੁੱਖ ਪੰਨਾ', report: 'ਰਿਪੋਰਟ', track: 'ਸਥਿਤੀ', check: 'ਨੰਬਰ ਜਾਂਚ', callScan: 'ਕਾਲ ਸਕੈਨ', noticeVerifier: 'ਫਰਜ਼ੀ ਨੋਟਿਸ', volunteers: 'ਵਲੰਟੀਅਰ', learn: 'ਮਦਦ', contact: 'ਸੰਪਰਕ', openNavigation: 'ਨੇਵੀਗੇਸ਼ਨ ਖੋਲ੍ਹੋ' },
     actions: { startReport: 'ਰਿਪੋਰਟ ਸ਼ੁਰੂ ਕਰੋ', call1930: '1930 ਤੇ ਕਾਲ ਕਰੋ', continue: 'ਅੱਗੇ', back: 'ਪਿੱਛੇ', clear: 'ਸਾਫ਼ ਕਰੋ', open: 'ਖੋਲ੍ਹੋ', close: 'ਬੰਦ ਕਰੋ', reset: 'ਰੀਸੈਟ', readMore: 'ਹੋਰ ਪੜ੍ਹੋ' },
     language: { label: 'ਭਾਸ਼ਾ', select: 'ਭਾਸ਼ਾ ਚੁਣੋ' },
@@ -160,7 +160,7 @@ export const common = {
     helpline: { financial: 'ਵਿੱਤੀ ਧੋਖਾਧੜੀ? {{number}} ਤੇ ਕਾਲ ਕਰੋ', childSafety: 'ਬਾਲ ਸੁਰੱਖਿਆ ਲਈ {{number}} ਤੇ ਕਾਲ ਕਰੋ', emergency: 'ਤੁਰੰਤ ਸਰੀਰਕ ਖਤਰੇ ਵਿੱਚ ਸਥਾਨਕ ਐਮਰਜੈਂਸੀ ਸੇਵਾਵਾਂ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।' },
   },
   ur: {
-    meta: { title: 'CyberDesk — سائبر جرم کی رپورٹ کریں', description: 'آسان سائبر جرم رپورٹنگ کے لیے آزاد پروٹوٹائپ۔ یہ سرکاری خدمت نہیں ہے۔' },
+    meta: { title: 'CyberDesk - سائبر جرم کی رپورٹ کریں', description: 'آسان سائبر جرم رپورٹنگ کے لیے آزاد پروٹوٹائپ۔ یہ سرکاری خدمت نہیں ہے۔' },
     nav: { home: 'ہوم', report: 'رپورٹ', track: 'حالت', check: 'نمبر چیک', callScan: 'کال اسکین', noticeVerifier: 'جعلی نوٹس', volunteers: 'رضاکار', learn: 'مدد', contact: 'رابطہ', openNavigation: 'نیویگیشن کھولیں' },
     actions: { startReport: 'رپورٹ شروع کریں', call1930: '1930 پر کال کریں', continue: 'جاری رکھیں', back: 'واپس', clear: 'صاف کریں', open: 'کھولیں', close: 'بند کریں', reset: 'ری سیٹ', readMore: 'مزید پڑھیں' },
     language: { label: 'زبان', select: 'زبان منتخب کریں' },

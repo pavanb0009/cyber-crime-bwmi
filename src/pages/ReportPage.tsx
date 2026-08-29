@@ -109,7 +109,7 @@ function SuccessView({
 
   function downloadAcknowledgement() {
     const content = [
-      `${brand.name.toUpperCase()} — ACKNOWLEDGEMENT`,
+      `${brand.name.toUpperCase()} - ACKNOWLEDGEMENT`,
       '',
       `Reference: ${record.caseId}`,
       `Created: ${record.createdAt}`,
@@ -689,8 +689,8 @@ export function ReportPage() {
       anonymous: draft.anonymous,
       progress: isFinancial ? 48 : 22,
       statusLabel: isFinancial
-        ? 'Financial response initiated — tracing in progress'
-        : 'Complaint received — initial triage',
+        ? 'Financial response initiated - tracing in progress'
+        : 'Complaint received - initial triage',
       assignedUnit: isFinancial ? 'Financial Fraud Response Queue' : 'Assignment pending',
       nextAction: isFinancial ? 'Beneficiary tracing and lien review' : 'Jurisdiction assignment',
       amount: draft.amount,

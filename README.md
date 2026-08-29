@@ -23,7 +23,7 @@ The concept begins with the moment a citizen is actually in: confused, anxious a
 | Learning corner | Searchable/filterable situation playbooks, emergency actions, expandable guidance and an interactive scam-signal checklist |
 | Accessibility | Keyboard focus states, larger-text mode, reduced-motion mode, mobile-first controls and a persistent mobile 1930 action |
 
-## Reviewer demo — under 60 seconds
+## Reviewer demo - under 60 seconds
 
 ### Fastest complete path
 

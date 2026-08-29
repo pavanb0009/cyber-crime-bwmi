@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Cloud, LogIn, UserPlus } from 'lucide-react'
+import { Cloud, KeyRound, LogIn, UserPlus } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, buttonStyles } from '../components/Button'
 import { PageIntro } from '../components/PageIntro'
@@ -8,6 +8,9 @@ import { cx } from '../lib/cx'
 import { useTranslation } from 'react-i18next'
 
 type LoginMode = 'signin' | 'signup'
+
+const DEMO_EMAIL = 'demo@cyberdesk.in'
+const DEMO_PASSWORD = 'demo1234'
 
 export function LoginPage() {
   const { t } = useTranslation('pages')
@@ -123,6 +126,39 @@ export function LoginPage() {
                 {mode === 'signin' ? t('auth.signIn') : t('auth.createAccount')}
               </Button>
             </form>
+
+            <div className="mt-5 rounded-xl border border-dashed border-brand/25 bg-brand/[0.04] p-4">
+              <div className="flex items-start gap-2.5">
+                <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-paper">{t('auth.demoTitle')}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted">{t('auth.demoHelp')}</p>
+                  <dl className="mt-3 grid gap-2 font-mono text-[0.8rem] sm:grid-cols-2">
+                    <div>
+                      <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('auth.email')}</dt>
+                      <dd className="mt-0.5 break-all text-paper">{DEMO_EMAIL}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('auth.password')}</dt>
+                      <dd className="mt-0.5 text-paper">{DEMO_PASSWORD}</dd>
+                    </div>
+                  </dl>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('signin')
+                      setEmail(DEMO_EMAIL)
+                      setPassword(DEMO_PASSWORD)
+                      setError('')
+                      setNotice('')
+                    }}
+                    className={cx(buttonStyles('secondary', 'sm'), 'mt-3 rounded-full')}
+                  >
+                    {t('auth.demoFill')}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <aside className="surface-soft p-5 sm:p-6">

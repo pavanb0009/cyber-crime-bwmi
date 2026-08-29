@@ -321,9 +321,9 @@ export function analyseNoticeText(rawText: string, fileName = ''): NoticeAnalysi
 
   const headline =
     verdict === 'high-risk'
-      ? 'High risk — strong indicators of a fake notice'
+      ? 'High risk - strong indicators of a fake notice'
       : verdict === 'suspicious'
-        ? 'Suspicious — verify before you act'
+        ? 'Suspicious - verify before you act'
         : 'Format looks consistent, still verify independently'
 
   const summary =
@@ -374,7 +374,7 @@ export interface DemoNotice {
 export const demoNotices: DemoNotice[] = [
   {
     id: 'safe-incometax',
-    label: 'Income Tax — refund intimation',
+    label: 'Income Tax - refund intimation',
     authorityHint: 'Income Tax Department',
     expected: 'genuine-format',
     fileName: 'ITD_intimation_143-1.pdf',
@@ -389,7 +389,7 @@ Issued by: Centralized Processing Centre, Bengaluru.`,
   },
   {
     id: 'safe-rbi',
-    label: 'RBI — public awareness advisory',
+    label: 'RBI - public awareness advisory',
     authorityHint: 'RBI',
     expected: 'genuine-format',
     fileName: 'RBI_awareness_advisory.pdf',
@@ -402,7 +402,7 @@ Report suspicious activity to your bank. This advisory is issued in public inter
   },
   {
     id: 'safe-trai',
-    label: 'TRAI — DND registration confirmation',
+    label: 'TRAI - DND registration confirmation',
     authorityHint: 'TRAI',
     expected: 'genuine-format',
     fileName: 'TRAI_DND_confirmation.pdf',
@@ -414,7 +414,7 @@ For queries visit trai.gov.in or contact your telecom service provider. TRAI nev
   },
   {
     id: 'safe-court',
-    label: 'District Court — hearing notice',
+    label: 'District Court - hearing notice',
     authorityHint: 'Court',
     expected: 'genuine-format',
     fileName: 'court_hearing_notice.pdf',
@@ -426,12 +426,12 @@ Parties may verify the cause list and case status online. Signed by: Registrar (
   },
   {
     id: 'fake-cbi-arrest',
-    label: 'CBI — "digital arrest" summons',
+    label: 'CBI - "digital arrest" summons',
     authorityHint: 'CBI',
     expected: 'high-risk',
     fileName: 'CBI_arrest_warrant_urgent.jpg',
     text: `CENTRAL BUREAU OF INVESTIGATION (CBI)
-URGENT ARREST WARRANT — FINAL NOTICE
+URGENT ARREST WARRANT - FINAL NOTICE
 Your Aadhaar has been linked to a money laundering case. A non-bailable warrant has been issued in your name.
 You are under DIGITAL ARREST. Do NOT disconnect the call and do not inform anyone, including family, as the matter is confidential and monitored.
 To avoid immediate arrest, pay a refundable security deposit of Rs. 2,50,000 within 2 hours via UPI to clear your name.
@@ -439,7 +439,7 @@ Contact Investigating Officer Rajesh Kumar at cbi.officer.verify@gmail.com or +9
   },
   {
     id: 'fake-customs-parcel',
-    label: 'Customs — parcel seizure',
+    label: 'Customs - parcel seizure',
     authorityHint: 'Customs',
     expected: 'high-risk',
     fileName: 'customs_parcel_seizure.pdf',
@@ -451,11 +451,11 @@ Reply to customsindia.clearance@outlook.com. Do not ignore this final warning.`,
   },
   {
     id: 'fake-trai-disconnect',
-    label: 'TRAI — SIM disconnection threat',
+    label: 'TRAI - SIM disconnection threat',
     authorityHint: 'TRAI',
     expected: 'high-risk',
     fileName: 'TRAI_sim_block_notice.jpg',
-    text: `TRAI — TELECOM REGULATORY AUTHORITY
+    text: `TRAI - TELECOM REGULATORY AUTHORITY
 URGENT: Your mobile number will be SUSPENDED within 2 hours.
 Your SIM is involved in illegal activity and harassment complaints. All your numbers will be blocked immediately.
 To keep your number active, verify now by paying a verification fee of Rs. 999 via UPI. Stay on this call and do not disconnect.
@@ -463,15 +463,15 @@ Helpline officer: Anil Sharma, contact trai.verification.team@gmail.com. Act now
   },
   {
     id: 'fake-police-ncb',
-    label: 'Police/NCB — case settlement',
+    label: 'Police/NCB - case settlement',
     authorityHint: 'Police',
     expected: 'high-risk',
     fileName: 'cyber_cell_notice_final.pdf',
-    text: `MUMBAI CYBER CELL — CRIME BRANCH
+    text: `MUMBAI CYBER CELL - CRIME BRANCH
 Final Notice / Non-Bailable
 Reference: 99887766
 Your bank account is linked to a narcotics case under investigation by NCB. A warrant is being prepared against you.
-This is confidential — do not disclose to anyone. To settle the matter out of court, transfer a security deposit via bank transfer or gift card immediately.
+This is confidential - do not disclose to anyone. To settle the matter out of court, transfer a security deposit via bank transfer or gift card immediately.
 Failing which, legal action and arrest will be taken today. Contact officer at mumbaicyber.cell@gmail.com.`,
   },
 ]

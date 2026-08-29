@@ -159,7 +159,7 @@ function VerifierResult({ analysis, onReset }: { analysis: NoticeAnalysis; onRes
                   {fields.phones.length ? <FieldRow icon={Phone} label="Phone" value={fields.phones.join(', ')} /> : null}
                   {fields.emails.length ? <FieldRow icon={Mail} label="Email" value={fields.emails.join(', ')} /> : null}
                   {fields.links.length ? <FieldRow icon={Link2} label="Links / QR destination" value={fields.links.join(', ')} /> : null}
-                  {fields.paymentDemand ? <FieldRow icon={AlertTriangle} label="Payment demand" value={`${fields.paymentDemand}${fields.amount ? ` — ${fields.amount}` : ''}`} /> : null}
+                  {fields.paymentDemand ? <FieldRow icon={AlertTriangle} label="Payment demand" value={`${fields.paymentDemand}${fields.amount ? ` - ${fields.amount}` : ''}`} /> : null}
                 </>
               ) : (
                 <p className="text-sm leading-6 text-muted">No structured fields could be read from the text provided.</p>

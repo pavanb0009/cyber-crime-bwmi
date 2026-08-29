@@ -22,7 +22,7 @@ const highNext = [
 ]
 
 const mediumNext = [
-  'Open the service yourself — do not use the link or number from the message',
+  'Open the service yourself - do not use the link or number from the message',
   'Do not share OTPs, PINs or KYC photos',
   'Report it if the request still looks wrong',
 ]
@@ -257,7 +257,7 @@ const phoneSeeds: Seed[] = [
     value: '1800200200',
     risk: 'clear',
     pattern: 'Demo identity helpline',
-    summary: 'Demo stand-in for a UIDAI-style helpline. Aadhaar updates happen on uidai.gov.in — never via a missed call.',
+    summary: 'Demo stand-in for a UIDAI-style helpline. Aadhaar updates happen on uidai.gov.in - never via a missed call.',
     signals: ['Listed official in this demo', 'No scam reports in this demo', 'Do not share Aadhaar OTP on a call'],
   },
   {
@@ -441,7 +441,7 @@ const upiSeeds: Seed[] = [
     risk: 'clear',
     pattern: 'Published rail merchant',
     summary:
-      'Listed in this demo as the public IRCTC merchant VPA. Still open IRCTC or the Rail Connect app yourself — never pay a handle sent on WhatsApp.',
+      'Listed in this demo as the public IRCTC merchant VPA. Still open IRCTC or the Rail Connect app yourself - never pay a handle sent on WhatsApp.',
     signals: ['Known merchant format in this demo', 'No scam reports in this demo', 'Confirm inside the official app'],
     chip: 'official',
   },
@@ -654,7 +654,7 @@ const emailSeeds: Seed[] = [
     value: 'webmaster@incometax.gov.in',
     risk: 'clear',
     pattern: 'Income Tax portal',
-    summary: 'Listed here as an official Income Tax mailbox. Refunds are credited to your bank — never collected on UPI.',
+    summary: 'Listed here as an official Income Tax mailbox. Refunds are credited to your bank - never collected on UPI.',
     signals: ['Official .gov.in domain', 'No scam reports in this demo', 'Log in only at incometax.gov.in'],
   },
   {
@@ -695,7 +695,7 @@ const urlSeeds: Seed[] = [
     reports: 97,
     firstSeen: '04 Jun 2026',
     pattern: 'Fake SBI net banking',
-    summary: 'Copy of the SBI login. The real site is onbank.sbi / sbi.co.in — this domain is reported for credential theft.',
+    summary: 'Copy of the SBI login. The real site is onbank.sbi / sbi.co.in - this domain is reported for credential theft.',
     signals: ['Lookalike bank login', 'Not sbi.co.in', 'Asks for high-security password'],
     related: ['support@sbi-secure.net'],
     chip: 'scam',

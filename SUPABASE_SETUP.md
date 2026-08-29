@@ -13,18 +13,22 @@ Supabase free plan includes Auth, Postgres, and **Storage (~1 GB)**. That is eno
    - Creates the `reports` table + RLS
    - Creates private Storage bucket `evidence` + owner-only policies
 3. For instant demo accounts, open **Authentication → Providers → Email** and turn off **Confirm email**. Keep email/password enabled.
-4. Open **Project Settings → API** and copy:
+4. In **Authentication → Users**, create the reviewer account shown on `/login`:
+   - Email: `demo@cyberdesk.in`
+   - Password: `demo1234`
+   Then sign in once and submit a sample report so Track has demo data.
+5. Open **Project Settings → API** and copy:
    - Project URL
    - Publishable/anon key (never use the service-role key in the frontend)
-5. For local development, copy `.env.example` to `.env` or `.env.local` and set:
+6. For local development, copy `.env.example` to `.env` or `.env.local` and set:
 
    ```env
    VITE_SUPABASE_URL=https://your-project.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key
    ```
 
-6. Restart `npm run dev` after saving env vars.
-7. In Vercel, add the same two variables (mark as safe to expose / Config — the `VITE_` prefix is required). Redeploy.
+7. Restart `npm run dev` after saving env vars.
+8. In Vercel, add the same two variables (mark as safe to expose / Config - the `VITE_` prefix is required). Redeploy.
 
 No Docker, database server, backend migration process, or Railway change is needed.
 

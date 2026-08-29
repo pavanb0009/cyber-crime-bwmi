@@ -2,7 +2,7 @@
 
 ## Product name
 
-**CyberDesk — Citizen cybercrime helpdesk**
+**CyberDesk - Citizen cybercrime helpdesk**
 
 ## Submission summary
 
@@ -30,19 +30,19 @@ The product asks a plain-language question, identifies urgency, explains what ev
 
 ## 90-second demo script
 
-**0–15 seconds — Home**  
+**0–15 seconds - Home**  
 “This is CyberDesk. Instead of asking citizens to understand the portal, it starts with what happened. I’ll choose ‘Money left my account.’ Notice that calling 1930 appears before the online form.”
 
-**15–50 seconds — Report**  
+**15–50 seconds - Report**  
 “The report is four short steps. Categories are plain-language. I’ll use demo details, add synthetic evidence, review exactly what will be submitted and acknowledge the prototype boundary. The draft is saved locally throughout.”
 
-**50–65 seconds — Acknowledgement and tracking**  
+**50–65 seconds - Acknowledgement and tracking**  
 “Submission creates a fictional acknowledgement, not a fake success message. Opening Track shows a human-readable timeline, assigned unit, current stage and next expected action.”
 
-**65–80 seconds — Suspect checker**  
+**65–80 seconds - Suspect checker**  
 “I can check a phone number, UPI ID, email or URL. The result explains why it was flagged, what the repository cannot guarantee and what to do next.”
 
-**80–90 seconds — Close**  
+**80–90 seconds - Close**  
 “The differentiator is not visual decoration or a chatbot. It is a calmer decision architecture for a high-stress public service.”
 
 ## Demo data

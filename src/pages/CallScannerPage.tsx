@@ -221,7 +221,7 @@ function AnalysisResult({ result, onReset }: { result: CallAnalysisResponse; onR
                 <div key={signal.id}>
                   <div className="flex items-center justify-between gap-3 text-xs">
                     <span className={cx('font-medium', signal.detected ? 'text-paper' : 'text-muted')}>{signal.label}</span>
-                    <span className="font-mono text-[0.65rem] text-muted">{signal.detected ? `+${signal.weight}` : '—'}</span>
+                    <span className="font-mono text-[0.65rem] text-muted">{signal.detected ? `+${signal.weight}` : '-'}</span>
                   </div>
                   <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-black/[0.08]">
                     <div className={cx('h-full rounded-full', signal.detected ? style.meter : 'bg-transparent')} style={{ width: signal.detected ? '100%' : '0%' }} />

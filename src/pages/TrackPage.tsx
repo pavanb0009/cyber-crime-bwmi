@@ -76,7 +76,7 @@ function getCase(reference: string): CaseRecord | undefined {
 
 function downloadStatus(record: CaseRecord) {
   const lines = [
-    `${brand.name.toUpperCase()} — COMPLAINT STATUS`,
+    `${brand.name.toUpperCase()} - COMPLAINT STATUS`,
     '',
     `Reference: ${record.caseId}`,
     `Created: ${record.createdAt}`,

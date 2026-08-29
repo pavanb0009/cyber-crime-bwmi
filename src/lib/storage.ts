@@ -92,7 +92,7 @@ export const defaultCase: CaseRecord = {
   anonymous: false,
   progress: 68,
   statusLabel: 'Under review by state cyber cell',
-  assignedUnit: 'Cyber Crime Cell — Bengaluru Urban',
+  assignedUnit: 'Cyber Crime Cell - Bengaluru Urban',
   amount: '85,000',
   paymentMethod: 'UPI',
   transactionId: '412345678901',
