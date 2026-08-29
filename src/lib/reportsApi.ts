@@ -42,7 +42,9 @@ export async function uploadEvidenceFiles(caseId: string, files: File[]): Promis
 
 export async function getEvidenceSignedUrl(path: string, expiresIn = 3600): Promise<string> {
   const client = requireSupabase()
-  const { data, error } = await client.storage.from(EVIDENCE_BUCKET).createSignedUrl(path, expiresIn)
+  const { data, error } = await client.storage.from(EVIDENCE_BUCKET).createSignedUrl(path, expiresIn, {
+    download: false,
+  })
   if (error || !data?.signedUrl) throw error ?? new Error('Could not open evidence file.')
   return data.signedUrl
 }

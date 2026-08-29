@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="640" viewBox="0 0 900 640">
+  <rect width="900" height="640" fill="#f4f7fb"/>
+  <rect width="900" height="76" fill="#1668cf"/>
+  <text x="36" y="48" fill="#ffffff" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">UPI payment receipt</text>
+  <rect x="36" y="112" width="828" height="492" rx="20" fill="#ffffff" stroke="#d7dee8"/>
+  <text x="64" y="168" fill="#1668cf" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">DEMO EVIDENCE</text>
+  <text x="64" y="230" fill="#101012" font-family="ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="800">¹85,000</text>
+  <text x="64" y="286" fill="#5a5a62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">Paid to refunddesk@upi</text>
+  <text x="64" y="348" fill="#101012" font-family="ui-monospace, monospace" font-size="18">Txn ID  412345678901</text>
+  <text x="64" y="388" fill="#101012" font-family="ui-monospace, monospace" font-size="18">Time    24 Aug 2026, 18:21</text>
+  <text x="64" y="428" fill="#101012" font-family="ui-monospace, monospace" font-size="18">Note    Fake customer-care collect</text>
+  <rect x="64" y="480" width="220" height="56" rx="12" fill="#c8102e"/>
+  <text x="174" y="516" fill="#ffffff" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">Failed / disputed</text>
+</svg>

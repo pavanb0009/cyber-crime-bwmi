@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="640" viewBox="0 0 900 640">
+  <rect width="900" height="640" fill="#eef2f6"/>
+  <rect width="900" height="76" fill="#1668cf"/>
+  <text x="36" y="48" fill="#ffffff" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">Bank SMS export</text>
+  <rect x="90" y="140" width="720" height="380" rx="28" fill="#ffffff"/>
+  <text x="130" y="200" fill="#5a5a62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16">SBI ALERT · 24 Aug, 18:22</text>
+  <text x="130" y="260" fill="#101012" font-family="ui-sans-serif, system-ui, sans-serif" font-size="26" font-weight="700">INR 85,000 debited via UPI</text>
+  <text x="130" y="318" fill="#101012" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">To: refunddesk@upi</text>
+  <text x="130" y="360" fill="#101012" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">Ref: 412345678901</text>
+  <text x="130" y="430" fill="#c8102e" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">Keep this SMS. Do not share OTPs.</text>
+</svg>

@@ -286,7 +286,7 @@ export function TrackPage() {
                     </div>
                   ) : null}
 
-                  <EvidenceList files={record.evidenceFiles} className="mt-7" />
+                  <EvidenceList files={record.evidenceFiles} caseId={record.caseId} className="mt-7" />
 
                   <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_18rem]">
                     <div>

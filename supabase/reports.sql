@@ -50,6 +50,7 @@ values (
     'image/jpeg',
     'image/webp',
     'image/gif',
+    'image/svg+xml',
     'application/pdf',
     'text/plain'
   ]

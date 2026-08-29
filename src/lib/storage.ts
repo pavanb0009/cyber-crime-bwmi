@@ -1,4 +1,5 @@
 import { brand } from '../data/brand'
+import { bundledEvidenceFiles } from '../data/demoEvidence'
 import type { CaseRecord, ReportDraft } from '../types'
 
 const DRAFT_KEY = 'rakshak-report-draft-v1'
@@ -100,11 +101,7 @@ export const defaultCase: CaseRecord = {
   nextAction: 'Beneficiary tracing and lien review',
   evidenceCount: 3,
   evidenceCompleteness: 72,
-  evidenceFiles: [
-    { name: 'upi-collect-screenshot.png', type: 'image/png', size: 248_320 },
-    { name: 'bank-sms.pdf', type: 'application/pdf', size: 92_112 },
-    { name: 'call-log.txt', type: 'text/plain', size: 4_180 },
-  ],
+  evidenceFiles: bundledEvidenceFiles(),
   recovery: {
     reported: 85000,
     traced: 65000,

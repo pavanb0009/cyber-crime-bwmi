@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="640" viewBox="0 0 900 640">
+  <rect width="900" height="640" fill="#ece5dd"/>
+  <rect width="900" height="76" fill="#075e54"/>
+  <text x="36" y="48" fill="#ffffff" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">WhatsApp chat</text>
+  <rect x="80" y="120" width="560" height="88" rx="16" fill="#ffffff"/>
+  <text x="104" y="158" fill="#111b21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">Your KYC will expire in 30 minutes.</text>
+  <text x="104" y="188" fill="#667781" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14">Unknown · 18:09</text>
+  <rect x="80" y="228" width="620" height="88" rx="16" fill="#ffffff"/>
+  <text x="104" y="266" fill="#111b21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">Pay verification on refunddesk@upi.</text>
+  <text x="104" y="296" fill="#667781" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14">Unknown · 18:10</text>
+  <rect x="260" y="336" width="560" height="88" rx="16" fill="#d9fdd3"/>
+  <text x="284" y="374" fill="#111b21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">I will call the bank myself. No OTP.</text>
+  <text x="284" y="404" fill="#667781" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14">You · 18:11</text>
+  <text x="80" y="500" fill="#c8102e" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">DEMO EVIDENCE · preserve full chat before blocking</text>
+</svg>

@@ -24,6 +24,7 @@ import { EvidenceList } from '../components/EvidenceList'
 import { PageIntro } from '../components/PageIntro'
 import { useAuth } from '../context/AuthContext'
 import { brand } from '../data/brand'
+import { bundledEvidenceAssets, loadBundledEvidenceFiles } from '../data/demoEvidence'
 import { channels, incidentTypes, indianStates } from '../data/content'
 import { cx } from '../lib/cx'
 import { useTranslation } from 'react-i18next'
@@ -158,7 +159,7 @@ function SuccessView({
           </Button>
         </div>
 
-        <EvidenceList files={record.evidenceFiles} className="mt-5" />
+        <EvidenceList files={record.evidenceFiles} caseId={record.caseId} className="mt-5" />
 
         {syncStatus ? (
           <p className={cx(
@@ -546,26 +547,12 @@ export function ReportPage() {
     }))
   }
 
-  function addSampleEvidence() {
-    const stamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
-    const samples = [
-      new File(
-        [`CyberDesk sample UPI collect screenshot\nCaptured: ${stamp}\nHandle: refunddesk@upi\nAmount: ₹8,500`],
-        'upi-collect-screenshot.txt',
-        { type: 'text/plain' },
-      ),
-      new File(
-        [`CyberDesk sample bank SMS export\nCaptured: ${stamp}\nDebit alert for UPI transfer`],
-        'bank-sms.txt',
-        { type: 'text/plain' },
-      ),
-      new File(
-        [`CyberDesk sample chat log\nCaller claimed to be customer care and asked for remote access.`],
-        'chat-threat-log.txt',
-        { type: 'text/plain' },
-      ),
-    ]
-    addFiles(samples)
+  async function addSampleEvidence() {
+    try {
+      addFiles(await loadBundledEvidenceFiles())
+    } catch {
+      setFileError(t('report.sampleFailed'))
+    }
   }
 
   function validateEmergency(): boolean {
@@ -676,7 +663,9 @@ export function ReportPage() {
       name: file.name,
       type: file.type || 'application/octet-stream',
       size: file.size,
+      url: bundledEvidenceAssets.find((asset) => asset.name === file.name)?.url,
     }))
+    void putFiles(`evidence:${caseId}`, evidenceFilesRef.current)
 
     const record: CaseRecord = {
       caseId,
@@ -718,7 +707,10 @@ export function ReportPage() {
         const cloudEvidence = await uploadEvidenceFiles(caseId, evidenceFilesRef.current)
         const synced: CaseRecord = {
           ...record,
-          evidenceFiles: cloudEvidence.length ? cloudEvidence : localEvidence,
+          evidenceFiles: (cloudEvidence.length ? cloudEvidence : localEvidence).map((file) => ({
+            ...file,
+            url: file.url ?? bundledEvidenceAssets.find((asset) => asset.name === file.name)?.url,
+          })),
           evidenceCount: cloudEvidence.length || evidenceCount,
         }
         await saveCloudReport(synced)
