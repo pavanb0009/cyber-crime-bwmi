@@ -15,6 +15,7 @@ export const common = {
       volunteers: 'Volunteers',
       learn: 'Learn',
       contact: 'Contact',
+      more: 'More',
       openNavigation: 'Open navigation',
     },
     actions: {
@@ -61,7 +62,7 @@ export const common = {
       title: 'CyberDesk - साइबर अपराध की रिपोर्ट करें',
       description: 'साइबर अपराध की रिपोर्ट करें, नंबर या UPI जाँचें और अपनी शिकायत की स्थिति देखें।',
     },
-    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'नंबर जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'फर्जी नोटिस', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', openNavigation: 'नेविगेशन खोलें' },
+    nav: { home: 'होम', report: 'रिपोर्ट', track: 'ट्रैक', check: 'नंबर जाँचें', callScan: 'कॉल स्कैन', noticeVerifier: 'फर्जी नोटिस', volunteers: 'स्वयंसेवक', learn: 'जानें', contact: 'संपर्क', more: 'और', openNavigation: 'नेविगेशन खोलें' },
     actions: { startReport: 'रिपोर्ट शुरू करें', call1930: '1930 पर कॉल करें', continue: 'आगे बढ़ें', back: 'वापस', clear: 'साफ़ करें', open: 'खोलें', close: 'बंद करें', reset: 'रीसेट', readMore: 'और पढ़ें' },
     account: { signIn: 'साइन इन', signOut: 'साइन आउट' },
     language: { label: 'भाषा', select: 'भाषा चुनें' },

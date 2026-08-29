@@ -17,9 +17,6 @@ const navKeys = [
   { to: '/check', key: 'nav.check' },
   { to: '/call-scanner', key: 'nav.callScan' },
   { to: '/notice-verifier', key: 'nav.noticeVerifier' },
-  { to: '/volunteers', key: 'nav.volunteers' },
-  { to: '/learn', key: 'nav.learn' },
-  { to: '/contact', key: 'nav.contact' },
 ] as const
 
 export function SiteHeader() {
@@ -33,11 +30,11 @@ export function SiteHeader() {
   }, [location.pathname])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-black/[0.08] bg-card/70 backdrop-blur-2xl backdrop-saturate-150 dark:bg-canvas/90 dark:backdrop-saturate-100">
+    <header className="sticky top-0 z-40 border-b border-white/50 bg-white/45 backdrop-blur-2xl backdrop-saturate-150 dark:border-black/[0.08] dark:bg-canvas/80 dark:backdrop-saturate-100">
       <div className="page-shell grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-4">
         <BrandMark />
 
-        <nav className="hidden items-center justify-center gap-6 xl:gap-7 lg:flex" aria-label="Primary navigation">
+        <nav className="hidden items-center justify-center gap-5 lg:flex xl:gap-7" aria-label="Primary navigation">
           {navKeys.map((link) => (
             <NavLink
               key={link.to}
@@ -45,7 +42,7 @@ export function SiteHeader() {
               end={link.to === '/'}
               className={({ isActive }) =>
                 cx(
-                  'relative pb-0.5 text-[0.9rem] transition',
+                  'relative whitespace-nowrap pb-0.5 text-[0.9rem] transition',
                   isActive
                     ? 'font-bold text-paper after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-brand'
                     : 'font-medium text-muted hover:text-paper',
@@ -63,28 +60,23 @@ export function SiteHeader() {
           <AccessibilityMenu />
           {!authLoading ? (
             user ? (
-              <div className="hidden items-center gap-2 lg:flex">
-                <span className="hidden max-w-28 truncate text-xs font-medium text-muted xl:block" title={user.email}>
-                  {user.email}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void signOut().catch(() => undefined)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-mist hover:text-paper"
-                  aria-label={t('account.signOut')}
-                  title={t('account.signOut')}
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => void signOut().catch(() => undefined)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-black transition hover:bg-black/[0.04]"
+                aria-label={t('account.signOut')}
+                title={user.email ? `${t('account.signOut')} · ${user.email}` : t('account.signOut')}
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
             ) : (
               <Link
                 to="/login"
-                className="hidden h-9 w-9 items-center justify-center rounded-lg border border-black/[0.12] text-xs font-semibold text-paper transition hover:border-brand hover:text-brand lg:inline-flex xl:w-auto xl:gap-1.5 xl:px-3"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-black transition hover:bg-black/[0.04]"
                 aria-label={t('account.signIn')}
+                title={t('account.signIn')}
               >
                 <UserRound className="h-4 w-4" />
-                <span className="hidden xl:inline">{t('account.signIn')}</span>
               </Link>
             )
           ) : null}
@@ -115,10 +107,7 @@ export function SiteHeader() {
                   to={link.to}
                   end={link.to === '/'}
                   className={({ isActive }) =>
-                    cx(
-                      'py-3 text-sm',
-                      isActive ? 'font-bold text-paper' : 'font-medium text-muted',
-                    )
+                    cx('py-3 text-sm', isActive ? 'font-bold text-paper' : 'font-medium text-muted')
                   }
                 >
                   {t(link.key)}
